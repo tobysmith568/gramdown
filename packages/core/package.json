@@ -1,0 +1,43 @@
+{
+  "name": "@tobysmith568/grammarly-md-core",
+  "version": "0.0.0",
+  "description": "Grammarly .docx export -> Markdown conversion core (pure, no I/O)",
+  "license": "ISC",
+  "author": {
+    "name": "Toby Smith",
+    "url": "https://tobysmith.uk"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tobysmith568/grammarly-md.git",
+    "directory": "packages/core"
+  },
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json",
+    "lint": "eslint src",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "jszip": "^3.10.1",
+    "mammoth": "^1.12.2",
+    "turndown": "^7.2.4",
+    "turndown-plugin-gfm": "^1.0.2"
+  },
+  "devDependencies": {
+    "@types/turndown": "^5.0.6"
+  }
+}

@@ -1,0 +1,7 @@
+# Bun uses the "isolated" linker for workspaces, so a package's transitive deps
+# are not placed in the root node_modules. Prettier resolves its plugins relative
+# to the project root, so the plugins pulled in by @tobysmith568/prettier-config
+# must be hoisted there explicitly.
+[install]
+linker = "isolated"
+publicHoistPattern = ["*prettier-plugin*"]
