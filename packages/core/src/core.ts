@@ -1,7 +1,7 @@
 import { docxToHtml } from "./docx-to-html.js";
 import { htmlToMarkdown, type LanguageGuesser } from "./html-to-markdown.js";
 import { postprocess } from "./postprocess.js";
-import { preprocessDocx } from "./preprocess.js";
+import { preprocessDocx } from "./preprocess/index.js";
 
 export interface ConvertOptions {
   /**

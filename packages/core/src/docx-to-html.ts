@@ -1,52 +1,20 @@
 import mammoth from "mammoth";
-import {
-  CODE_START_STYLE_NAME,
-  CODE_STYLE_NAME,
-  INLINE_CODE_STYLE_NAME,
-  MAX_CHECKLIST_LEVEL,
-  QUOTE_STYLE_NAME,
-  checklistStyleName
-} from "./preprocess.js";
+import { PARAGRAPH_STYLES, styleMapEntry } from "./preprocess/index.js";
 
 /**
- * A `ul > li` path nested `level` lists deep, in the same shape mammoth's own
- * default style map uses for `p:unordered-list(N)` / `p:ordered-list(N)`.
- */
-const nestedListItemPath = (level: number): string =>
-  `${"ul|ol > li > ".repeat(level)}ul > li:fresh`;
-
-/** One `p[style-name=…] => …` mapping per checklist nesting depth we declare. */
-const checklistStyleMap = Array.from({ length: MAX_CHECKLIST_LEVEL }, (_, level) => {
-  const name = checklistStyleName(level);
-  return `p[style-name='${name}'] => ${nestedListItemPath(level)}`;
-});
-
-/**
- * Maps the styles injected by the preprocessing pass onto HTML.
+ * Maps the styles the preprocessing pass injects (see `PARAGRAPH_STYLES`) onto
+ * HTML, plus two mappings that aren't tied to any of our own injected styles:
  *
- * `:separator('\n')` tells mammoth to collapse a run of consecutive code
- * paragraphs into a single `<pre>` with newlines between them, rather than one
- * `<pre>` per line. `Source Code Start` adds `:fresh`, which is mammoth's way
- * of saying "never merge this into the previous element even if it's the same
- * tag" — used for the first line of a block, so two blocks that sit directly
- * adjacent (see `startsNewCodeBlock` in preprocess.ts) stay two `<pre>`s.
- *
- * `u => u` re-enables underline, which mammoth drops by default. Word underlines
- * link text automatically, so that noise is stripped again when the HTML is
- * converted to Markdown — but underline used deliberately in prose survives.
- *
- * Checklist items need no mapping for the checkbox itself — mammoth already
- * turns Word's `FORMCHECKBOX` field into `<input type="checkbox">` on its own;
- * the mapping only needs to put that `<input>` inside an `<li>` so turndown's
- * GFM plugin recognises it as a task-list item.
+ * - `p[style-name='Quote']` — Word's own built-in "Quote" style, in case a
+ *   document already uses it, independent of Grammarly's unstyled quotes.
+ * - `u => u` re-enables underline, which mammoth drops by default. Word
+ *   underlines link text automatically, so that noise is stripped again when
+ *   the HTML is converted to Markdown — but underline used deliberately in
+ *   prose survives.
  */
 export const STYLE_MAP = [
-  `p[style-name='${CODE_STYLE_NAME}'] => pre:separator('\n')`,
-  `p[style-name='${CODE_START_STYLE_NAME}'] => pre:fresh:separator('\n')`,
-  `r[style-name='${INLINE_CODE_STYLE_NAME}'] => code`,
-  `p[style-name='${QUOTE_STYLE_NAME}'] => blockquote > p:fresh`,
+  ...PARAGRAPH_STYLES.map(styleMapEntry),
   "p[style-name='Quote'] => blockquote > p:fresh",
-  ...checklistStyleMap,
   "u => u"
 ];
 
