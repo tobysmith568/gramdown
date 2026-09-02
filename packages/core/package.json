@@ -1,5 +1,5 @@
 {
-  "name": "@tobysmith568/grammarly-md-core",
+  "name": "@gramdown/core",
   "version": "0.0.0",
   "description": "Grammarly .docx export -> Markdown conversion core (pure, no I/O)",
   "license": "ISC",
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tobysmith568/grammarly-md.git",
+    "url": "git+https://github.com/tobysmith568/gramdown.git",
     "directory": "packages/core"
   },
   "type": "module",

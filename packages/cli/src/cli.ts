@@ -1,4 +1,4 @@
-import { InvalidDocxError, convert } from "@tobysmith568/grammarly-md-core";
+import { InvalidDocxError, convert } from "@gramdown/core";
 import { readFile, writeFile } from "node:fs/promises";
 import process from "node:process";
 
@@ -13,7 +13,7 @@ export const defaultIo: Io = {
 };
 
 export function usage(): string {
-  return `grammarly-md <input.docx> [options]
+  return `gramdown <input.docx> [options]
 
   -o, --output <file>    write to file instead of stdout
   -h, --help             show this help

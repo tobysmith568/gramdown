@@ -6,6 +6,6 @@ coverage
 .DS_Store
 
 # compiled binaries
-/grammarly-md
-/grammarly-md-*
+/gramdown
+/gramdown-*
 *.exe

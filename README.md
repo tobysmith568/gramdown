@@ -1,4 +1,4 @@
-# grammarly-md
+# gramdown
 
 Convert Grammarly `.docx` exports to Markdown. Pure JS — no system dependencies —
 installable from npm and compilable to a single self-contained binary with
@@ -6,10 +6,10 @@ installable from npm and compilable to a single self-contained binary with
 
 ## Workspace layout
 
-| Package         | npm name                          | Purpose                                          |
-| --------------- | --------------------------------- | ------------------------------------------------ |
-| `packages/core` | `@tobysmith568/grammarly-md-core` | Pure, I/O-free `convert(bytes, opts) -> string`. |
-| `packages/cli`  | `@tobysmith568/grammarly-md`      | `grammarly-md <file.docx>` CLI wrapper + `bin`.  |
+| Package         | npm name         | Purpose                                          |
+| --------------- | ---------------- | ----------------------------------------------- |
+| `packages/core` | `@gramdown/core` | Pure, I/O-free `convert(bytes, opts) -> string`. |
+| `packages/cli`  | `gramdown`       | `gramdown <file.docx>` CLI wrapper + `bin`.      |
 
 ## Scripts
 
@@ -30,8 +30,8 @@ bun run format      # prettier (whole repo, not per-package)
 Run a task for one package with turbo's filter:
 
 ```bash
-bunx turbo run build --filter=@tobysmith568/grammarly-md-core
-bunx turbo run test  --filter=@tobysmith568/grammarly-md   # builds core first via ^build
+bunx turbo run build --filter=@gramdown/core
+bunx turbo run test  --filter=gramdown   # builds core first via ^build
 ```
 
 ## License
