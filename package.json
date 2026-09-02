@@ -1,5 +1,5 @@
 {
-  "name": "@tobysmith568/grammarly-md-workspace",
+  "name": "@gramdown/workspace",
   "private": true,
   "type": "module",
   "packageManager": "bun@1.4.0",

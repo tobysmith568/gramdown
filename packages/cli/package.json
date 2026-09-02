@@ -1,5 +1,5 @@
 {
-  "name": "@tobysmith568/grammarly-md",
+  "name": "gramdown",
   "version": "0.0.0",
   "description": "Convert Grammarly .docx exports to Markdown. Pure JS, no system dependencies.",
   "license": "ISC",
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tobysmith568/grammarly-md.git",
+    "url": "git+https://github.com/tobysmith568/gramdown.git",
     "directory": "packages/cli"
   },
   "keywords": [
@@ -20,7 +20,7 @@
   ],
   "type": "module",
   "bin": {
-    "grammarly-md": "./dist/bin.js"
+    "gramdown": "./dist/bin.js"
   },
   "files": [
     "dist"
@@ -30,9 +30,9 @@
     "typecheck": "tsc -p tsconfig.json",
     "lint": "eslint src",
     "test": "bun test",
-    "compile": "bun build ./src/bin.ts --compile --minify --bytecode --outfile grammarly-md"
+    "compile": "bun build ./src/bin.ts --compile --minify --bytecode --outfile gramdown"
   },
   "dependencies": {
-    "@tobysmith568/grammarly-md-core": "workspace:*"
+    "@gramdown/core": "workspace:*"
   }
 }
