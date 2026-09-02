@@ -1,7 +1,7 @@
-import { PARAGRAPH_RE } from "../xml.js";
-import { addParagraphStyle, classify, type Kind } from "./paragraph.js";
-import { spacingTwip } from "./spacing.js";
-import type { StyleDescriptor } from "./style.js";
+import { PARAGRAPH_RE } from "../xml";
+import { addParagraphStyle, classify, type Kind } from "./paragraph";
+import { spacingTwip } from "./spacing";
+import type { StyleDescriptor } from "./style";
 
 const CODE_STYLE_ID = "SourceCode";
 const CODE_START_STYLE_ID = "SourceCodeStart";

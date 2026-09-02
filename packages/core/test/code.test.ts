@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { convertFixture } from "./helpers.js";
+import { convertFixture } from "./helpers";
 
 describe("code.docx", () => {
   it("marks a monospace run inside prose as inline code", async () => {

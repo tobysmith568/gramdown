@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { hasText, paragraphProperties, runProperties, runs, textOf } from "./xml.js";
+import { hasText, paragraphProperties, runProperties, runs, textOf } from "./xml";
 
 const run = (properties: string, text: string) => `<w:r>${properties}<w:t>${text}</w:t></w:r>`;
 

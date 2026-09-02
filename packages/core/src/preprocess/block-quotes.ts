@@ -1,7 +1,7 @@
-import { paragraphProperties } from "../xml.js";
-import { addParagraphStyle, mapOtherParagraphs } from "./paragraph.js";
-import { indentTag, indentTwip } from "./spacing.js";
-import type { StyleDescriptor } from "./style.js";
+import { paragraphProperties } from "../xml";
+import { addParagraphStyle, mapOtherParagraphs } from "./paragraph";
+import { indentTag, indentTwip } from "./spacing";
+import type { StyleDescriptor } from "./style";
 
 const QUOTE_STYLE_ID = "GrammarlyBlockQuote";
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import { isBlockQuote, styleBlockQuotes } from "./block-quotes.js";
-import { body, run } from "./test-helpers.js";
+import { isBlockQuote, styleBlockQuotes } from "./block-quotes";
+import { body, run } from "./test-helpers";
 
 describe("isBlockQuote", () => {
   const indented = (indent: string, properties = "") =>

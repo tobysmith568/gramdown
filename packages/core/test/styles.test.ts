@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { convertFixture } from "./helpers.js";
+import { convertFixture } from "./helpers";
 
 describe("styles.docx", () => {
   it("writes bold and italic with GFM emphasis markers", async () => {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { ensureStyles, styleMapEntry, type StyleDescriptor } from "./style.js";
+import { ensureStyles, styleMapEntry, type StyleDescriptor } from "./style";
 
 const paragraphStyle: StyleDescriptor = {
   id: "Example",

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import { PARAGRAPH_STYLES, preprocessDocumentXml } from "./document.js";
-import { body, paragraph, run } from "./test-helpers.js";
+import { PARAGRAPH_STYLES, preprocessDocumentXml } from "./document";
+import { body, paragraph, run } from "./test-helpers";
 
 describe("PARAGRAPH_STYLES", () => {
   it("aggregates every quirk's styles", () => {

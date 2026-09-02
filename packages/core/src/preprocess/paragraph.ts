@@ -1,5 +1,5 @@
-import { PARAGRAPH_RE, hasText, runs, textOf } from "../xml.js";
-import { isMonospace } from "./monospace.js";
+import { PARAGRAPH_RE, hasText, runs, textOf } from "../xml";
+import { isMonospace } from "./monospace";
 
 export type Kind = "code" | "empty" | "other";
 

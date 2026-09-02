@@ -7,7 +7,7 @@
 
 import { readdir, readFile, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
-import { convert } from "../src/core.js";
+import { convert } from "../src/core";
 
 const directory = fileURLToPath(new URL("./fixtures/", import.meta.url));
 

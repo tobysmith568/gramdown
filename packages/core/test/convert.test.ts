@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import { InvalidDocxError, convert } from "../src/core.js";
-import { convertFixture, expectedMarkdown, readFixture } from "./helpers.js";
+import { InvalidDocxError, convert } from "../src/core";
+import { convertFixture, expectedMarkdown, readFixture } from "./helpers";
 
 /**
  * Real Grammarly exports, converted end to end and checked against the

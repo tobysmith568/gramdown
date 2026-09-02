@@ -1,8 +1,8 @@
-import { blockQuoteStyle, styleBlockQuotes } from "./block-quotes.js";
-import { checklistStyles, styleChecklists } from "./checklists.js";
-import { codeBlockStyles, styleCodeBlocks } from "./code-blocks.js";
-import { inlineCodeStyle, styleInlineCode } from "./inline-code.js";
-import type { StyleDescriptor } from "./style.js";
+import { blockQuoteStyle, styleBlockQuotes } from "./block-quotes";
+import { checklistStyles, styleChecklists } from "./checklists";
+import { codeBlockStyles, styleCodeBlocks } from "./code-blocks";
+import { inlineCodeStyle, styleInlineCode } from "./inline-code";
+import type { StyleDescriptor } from "./style";
 
 /** Every style any pass below might apply — the input to `ensureStyles`. */
 export const PARAGRAPH_STYLES: StyleDescriptor[] = [

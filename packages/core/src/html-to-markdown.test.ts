@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { htmlToMarkdown } from "./html-to-markdown.js";
+import { htmlToMarkdown } from "./html-to-markdown";
 
 const md = (html: string, options?: Parameters<typeof htmlToMarkdown>[1]) =>
   htmlToMarkdown(html, options);

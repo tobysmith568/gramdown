@@ -1,6 +1,6 @@
 import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
-import { convert, type ConvertOptions } from "../src/core.js";
+import { convert, type ConvertOptions } from "../src/core";
 
 const fixturePath = (name: string): string =>
   fileURLToPath(new URL(`./fixtures/${name}`, import.meta.url));

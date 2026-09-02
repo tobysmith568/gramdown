@@ -1,7 +1,7 @@
-import { RUN_RE, hasText } from "../xml.js";
-import { isMonospace } from "./monospace.js";
-import { mapOtherParagraphs } from "./paragraph.js";
-import type { StyleDescriptor } from "./style.js";
+import { RUN_RE, hasText } from "../xml";
+import { isMonospace } from "./monospace";
+import { mapOtherParagraphs } from "./paragraph";
+import type { StyleDescriptor } from "./style";
 
 const INLINE_CODE_STYLE_ID = "VerbatimChar";
 

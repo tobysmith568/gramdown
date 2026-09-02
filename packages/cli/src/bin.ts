@@ -6,7 +6,7 @@
 // that no `import.meta.url` comparison can match.
 
 import process from "node:process";
-import { defaultIo, run } from "./cli.js";
+import { defaultIo, run } from "./cli";
 
 run(process.argv)
   .then(code => process.exit(code))

@@ -1,6 +1,6 @@
-import { addParagraphStyle, mapOtherParagraphs } from "./paragraph.js";
-import { indentTwip } from "./spacing.js";
-import type { StyleDescriptor } from "./style.js";
+import { addParagraphStyle, mapOtherParagraphs } from "./paragraph";
+import { indentTwip } from "./spacing";
+import type { StyleDescriptor } from "./style";
 
 const CHECKLIST_STYLE_PREFIX = "GrammarlyChecklist";
 const MAX_CHECKLIST_LEVEL = 5;

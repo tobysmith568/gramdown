@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
 import JSZip from "jszip";
-import { preprocessDocx } from "./docx.js";
-import { body, paragraph, run } from "./test-helpers.js";
+import { preprocessDocx } from "./docx";
+import { body, paragraph, run } from "./test-helpers";
 
 const docx = async (files: Record<string, string>): Promise<Uint8Array> => {
   const zip = new JSZip();

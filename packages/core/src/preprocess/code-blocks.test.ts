@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import { codeBlockMembership, startsNewCodeBlock, styleCodeBlocks } from "./code-blocks.js";
-import { body, codeParagraph, paragraph, run } from "./test-helpers.js";
+import { codeBlockMembership, startsNewCodeBlock, styleCodeBlocks } from "./code-blocks";
+import { body, codeParagraph, paragraph, run } from "./test-helpers";
 
 const isCode = (xml: string) => /<w:pStyle w:val="SourceCode(Start)?"\/>/.test(xml);
 const startsCode = (xml: string) => xml.includes('<w:pStyle w:val="SourceCodeStart"/>');

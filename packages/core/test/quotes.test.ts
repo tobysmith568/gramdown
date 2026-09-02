@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { convertFixture } from "./helpers.js";
+import { convertFixture } from "./helpers";
 
 describe("quotes.docx", () => {
   it("writes a multi-line block quote with > on every line", async () => {

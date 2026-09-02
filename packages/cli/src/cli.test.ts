@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { run, usage } from "./cli.js";
+import { run, usage } from "./cli";
 
 function capture() {
   const out: string[] = [];

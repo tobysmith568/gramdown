@@ -1,3 +1,3 @@
-export { InvalidDocxError, convert } from "./core.js";
-export type { ConvertOptions } from "./core.js";
-export type { LanguageGuesser } from "./html-to-markdown.js";
+export { InvalidDocxError, convert } from "./core";
+export type { ConvertOptions } from "./core";
+export type { LanguageGuesser } from "./html-to-markdown";

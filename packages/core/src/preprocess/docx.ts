@@ -1,6 +1,6 @@
 import JSZip from "jszip";
-import { PARAGRAPH_STYLES, preprocessDocumentXml } from "./document.js";
-import { ensureStyles } from "./style.js";
+import { PARAGRAPH_STYLES, preprocessDocumentXml } from "./document";
+import { ensureStyles } from "./style";
 
 const DOCUMENT_PATH = "word/document.xml";
 const STYLES_PATH = "word/styles.xml";

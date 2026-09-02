@@ -1,4 +1,4 @@
-import { runProperties } from "../xml.js";
+import { runProperties } from "../xml";
 
 /**
  * Fonts Grammarly (and Word) use for code. Grammarly only ever emits "Courier

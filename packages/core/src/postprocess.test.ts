@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { normaliseBlankLines, postprocess } from "./postprocess.js";
+import { normaliseBlankLines, postprocess } from "./postprocess";
 
 describe("normaliseBlankLines", () => {
   it("collapses runs of blank lines to one", () => {

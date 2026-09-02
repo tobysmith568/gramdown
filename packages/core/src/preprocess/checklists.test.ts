@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import { checklistLevel, isChecked, isChecklistItem, styleChecklists } from "./checklists.js";
-import { body, paragraph, run } from "./test-helpers.js";
+import { checklistLevel, isChecked, isChecklistItem, styleChecklists } from "./checklists";
+import { body, paragraph, run } from "./test-helpers";
 
 const checkbox = (checked: boolean, checkedAttr = true) =>
   '<w:r><w:fldChar w:fldCharType="begin"><w:ffData><w:checkBox>' +

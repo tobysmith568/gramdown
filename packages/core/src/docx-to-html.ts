@@ -1,5 +1,5 @@
 import mammoth from "mammoth";
-import { PARAGRAPH_STYLES, styleMapEntry } from "./preprocess/index.js";
+import { PARAGRAPH_STYLES, styleMapEntry } from "./preprocess/index";
 
 /**
  * Maps the styles the preprocessing pass injects (see `PARAGRAPH_STYLES`) onto

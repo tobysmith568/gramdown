@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import { styleInlineCode } from "./inline-code.js";
-import { body, paragraph, run } from "./test-helpers.js";
+import { styleInlineCode } from "./inline-code";
+import { body, paragraph, run } from "./test-helpers";
 
 const inlineCodeRuns = (xml: string) =>
   (xml.match(/<w:rStyle w:val="VerbatimChar"\/>/g) ?? []).length;

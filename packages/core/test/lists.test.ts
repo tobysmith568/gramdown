@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { convertFixture } from "./helpers.js";
+import { convertFixture } from "./helpers";
 
 describe("lists.docx", () => {
   it("writes an ordered list numbered from 1, nesting sub-items under their parent", async () => {

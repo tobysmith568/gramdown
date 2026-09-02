@@ -1,4 +1,4 @@
-import { paragraphProperties } from "../xml.js";
+import { paragraphProperties } from "../xml";
 
 const INDENT_RE = /<w:ind\b[^>]*>/;
 const SPACING_RE = /<w:spacing\b[^>]*>/;

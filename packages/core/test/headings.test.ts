@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { convertFixture } from "./helpers.js";
+import { convertFixture } from "./helpers";
 
 describe("headings.docx", () => {
   it("maps Word's three heading levels to ATX headings of the same depth", async () => {

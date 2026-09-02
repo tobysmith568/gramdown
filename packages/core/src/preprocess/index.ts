@@ -1,4 +1,4 @@
-export { PARAGRAPH_STYLES, preprocessDocumentXml } from "./document.js";
-export { preprocessDocx } from "./docx.js";
-export { styleMapEntry } from "./style.js";
-export type { StyleDescriptor } from "./style.js";
+export { PARAGRAPH_STYLES, preprocessDocumentXml } from "./document";
+export { preprocessDocx } from "./docx";
+export { styleMapEntry } from "./style";
+export type { StyleDescriptor } from "./style";
