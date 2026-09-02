@@ -20,7 +20,7 @@
   ],
   "type": "module",
   "bin": {
-    "grammarly-md": "./dist/cli.js"
+    "grammarly-md": "./dist/bin.js"
   },
   "files": [
     "dist"
@@ -30,7 +30,7 @@
     "typecheck": "tsc -p tsconfig.json",
     "lint": "eslint src",
     "test": "bun test",
-    "compile": "bun build ./src/cli.ts --compile --minify --bytecode --outfile grammarly-md"
+    "compile": "bun build ./src/bin.ts --compile --minify --bytecode --outfile grammarly-md"
   },
   "dependencies": {
     "@tobysmith568/grammarly-md-core": "workspace:*"

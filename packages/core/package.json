@@ -29,7 +29,8 @@
     "build": "tsc -p tsconfig.build.json",
     "typecheck": "tsc -p tsconfig.json",
     "lint": "eslint src",
-    "test": "bun test"
+    "test": "bun test",
+    "test:update": "bun run test/update-fixtures.ts"
   },
   "dependencies": {
     "jszip": "^3.10.1",

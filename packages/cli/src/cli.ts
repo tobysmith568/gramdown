@@ -1,15 +1,13 @@
-#!/usr/bin/env node
-import { convert } from "@tobysmith568/grammarly-md-core";
+import { InvalidDocxError, convert } from "@tobysmith568/grammarly-md-core";
 import { readFile, writeFile } from "node:fs/promises";
 import process from "node:process";
-import { fileURLToPath } from "node:url";
 
 export interface Io {
   stdout: (s: string) => void;
   stderr: (s: string) => void;
 }
 
-const defaultIo: Io = {
+export const defaultIo: Io = {
   stdout: s => process.stdout.write(s),
   stderr: s => process.stderr.write(s)
 };
@@ -18,10 +16,12 @@ export function usage(): string {
   return `grammarly-md <input.docx> [options]
 
   -o, --output <file>    write to file instead of stdout
-  --guess-lang           attempt to detect code-block languages (default: off)
   -h, --help             show this help
 `;
 }
+
+const isNotFound = (error: unknown): boolean =>
+  typeof error === "object" && error !== null && "code" in error && error.code === "ENOENT";
 
 export async function run(argv: string[], io: Io = defaultIo): Promise<number> {
   const args = argv.slice(2);
@@ -43,10 +43,22 @@ export async function run(argv: string[], io: Io = defaultIo): Promise<number> {
 
   const outIndex = Math.max(args.indexOf("-o"), args.indexOf("--output"));
   const output = outIndex === -1 ? undefined : args[outIndex + 1];
-  const guessLang = args.includes("--guess-lang");
 
-  const bytes = new Uint8Array(await readFile(input));
-  const markdown = await convert(bytes, { guessLang });
+  let markdown: string;
+  try {
+    const bytes = new Uint8Array(await readFile(input));
+    markdown = await convert(bytes, { onWarning: warning => io.stderr(`warning: ${warning}\n`) });
+  } catch (error) {
+    if (error instanceof InvalidDocxError) {
+      io.stderr(`error: ${input}: ${error.message}\n`);
+      return 1;
+    }
+    if (isNotFound(error)) {
+      io.stderr(`error: no such file: ${input}\n`);
+      return 1;
+    }
+    throw error;
+  }
 
   if (output) {
     await writeFile(output, markdown);
@@ -54,16 +66,4 @@ export async function run(argv: string[], io: Io = defaultIo): Promise<number> {
     io.stdout(markdown);
   }
   return 0;
-}
-
-const invokedDirectly =
-  process.argv[1] !== undefined && process.argv[1] === fileURLToPath(import.meta.url);
-
-if (invokedDirectly) {
-  run(process.argv)
-    .then(code => process.exit(code))
-    .catch((err: unknown) => {
-      defaultIo.stderr(`error: ${err instanceof Error ? err.message : String(err)}\n`);
-      process.exit(1);
-    });
 }

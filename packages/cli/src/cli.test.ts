@@ -29,3 +29,11 @@ describe("run", () => {
     expect(c.err()).toMatch(/not a \.docx/);
   });
 });
+
+describe("run against a file", () => {
+  it("reports a missing file cleanly", async () => {
+    const c = capture();
+    expect(await run(["bun", "cli", "does-not-exist.docx"], c.io)).toBe(1);
+    expect(c.err()).toMatch(/no such file/);
+  });
+});

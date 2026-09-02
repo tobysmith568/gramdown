@@ -2,4 +2,4 @@ dist
 node_modules
 coverage
 bun.lock
-test/fixtures/**/*.md
+**/test/fixtures/**/*.md
