@@ -1,0 +1,60 @@
+/*
+ * Design tokens - the single source of truth for colour, type, spacing and motion. Components
+ * read these rather than hard-coding values. Loosely borrowed from ../tobysmith.uk but kept
+ * self-contained (no dependency on that project).
+ *
+ * Milestone 8.1 ships light + dark via prefers-color-scheme only; an explicit toggle is a
+ * later polish step (8.10), at which point a :root[data-theme="dark"] block joins the media
+ * query and the two must stay in sync.
+ */
+
+:root {
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --ink: #16181d;
+  --muted: #6b7280;
+  --border: #e1e4e8;
+  --accent: #1e90ff;
+  --accent-strong: #0f6fd1;
+
+  color-scheme: light;
+
+  --f-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --f-body: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --f-mono: ui-monospace, "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+
+  --text-sm: 0.9375rem;
+  --text-base: 1.0625rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.5rem;
+  --text-3xl: 2.5rem;
+
+  --shell: 60rem;
+
+  --sp-2: 0.5rem;
+  --sp-3: 0.75rem;
+  --sp-4: 1rem;
+  --sp-5: 1.5rem;
+  --sp-6: 2rem;
+  --sp-7: 3rem;
+  --sp-9: 6rem;
+
+  --radius: 6px;
+
+  --dur-fast: 120ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #10131a;
+    --surface: #191d26;
+    --ink: #e7e9ec;
+    --muted: #8b94a3;
+    --border: #2a2f3a;
+    --accent: #4da6ff;
+    --accent-strong: #7cbeff;
+
+    color-scheme: dark;
+  }
+}

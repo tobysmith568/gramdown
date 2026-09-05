@@ -1,0 +1,51 @@
+---
+const year = new Date().getUTCFullYear();
+---
+
+<footer>
+  <div class="wrap bar">
+    <span>© Toby Smith {year}</span>
+    <span class="note">Your documents never leave your browser</span>
+    <nav class="links" aria-label="Legal">
+      <a href="/terms">Terms</a>
+      <a href="/privacy">Privacy</a>
+      <a href="https://github.com/tobysmith568/gramdown">GitHub</a>
+    </nav>
+  </div>
+</footer>
+
+<style>
+  footer {
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    padding-block: var(--sp-5) var(--sp-7);
+    font-size: var(--text-sm);
+  }
+
+  .bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-3);
+  }
+
+  .note {
+    font-style: italic;
+  }
+
+  .links {
+    display: flex;
+    gap: var(--sp-4);
+  }
+
+  .links a {
+    color: var(--muted);
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+
+  .links a:hover {
+    color: var(--accent);
+  }
+</style>

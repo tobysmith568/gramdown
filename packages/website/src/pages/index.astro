@@ -1,0 +1,68 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const description =
+  "Convert Grammarly .docx exports to Markdown. Pure JavaScript, no pandoc, and a converter that runs entirely in your browser.";
+---
+
+<BaseLayout title="gramdown" description={description}>
+  <section class="wrap hero">
+    <h1>gramdown</h1>
+    <p class="lead">{description}</p>
+
+    <p class="status">This site is under construction. For now, grab the CLI:</p>
+
+    <pre class="install"><code>npm install -g gramdown</code></pre>
+
+    <p class="links">
+      <a href="https://github.com/tobysmith568/gramdown">GitHub</a>
+      <span aria-hidden="true">·</span>
+      <a href="https://www.npmjs.com/package/gramdown">gramdown on npm</a>
+      <span aria-hidden="true">·</span>
+      <a href="https://www.npmjs.com/package/@gramdown/core">@gramdown/core on npm</a>
+    </p>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero {
+    padding-block: var(--sp-9);
+  }
+
+  h1 {
+    font-size: var(--text-3xl);
+    margin: 0;
+  }
+
+  .lead {
+    max-width: 40rem;
+    font-size: var(--text-lg);
+    color: var(--muted);
+  }
+
+  .status {
+    margin-top: var(--sp-6);
+  }
+
+  .install {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: var(--sp-4);
+    overflow-x: auto;
+  }
+
+  .install code {
+    background: none;
+    border: none;
+    padding: 0;
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-3);
+    margin-top: var(--sp-6);
+    font-size: var(--text-sm);
+  }
+</style>
