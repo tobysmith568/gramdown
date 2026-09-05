@@ -1,23 +1,15 @@
 import TurndownService from "turndown";
 import { gfm } from "turndown-plugin-gfm";
 
-/** Grammarly indents code with U+00A0, which is not copy-pasteable as code. */
-const nbspRe = /\u00a0/g;
-
-const unpadded = (code: string): string => code.replace(nbspRe, " ").replace(/\n+$/, "");
-
-/** A backtick fence long enough not to collide with backticks in the content. */
-const fenceFor = (code: string, minimum: number): string => {
-  const longest = (code.match(/`+/g) ?? []).reduce((max, run) => Math.max(max, run.length), 0);
-  return "`".repeat(Math.max(minimum, longest + 1));
-};
-
 export type LanguageGuesser = (code: string) => string | undefined;
 
 export interface MarkdownOptions {
   /** Called for each code block to produce a fence info string. */
   guessLanguage?: LanguageGuesser;
 }
+
+/** Grammarly indents code with U+00A0, which is not copy-pasteable as code. */
+const nbspRe = /\u00a0/g;
 
 export const createTurndown = (options: MarkdownOptions = {}): TurndownService => {
   const turndown = new TurndownService({
@@ -115,3 +107,11 @@ export const createTurndown = (options: MarkdownOptions = {}): TurndownService =
 /** Convert mammoth's HTML into GitHub-Flavored Markdown. */
 export const htmlToMarkdown = (html: string, options: MarkdownOptions = {}): string =>
   createTurndown(options).turndown(html);
+
+const unpadded = (code: string): string => code.replace(nbspRe, " ").replace(/\n+$/, "");
+
+/** A backtick fence long enough not to collide with backticks in the content. */
+const fenceFor = (code: string, minimum: number): string => {
+  const longest = (code.match(/`+/g) ?? []).reduce((max, run) => Math.max(max, run.length), 0);
+  return "`".repeat(Math.max(minimum, longest + 1));
+};

@@ -20,9 +20,6 @@ export function usage(): string {
 `;
 }
 
-const isNotFound = (error: unknown): boolean =>
-  typeof error === "object" && error !== null && "code" in error && error.code === "ENOENT";
-
 export async function run(argv: string[], io: Io = defaultIo): Promise<number> {
   const args = argv.slice(2);
 
@@ -68,3 +65,6 @@ export async function run(argv: string[], io: Io = defaultIo): Promise<number> {
   }
   return 0;
 }
+
+const isNotFound = (error: unknown): boolean =>
+  typeof error === "object" && error !== null && "code" in error && error.code === "ENOENT";

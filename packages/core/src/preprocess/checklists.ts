@@ -1,10 +1,15 @@
+import { readBoolean } from "../xml";
 import { addParagraphStyle, mapOtherParagraphs } from "./paragraph";
 import { indentTwip } from "./spacing";
 import type { StyleDescriptor } from "./style";
 
 const checklistStylePrefix = "GrammarlyChecklist";
 const maxChecklistLevel = 5;
+const checklistIndentStep = 720; // twips per level — matches Grammarly's own step
 
+// checklistStyleId and nestedListItemPath are built eagerly into
+// checklistStyles below (an Array.from run at module load), so — unlike the
+// rest of this file's helpers — they must be declared before it, not after.
 const checklistStyleId = (level: number): string => `${checklistStylePrefix}${level}`;
 
 /** A `ul > li` path nested `level` lists deep, matching the shape mammoth's own
@@ -41,15 +46,6 @@ export const checklistStyles: StyleDescriptor[] = Array.from(
  */
 export const isChecklistItem = (paragraph: string): boolean => paragraph.includes("FORMCHECKBOX");
 
-const readBoolean = (xml: string, tag: string): boolean | undefined => {
-  const match = new RegExp(`<w:${tag}(?:\\s+w:val="([^"]*)")?\\s*/>`).exec(xml);
-  if (!match) {
-    return undefined;
-  }
-  const value = match[1];
-  return value === undefined || (value !== "0" && value.toLowerCase() !== "false");
-};
-
 /**
  * Whether a checklist item is ticked, following the same default-then-checked
  * fallback as the `<w:checkBox>` form field itself.
@@ -61,8 +57,6 @@ export const isChecked = (paragraph: string): boolean => {
   }
   return readBoolean(checkbox, "checked") ?? readBoolean(checkbox, "default") ?? false;
 };
-
-const checklistIndentStep = 720; // twips per level — matches Grammarly's own step
 
 /** How deeply a checklist item is nested, clamped to what we declare styles for. */
 export const checklistLevel = (paragraph: string): number => {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { hasText, paragraphProperties, runProperties, runs, textOf } from "./xml";
+import { hasText, paragraphProperties, readBoolean, runProperties, runs, textOf } from "./xml";
 
 const run = (properties: string, text: string) => `<w:r>${properties}<w:t>${text}</w:t></w:r>`;
 
@@ -65,5 +65,27 @@ describe("paragraphProperties", () => {
 
   it("is empty when there are none", () => {
     expect(paragraphProperties("<w:p />")).toBe("");
+  });
+});
+
+describe("readBoolean", () => {
+  it("is true for a bare flag with no w:val", () => {
+    expect(readBoolean("<w:checked/>", "checked")).toBe(true);
+  });
+
+  it('is true for w:val="1"', () => {
+    expect(readBoolean('<w:checked w:val="1"/>', "checked")).toBe(true);
+  });
+
+  it('is false for w:val="0"', () => {
+    expect(readBoolean('<w:checked w:val="0"/>', "checked")).toBe(false);
+  });
+
+  it('is false for w:val="false", case-insensitively', () => {
+    expect(readBoolean('<w:checked w:val="FALSE"/>', "checked")).toBe(false);
+  });
+
+  it("is undefined when the tag isn't present at all", () => {
+    expect(readBoolean("<w:other/>", "checked")).toBeUndefined();
   });
 });

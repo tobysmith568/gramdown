@@ -1,4 +1,4 @@
-import { runRe, hasText } from "../xml";
+import { hasText, runRe } from "../xml";
 import { isMonospace } from "./monospace";
 import { mapOtherParagraphs } from "./paragraph";
 import type { StyleDescriptor } from "./style";
@@ -15,6 +15,16 @@ export const inlineCodeStyle: StyleDescriptor = {
 
 const rStyle = `<w:rStyle w:val="${inlineCodeStyleId}"/>`;
 
+/**
+ * Tag monospace runs inside ordinary prose paragraphs as inline code.
+ *
+ * A paragraph that's *entirely* monospace is a code block (see
+ * code-blocks.ts) and never reaches this pass — only a monospace run mixed
+ * into otherwise-normal prose counts as inline code.
+ */
+export const styleInlineCode = (documentXml: string): string =>
+  mapOtherParagraphs(documentXml, tagInlineCode);
+
 const tagInlineCode = (paragraph: string): string =>
   paragraph.replace(runRe, run => {
     if (!hasText(run) || !isMonospace(run) || run.includes(rStyle)) {
@@ -28,13 +38,3 @@ const tagInlineCode = (paragraph: string): string =>
     }
     return run.replace(/^<w:r(?:\s[^>]*)?>/, open => `${open}<w:rPr>${rStyle}</w:rPr>`);
   });
-
-/**
- * Tag monospace runs inside ordinary prose paragraphs as inline code.
- *
- * A paragraph that's *entirely* monospace is a code block (see
- * code-blocks.ts) and never reaches this pass — only a monospace run mixed
- * into otherwise-normal prose counts as inline code.
- */
-export const styleInlineCode = (documentXml: string): string =>
-  mapOtherParagraphs(documentXml, tagInlineCode);

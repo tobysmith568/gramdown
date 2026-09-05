@@ -18,20 +18,6 @@ export const styleMap = [
   "u => u"
 ];
 
-/**
- * A mammoth input that works in both its Node and browser builds: the Node
- * build looks for `buffer`, the browser build for `arrayBuffer`. Supplying both
- * keeps this module free of any environment detection.
- */
-const inputFor = (bytes: Uint8Array) => {
-  const arrayBuffer = bytes.buffer.slice(
-    bytes.byteOffset,
-    bytes.byteOffset + bytes.byteLength
-  ) as ArrayBuffer;
-
-  return { buffer: bytes, arrayBuffer } as unknown as { arrayBuffer: ArrayBuffer };
-};
-
 export interface HtmlResult {
   html: string;
   warnings: string[];
@@ -48,4 +34,18 @@ export const docxToHtml = async (bytes: Uint8Array): Promise<HtmlResult> => {
   });
 
   return { html: result.value, warnings: result.messages.map(message => message.message) };
+};
+
+/**
+ * A mammoth input that works in both its Node and browser builds: the Node
+ * build looks for `buffer`, the browser build for `arrayBuffer`. Supplying both
+ * keeps this module free of any environment detection.
+ */
+const inputFor = (bytes: Uint8Array) => {
+  const arrayBuffer = bytes.buffer.slice(
+    bytes.byteOffset,
+    bytes.byteOffset + bytes.byteLength
+  ) as ArrayBuffer;
+
+  return { buffer: bytes, arrayBuffer } as unknown as { arrayBuffer: ArrayBuffer };
 };

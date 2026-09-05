@@ -2,8 +2,6 @@
 // well-formed `<w:p>`/`<w:r>` XML, just enough for each module's own regexes
 // to work on.
 
-const mono = '<w:rFonts w:ascii="Courier New" w:hAnsi="Courier New" />';
-
 export const run = (text: string, monospace = false): string =>
   `<w:r><w:rPr>${monospace ? mono : ""}</w:rPr><w:t>${text}</w:t></w:r>`;
 
@@ -15,3 +13,5 @@ export const body = (...paragraphs: string[]): string => `<w:body>${paragraphs.j
 /** A code-styled paragraph carrying real Grammarly-style before/after spacing. */
 export const codeParagraph = (text: string, before: number, after: number): string =>
   `<w:p><w:pPr><w:spacing w:before="${before}" w:after="${after}" /></w:pPr>${run(text, true)}</w:p>`;
+
+const mono = '<w:rFonts w:ascii="Courier New" w:hAnsi="Courier New" />';

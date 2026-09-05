@@ -46,3 +46,18 @@ export const paragraphProperties = (paragraph: string): string => {
   const match = /<w:pPr(?:\s[^>]*)?>[\s\S]*?<\/w:pPr>|<w:pPr(?:\s[^>]*)?\/>/.exec(paragraph);
   return match?.[0] ?? "";
 };
+
+/**
+ * The boolean value of a self-closing `<w:{tag}>` flag, e.g. `<w:checked
+ * w:val="0"/>` — `undefined` if the tag isn't present at all. Following
+ * OOXML's own convention: a bare `<w:{tag}/>` with no `w:val` means true, and
+ * only `w:val="0"` or `w:val="false"` (case-insensitive) turns it off.
+ */
+export const readBoolean = (xml: string, tag: string): boolean | undefined => {
+  const match = new RegExp(`<w:${tag}(?:\\s+w:val="([^"]*)")?\\s*/>`).exec(xml);
+  if (!match) {
+    return undefined;
+  }
+  const value = match[1];
+  return value === undefined || (value !== "0" && value.toLowerCase() !== "false");
+};

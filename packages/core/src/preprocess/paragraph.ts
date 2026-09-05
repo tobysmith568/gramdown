@@ -1,4 +1,4 @@
-import { paragraphRe, hasText, runs, textOf } from "../xml";
+import { hasText, paragraphRe, runs, textOf } from "../xml";
 import { isMonospace } from "./monospace";
 
 export type Kind = "code" | "empty" | "other";
