@@ -33,6 +33,8 @@
     "compile": "bun build ./src/bin.ts --compile --minify --bytecode --outfile gramdown"
   },
   "dependencies": {
-    "@gramdown/core": "workspace:*"
+    "@gramdown/core": "workspace:*",
+    "flourite": "^1.3.0",
+    "zod": "^4.5.4"
   }
 }
