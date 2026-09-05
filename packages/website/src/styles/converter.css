@@ -168,6 +168,20 @@
   min-width: 0;
 }
 
+.gd-tray__pref {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-4);
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: var(--text-sm);
+}
+
+.gd-tray__pref input {
+  flex-shrink: 0;
+}
+
 /* --- one conversion row ---------------------------------------------- */
 
 .gd-row {

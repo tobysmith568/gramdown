@@ -3,13 +3,16 @@
  * and the tray both show. Plain module state (Preact signals) so the two
  * islands share it without a common component root.
  *
- * Milestone 8.3 keeps this in memory only — persistence across navigation
- * (IndexedDB) is 8.4, and language guessing is 8.5.
+ * Milestone 8.4 adds persistence: `initPersistence` (called once from the
+ * `Converter` island) rehydrates the queue from IndexedDB, keeps it written
+ * back on every mutation, and syncs it across tabs. Language guessing is 8.5.
  */
 
-import { signal } from "@preact/signals";
+import { effect, signal } from "@preact/signals";
 import { downloadBytes, downloadMarkdown } from "./download";
 import { dedupeName, toMarkdownName } from "./filenames";
+import { applyRetention, clearStore, loadConversions, saveConversions } from "./persistence";
+import { autoDownload } from "./preferences";
 import type { ConversionClient } from "./worker-client";
 
 export type ConversionStatus = "converting" | "ready" | "error";
@@ -25,6 +28,10 @@ export interface Conversion {
   markdown: string | null;
   warnings: string[];
   error: string | null;
+  /** Retained so "re-run" (8.5) works after a reload and the record is self-contained. */
+  sourceBytes: Uint8Array;
+  /** Epoch millis; drives oldest-first retention eviction. */
+  createdAt: number;
 }
 
 export const conversions = signal<Conversion[]>([]);
@@ -32,7 +39,52 @@ export const conversions = signal<Conversion[]>([]);
 /** A transient note when a drop / pick included files that were not `.docx`. */
 export const lastRejection = signal<string | null>(null);
 
+const broadcastChannelName = "gramdown-conversions";
+const persistDebounceMs = 150;
+
 let clientPromise: Promise<ConversionClient> | null = null;
+let channel: BroadcastChannel | null = null;
+let persistTimer: ReturnType<typeof setTimeout> | undefined;
+/** The exact array last written to storage — reference-compared to skip no-op saves. */
+let lastPersisted: Conversion[] | null = null;
+
+/**
+ * Wire the in-memory queue to IndexedDB. Call once, client-side, on island
+ * mount; the returned function tears the wiring down again.
+ */
+export const initPersistence = async (): Promise<() => void> => {
+  const stored = await loadConversions();
+  lastPersisted = stored;
+  conversions.value = stored;
+
+  // Anything caught mid-conversion by a navigation or reload restarts from its
+  // retained source bytes.
+  for (const entry of conversions.value) {
+    if (entry.status === "converting") {
+      void runConversion(entry.id, entry.sourceBytes);
+    }
+  }
+
+  const disposeEffect = effect(() => {
+    // Subscribe to the queue and persist a debounced snapshot on every change.
+    void conversions.value;
+    schedulePersist();
+  });
+
+  if (typeof BroadcastChannel !== "undefined") {
+    channel = new BroadcastChannel(broadcastChannelName);
+    channel.addEventListener("message", onPeerMutation);
+  }
+  document.addEventListener("visibilitychange", onVisibilityChange);
+
+  return () => {
+    disposeEffect();
+    channel?.removeEventListener("message", onPeerMutation);
+    channel?.close();
+    channel = null;
+    document.removeEventListener("visibilitychange", onVisibilityChange);
+  };
+};
 
 /** Add every `.docx` in `files` to the queue and start converting each one. */
 export const enqueueFiles = async (files: readonly File[]): Promise<void> => {
@@ -45,6 +97,9 @@ export const enqueueFiles = async (files: readonly File[]): Promise<void> => {
     const markdownName = toMarkdownName(file.name);
     const outputName = dedupeName(markdownName, takenNames);
 
+    const buffer = await file.arrayBuffer();
+    const bytes = new Uint8Array(buffer);
+
     const entry: Conversion = {
       id: crypto.randomUUID(),
       sourceName: file.name,
@@ -53,12 +108,13 @@ export const enqueueFiles = async (files: readonly File[]): Promise<void> => {
       status: "converting",
       markdown: null,
       warnings: [],
-      error: null
+      error: null,
+      sourceBytes: bytes,
+      createdAt: Date.now()
     };
-    conversions.value = [...conversions.value, entry];
+    const withEntry = [...conversions.value, entry];
+    conversions.value = applyRetention(withEntry);
 
-    const buffer = await file.arrayBuffer();
-    const bytes = new Uint8Array(buffer);
     void runConversion(entry.id, bytes);
   }
 };
@@ -68,8 +124,12 @@ export const removeConversion = (id: string): void => {
 };
 
 export const clearConversions = (): void => {
-  conversions.value = [];
+  const empty: Conversion[] = [];
+  lastPersisted = empty;
+  conversions.value = empty;
   lastRejection.value = null;
+  void clearStore();
+  channel?.postMessage("mutated");
 };
 
 export const downloadConversion = (id: string): void => {
@@ -102,6 +162,9 @@ const runConversion = async (id: string, bytes: Uint8Array): Promise<void> => {
       markdown: result.markdown,
       warnings: result.warnings
     });
+    if (autoDownload.value) {
+      downloadConversion(id);
+    }
   } catch (cause) {
     const message = cause instanceof Error ? cause.message : String(cause);
     patchConversion(id, { status: "error", error: message });
@@ -120,6 +183,40 @@ const patchConversion = (id: string, changes: Partial<Conversion>): void => {
   conversions.value = conversions.value.map(entry =>
     entry.id === id ? { ...entry, ...changes } : entry
   );
+};
+
+const schedulePersist = (): void => {
+  if (typeof indexedDB === "undefined") {
+    return;
+  }
+  clearTimeout(persistTimer);
+  persistTimer = setTimeout(() => void persist(), persistDebounceMs);
+};
+
+const persist = async (): Promise<void> => {
+  const snapshot = conversions.value;
+  if (snapshot === lastPersisted) {
+    return;
+  }
+  lastPersisted = snapshot;
+  await saveConversions(snapshot);
+  channel?.postMessage("mutated");
+};
+
+const reloadFromStore = async (): Promise<void> => {
+  const stored = await loadConversions();
+  lastPersisted = stored;
+  conversions.value = stored;
+};
+
+const onPeerMutation = (): void => {
+  void reloadFromStore();
+};
+
+const onVisibilityChange = (): void => {
+  if (document.visibilityState === "visible") {
+    void reloadFromStore();
+  }
 };
 
 const isDownloadable = (entry: Conversion): entry is Conversion & { markdown: string } => {

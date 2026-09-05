@@ -1,4 +1,5 @@
 import { useEffect, useState } from "preact/hooks";
+import { autoDownload, setAutoDownload } from "../../lib/converter/preferences";
 import {
   clearConversions,
   conversions,
@@ -147,6 +148,15 @@ const ConversionTray = () => {
       <label class="gd-tray__add">
         <span>Add .docx files</span>
         <input type="file" accept=".docx" multiple onChange={onPick} />
+      </label>
+
+      <label class="gd-tray__pref">
+        <input
+          type="checkbox"
+          checked={autoDownload.value}
+          onChange={event => setAutoDownload((event.currentTarget as HTMLInputElement).checked)}
+        />
+        <span>Download automatically when ready</span>
       </label>
     </section>
   );
