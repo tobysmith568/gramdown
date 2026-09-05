@@ -5,6 +5,7 @@
   "description": "Real Grammarly .docx exports, shared by every package's tests",
   "type": "module",
   "exports": {
-    ".": "./index.ts"
+    ".": "./index.ts",
+    "./*.docx": "./*.docx"
   }
 }

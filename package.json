@@ -11,6 +11,7 @@
   ],
   "prettier": "@tobysmith568/prettier-config",
   "scripts": {
+    "dev": "turbo run dev",
     "build": "turbo run build",
     "test": "turbo run test",
     "typecheck": "turbo run typecheck",

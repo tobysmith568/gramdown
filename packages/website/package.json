@@ -15,12 +15,14 @@
   "dependencies": {
     "@astrojs/preact": "^6.0.5",
     "@gramdown/core": "workspace:*",
+    "@mixmark-io/domino": "^2.2.0",
     "astro": "^7.3.1",
     "preact": "^10.29.8",
     "typescript": "~5.9.3"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
+    "@gramdown/fixtures": "workspace:*",
     "eslint": "^9.39.3",
     "eslint-plugin-astro": "^3.1.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",

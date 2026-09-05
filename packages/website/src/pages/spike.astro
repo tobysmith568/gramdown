@@ -1,0 +1,227 @@
+---
+/*
+ * Milestone 8.2 — the browser spike. THROWAWAY: delete this page (and drop the
+ * base64 plumbing) once 8.3 lands the real drop-anywhere UX. It exists only to
+ * prove `@gramdown/core` bundles and runs in a real browser Web Worker and
+ * produces output byte-identical to core's committed snapshots.
+ *
+ * The frontmatter (Node, build time) reads every fixture `.docx` and core's
+ * matching expected Markdown off disk and hands both to the client as inert
+ * data; the conversion itself happens in the browser, in the worker, on load.
+ */
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
+import { fixtureNames } from "@gramdown/fixtures";
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+// Read straight off disk by path rather than through `@gramdown/fixtures`'
+// `new URL(..., import.meta.url)` helper — the bundler intercepts that as an
+// asset import and mangles the path during prerender. `process.cwd()` is the
+// package root (`packages/website`) under both `astro dev` and `astro build`.
+const packagesDir = join(process.cwd(), "..");
+
+const cases = await Promise.all(
+  fixtureNames.map(async name => {
+    const docxPath = join(packagesDir, "fixtures", `${name}.docx`);
+    const snapshotPath = join(packagesDir, "core", "test", "fixtures", `${name}.md`);
+
+    const docxBuffer = await readFile(docxPath);
+    const expected = await readFile(snapshotPath, "utf8");
+
+    return { name, docxBase64: docxBuffer.toString("base64"), expected };
+  })
+);
+---
+
+<BaseLayout title="Browser spike" description="Milestone 8.2 browser conversion spike." noIndex>
+  <section class="wrap spike">
+    <h1>Browser conversion spike</h1>
+    <p class="lead">
+      Runs <code>@gramdown/core</code>'s <code>convert()</code> in a Web Worker against every
+      <code>@gramdown/fixtures</code>
+      <code>.docx</code> and diffs the result against
+      <code>packages/core/test/fixtures/*.md</code>.
+    </p>
+
+    <p id="summary" class="verdict pending" role="status">Running…</p>
+
+    <ul id="cases">
+      {
+        cases.map(testCase => (
+          <li
+            class="case"
+            data-fixture={testCase.name}
+            data-docx={testCase.docxBase64}
+            data-expected={testCase.expected}>
+            <span class="name">{testCase.name}.docx</span>
+            <span class="result pending">queued</span>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</BaseLayout>
+
+<script>
+  import { ConversionClient } from "../lib/converter/worker-client";
+
+  interface CaseOutcome {
+    ok: boolean;
+    detail: string;
+  }
+
+  const summary = document.getElementById("summary");
+  const items = [...document.querySelectorAll<HTMLLIElement>("#cases .case")];
+
+  if (summary && items.length > 0) {
+    void runSpike(summary, items);
+  }
+
+  async function runSpike(summary: HTMLElement, items: HTMLLIElement[]): Promise<void> {
+    const client = new ConversionClient();
+    let passed = 0;
+
+    try {
+      for (const item of items) {
+        const outcome = await runCase(client, item);
+        renderCase(item, outcome);
+        if (outcome.ok) {
+          passed++;
+        }
+      }
+    } finally {
+      client.terminate();
+    }
+
+    const allPassed = passed === items.length;
+    summary.classList.remove("pending");
+    summary.classList.add(allPassed ? "pass" : "fail");
+    summary.textContent = `${allPassed ? "PASS" : "FAIL"} — ${passed}/${items.length} fixtures byte-identical to their snapshot`;
+  }
+
+  async function runCase(client: ConversionClient, item: HTMLLIElement): Promise<CaseOutcome> {
+    const docxBase64 = item.dataset.docx ?? "";
+    const expected = item.dataset.expected ?? "";
+    const bytes = decodeBase64(docxBase64);
+
+    try {
+      const result = await client.convert(bytes);
+      if (result.markdown === expected) {
+        return {
+          ok: true,
+          detail: `${result.markdown.length} chars, ${result.warnings.length} warnings`
+        };
+      }
+
+      const at = firstDifference(result.markdown, expected);
+      return {
+        ok: false,
+        detail: `mismatch at char ${at}: got ${JSON.stringify(result.markdown.slice(at - 15, at + 15))} vs ${JSON.stringify(expected.slice(at - 15, at + 15))}`
+      };
+    } catch (cause) {
+      const message = cause instanceof Error ? cause.message : String(cause);
+      return { ok: false, detail: `convert() threw: ${message}` };
+    }
+  }
+
+  function renderCase(item: HTMLLIElement, outcome: CaseOutcome): void {
+    const result = item.querySelector(".result");
+    if (!(result instanceof HTMLElement)) {
+      return;
+    }
+    result.classList.remove("pending");
+    result.classList.add(outcome.ok ? "pass" : "fail");
+    result.textContent = `${outcome.ok ? "PASS" : "FAIL"} — ${outcome.detail}`;
+  }
+
+  function firstDifference(a: string, b: string): number {
+    const limit = Math.min(a.length, b.length);
+    for (let i = 0; i < limit; i++) {
+      if (a[i] !== b[i]) {
+        return i;
+      }
+    }
+    return limit;
+  }
+
+  function decodeBase64(base64: string): Uint8Array {
+    const binary = atob(base64);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) {
+      bytes[i] = binary.charCodeAt(i);
+    }
+    return bytes;
+  }
+</script>
+
+<style>
+  .spike {
+    padding-block: var(--sp-7);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-4);
+  }
+
+  .verdict {
+    font-family: var(--f-mono);
+    font-size: var(--text-sm);
+    padding: var(--sp-3) var(--sp-4);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+
+  .verdict.pending {
+    color: var(--muted);
+  }
+
+  .verdict.pass {
+    border-color: #2e7d32;
+    color: #2e7d32;
+  }
+
+  .verdict.fail {
+    border-color: #c62828;
+    color: #c62828;
+  }
+
+  #cases {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+  }
+
+  .case {
+    display: flex;
+    gap: var(--sp-3);
+    align-items: baseline;
+    font-family: var(--f-mono);
+    font-size: var(--text-sm);
+    padding: var(--sp-2) var(--sp-3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+
+  .case .name {
+    min-width: 9ch;
+    font-weight: 600;
+  }
+
+  .result {
+    overflow-wrap: anywhere;
+  }
+
+  .result.pending {
+    color: var(--muted);
+  }
+
+  .result.pass {
+    color: #2e7d32;
+  }
+
+  .result.fail {
+    color: #c62828;
+  }
+</style>
