@@ -1,8 +1,10 @@
 ---
+import Converter from "../components/converter/Converter";
 import Footer from "../components/Footer.astro";
 import Header from "../components/Header.astro";
 import "../styles/tokens.css";
 import "../styles/global.css";
+import "../styles/converter.css";
 
 interface Props {
   title: string | undefined;
@@ -43,6 +45,8 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     </main>
 
     <Footer />
+
+    <Converter client:idle />
   </body>
 </html>
 

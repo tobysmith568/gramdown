@@ -2,23 +2,40 @@
 /// <reference lib="webworker" />
 
 // The dedicated Web Worker that runs `@gramdown/core`'s `convert()` off the main
-// thread. `mammoth` is old CJS that pokes at globals and a large document can
-// take a noticeable moment to parse — both reasons to keep it out of the UI
-// thread. Vite bundles `@gramdown/core` (and mammoth's browser build, picked up
-// via mammoth's own `package.json#browser` field) into this worker chunk.
+// thread, and (same worker, same bundle) zips a batch of finished Markdown files
+// with `jszip`. `mammoth` is old CJS that pokes at globals and a large document
+// can take a noticeable moment to parse — both reasons to keep the pipeline out
+// of the UI thread. `jszip` is already in this chunk because `@gramdown/core`
+// pulls it in for the preprocess pass, so the "download all" path costs no extra
+// bytes. Vite bundles all of it (and mammoth's browser build, picked up via
+// mammoth's own `package.json#browser` field) into this worker chunk.
 
 import "./dom-shim"; // installs window.DOMParser for turndown — keep first
 import { convert } from "@gramdown/core";
-import type { ConvertRequest, ConvertResponse } from "./messages";
+import JSZip from "jszip";
+import type {
+  ConvertRequest,
+  ConvertResponse,
+  ConvertZipRequest,
+  ConvertZipResponse,
+  WorkerRequest
+} from "./messages";
 
 const worker = self as unknown as DedicatedWorkerGlobalScope;
 
-worker.addEventListener("message", (event: MessageEvent<ConvertRequest>) => {
+worker.addEventListener("message", (event: MessageEvent<WorkerRequest>) => {
   const request = event.data;
-  void handleRequest(request);
+  switch (request.kind) {
+    case "convert":
+      void handleConvert(request);
+      return;
+    case "zip":
+      void handleZip(request);
+      return;
+  }
 });
 
-async function handleRequest(request: ConvertRequest): Promise<void> {
+const handleConvert = async (request: ConvertRequest): Promise<void> => {
   const warnings: string[] = [];
 
   try {
@@ -27,6 +44,7 @@ async function handleRequest(request: ConvertRequest): Promise<void> {
     });
 
     const response: ConvertResponse = {
+      kind: "convert",
       id: request.id,
       ok: true,
       markdown,
@@ -38,6 +56,7 @@ async function handleRequest(request: ConvertRequest): Promise<void> {
     const message = cause instanceof Error ? cause.message : String(cause);
 
     const response: ConvertResponse = {
+      kind: "convert",
       id: request.id,
       ok: false,
       markdown: null,
@@ -46,4 +65,35 @@ async function handleRequest(request: ConvertRequest): Promise<void> {
     };
     worker.postMessage(response);
   }
-}
+};
+
+const handleZip = async (request: ConvertZipRequest): Promise<void> => {
+  try {
+    const zip = new JSZip();
+    for (const entry of request.entries) {
+      zip.file(entry.name, entry.markdown);
+    }
+
+    const bytes = await zip.generateAsync({ type: "uint8array" });
+
+    const response: ConvertZipResponse = {
+      kind: "zip",
+      id: request.id,
+      ok: true,
+      bytes,
+      error: null
+    };
+    worker.postMessage(response);
+  } catch (cause) {
+    const message = cause instanceof Error ? cause.message : String(cause);
+
+    const response: ConvertZipResponse = {
+      kind: "zip",
+      id: request.id,
+      ok: false,
+      bytes: null,
+      error: message
+    };
+    worker.postMessage(response);
+  }
+};
