@@ -24,7 +24,6 @@
       },
       "dependencies": {
         "@gramdown/core": "workspace:*",
-        "flourite": "^1.3.0",
         "zod": "^4.5.4",
       },
       "devDependencies": {
@@ -35,6 +34,7 @@
       "name": "@gramdown/core",
       "version": "0.0.0",
       "dependencies": {
+        "flourite": "^1.3.0",
         "jszip": "^3.10.1",
         "mammoth": "^1.12.2",
         "turndown": "^7.2.4",

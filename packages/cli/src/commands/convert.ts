@@ -1,7 +1,7 @@
 import { InvalidDocxError, convert } from "@gramdown/core";
+import { languageGuesser } from "@gramdown/core/guess-lang";
 import type { ConvertOptions } from "../args/schema";
 import { type Io, isFileNotFoundError } from "../io";
-import { languageGuesser } from "../lang/guess";
 
 /** Read the input, convert it, and write the Markdown. Returns an exit code. */
 export const runConvert = async (options: ConvertOptions, io: Io): Promise<number> => {

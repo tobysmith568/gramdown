@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { languageGuesser } from "./guess";
+import { languageGuesser } from "./guess-lang";
 
 describe("languageGuesser", () => {
   it("labels a shell script", () => {
