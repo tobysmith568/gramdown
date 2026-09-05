@@ -17,7 +17,11 @@ const fixtures = ["headings", "lists", "styles", "quotes", "code"];
 describe("convert", () => {
   for (const name of fixtures) {
     it(`matches the expected output for ${name}.docx`, async () => {
-      expect(await convertFixture(name)).toBe(await expectedMarkdown(name));
+      const actual = await convertFixture(name);
+
+      const expected = await expectedMarkdown(name);
+
+      expect(actual).toBe(expected);
     });
   }
 
@@ -31,31 +35,44 @@ describe("convert", () => {
   });
 
   it("rejects an empty file", async () => {
-    await expect(convert(new Uint8Array())).rejects.toBeInstanceOf(InvalidDocxError);
+    const empty = new Uint8Array();
+
+    const conversion = convert(empty);
+
+    await expect(conversion).rejects.toBeInstanceOf(InvalidDocxError);
   });
 
   it("rejects something that is not a zip archive", async () => {
-    await expect(convert(new TextEncoder().encode("not a docx"))).rejects.toThrow(
-      /could not be read as a \.docx/
-    );
+    const encoder = new TextEncoder();
+    const notAZip = encoder.encode("not a docx");
+    const conversion = convert(notAZip);
+
+    await expect(conversion).rejects.toThrow(/could not be read as a \.docx/);
   });
 
   it("rejects a zip archive that is not a Word document", async () => {
-    const JSZip = (await import("jszip")).default;
+    const jszipModule = await import("jszip");
+    const JSZip = jszipModule.default;
     const zip = new JSZip();
     zip.file("hello.txt", "not a word document");
     const bytes = await zip.generateAsync({ type: "uint8array" });
 
     // No word/document.xml means preprocessing is a no-op, so this exercises
     // mammoth's own rejection of the file instead.
-    await expect(convert(bytes)).rejects.toThrow(/not a Word document/);
+    const conversion = convert(bytes);
+
+    await expect(conversion).rejects.toThrow(/not a Word document/);
   });
 
   it("surfaces mammoth's warnings via onWarning", async () => {
     const warnings: string[] = [];
-    await convert(await readFixture("styles.docx"), { onWarning: w => warnings.push(w) });
+    const bytes = await readFixture("styles.docx");
+
+    await convert(bytes, { onWarning: w => warnings.push(w) });
+
     // Not asserting on content: this fixture may or may not trigger any
     // mammoth warning, only that the callback plumbing doesn't throw.
-    expect(Array.isArray(warnings)).toBe(true);
+    const isArray = Array.isArray(warnings);
+    expect(isArray).toBe(true);
   });
 });

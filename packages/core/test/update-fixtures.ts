@@ -9,12 +9,19 @@ import { readdir, readFile, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { convert } from "../src/core";
 
-const directory = fileURLToPath(new URL("./fixtures/", import.meta.url));
+const fixturesUrl = new URL("./fixtures/", import.meta.url);
+const directory = fileURLToPath(fixturesUrl);
 
-for (const entry of await readdir(directory)) {
-  if (!entry.endsWith(".docx")) continue;
+const entries = await readdir(directory);
 
-  const markdown = await convert(new Uint8Array(await readFile(directory + entry)));
+for (const entry of entries) {
+  if (!entry.endsWith(".docx")) {
+    continue;
+  }
+
+  const docx = await readFile(directory + entry);
+  const bytes = new Uint8Array(docx);
+  const markdown = await convert(bytes);
   const output = `${entry.slice(0, -".docx".length)}.md`;
   await writeFile(directory + output, markdown);
   console.log(`Wrote ${output}`);

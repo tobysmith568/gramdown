@@ -10,8 +10,19 @@ export const paragraph = (...children: string[]): string =>
 
 export const body = (...paragraphs: string[]): string => `<w:body>${paragraphs.join("")}</w:body>`;
 
+/**
+ * A `<w:p>` holding a single run of `text` — the common case, so tests don't
+ * have to nest `paragraph(run(...))`.
+ */
+export const line = (text: string, monospace = false): string => {
+  const onlyRun = run(text, monospace);
+  return paragraph(onlyRun);
+};
+
 /** A code-styled paragraph carrying real Grammarly-style before/after spacing. */
-export const codeParagraph = (text: string, before: number, after: number): string =>
-  `<w:p><w:pPr><w:spacing w:before="${before}" w:after="${after}" /></w:pPr>${run(text, true)}</w:p>`;
+export const codeParagraph = (text: string, before: number, after: number): string => {
+  const codeRun = run(text, true);
+  return `<w:p><w:pPr><w:spacing w:before="${before}" w:after="${after}" /></w:pPr>${codeRun}</w:p>`;
+};
 
 const mono = '<w:rFonts w:ascii="Courier New" w:hAnsi="Courier New" />';

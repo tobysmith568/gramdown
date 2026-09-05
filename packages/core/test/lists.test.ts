@@ -30,7 +30,8 @@ describe("lists.docx", () => {
     // Known limitation: Grammarly's docx export gives a collapsible/toggle list
     // no formatting of its own, so it round-trips as an ordinary bullet list.
     const markdown = await convertFixture("lists");
-    const afterCollapsible = markdown.split("The third list is a collapsible list:")[1];
+    const parts = markdown.split("The third list is a collapsible list:");
+    const afterCollapsible = parts[1];
 
     expect(afterCollapsible).toBeDefined();
     expect(afterCollapsible).toStartWith(

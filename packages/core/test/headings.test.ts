@@ -12,9 +12,10 @@ describe("headings.docx", () => {
 
   it("leaves normal paragraphs as plain text either side of the headings", async () => {
     const markdown = await convertFixture("headings");
+    const trimmed = markdown.trimEnd();
 
-    expect(markdown.startsWith("Start of document.\n")).toBe(true);
-    expect(markdown.trimEnd().endsWith("End of document.")).toBe(true);
+    expect(markdown).toStartWith("Start of document.\n");
+    expect(trimmed).toEndWith("End of document.");
     expect(markdown).toContain("\nThis is normal text.\n");
   });
 });
