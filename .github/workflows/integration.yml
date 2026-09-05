@@ -1,0 +1,189 @@
+name: Integration
+run-name: Integration for ${{ (inputs.version && format('v{0}', inputs.version)) || (github.event.pull_request.number && format('PR {0}', github.event.pull_request.number)) || github.ref_name }}
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_call:
+    inputs:
+      version:
+        description: Version to stamp onto the build artifacts (SemVer). Omit for a dev build.
+        required: false
+        type: string
+        default: ""
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version to stamp onto the build artifacts (SemVer). Omit for a dev build.
+        required: false
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: integration-${{ github.ref }}-${{ inputs.version }}
+  cancel-in-progress: true
+
+jobs:
+  format:
+    name: Format
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup
+        uses: ./.github/actions/setup
+
+      - name: Check formatting
+        run: bun run format:check
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup
+        uses: ./.github/actions/setup
+
+      - name: Lint
+        run: bun run lint
+
+  typecheck:
+    name: Typecheck
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup
+        uses: ./.github/actions/setup
+
+      - name: Typecheck
+        run: bun run typecheck
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup
+        uses: ./.github/actions/setup
+
+      - name: Build
+        run: bun run build
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup
+        uses: ./.github/actions/setup
+
+      - name: Test
+        run: bun run test
+
+  binaries:
+    name: Compile binaries
+    needs:
+      - typecheck
+      - build
+      - test
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup
+        uses: ./.github/actions/setup
+
+      - name: Set version
+        if: inputs.version != ''
+        run: bun run set-version
+        env:
+          VERSION: ${{ inputs.version }}
+
+      # A pull request only needs to know the executable still bundles and runs;
+      # the full cross-compile (5 × ~90 MB) is reserved for main and releases.
+      - name: Compile binaries
+        run: bun run compile:binaries
+        env:
+          GRAMDOWN_TARGETS: ${{ github.event_name == 'pull_request' && 'linux-x64' || '' }}
+
+      - name: Smoke-test the Linux binary
+        run: |
+          ./dist-bin/gramdown-linux-x64 --version
+          ./dist-bin/gramdown-linux-x64 packages/fixtures/headings.docx | grep -q "# This is a large heading."
+
+      - name: Upload binaries
+        uses: actions/upload-artifact@v7
+        with:
+          name: binaries
+          path: dist-bin/*
+          if-no-files-found: error
+          retention-days: 1
+
+  pack:
+    name: Pack npm tarballs
+    needs:
+      - typecheck
+      - build
+      - test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup
+        uses: ./.github/actions/setup
+
+      - name: Set version
+        if: inputs.version != ''
+        run: bun run set-version
+        env:
+          VERSION: ${{ inputs.version }}
+
+      - name: Pack
+        run: bun run pack
+
+      - name: Upload tarballs
+        uses: actions/upload-artifact@v7
+        with:
+          name: npm-tarballs
+          path: packages/*/*.tgz
+          if-no-files-found: error
+          retention-days: 1
+
+  codeql:
+    name: CodeQL
+    uses: ./.github/workflows/codeql.yml
+    secrets: inherit
+    permissions:
+      actions: read
+      contents: read
+      security-events: write

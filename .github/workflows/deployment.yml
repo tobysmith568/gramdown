@@ -1,0 +1,138 @@
+name: Deployment
+run-name: Deployment for v${{ inputs.version }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Release version (SemVer, e.g. 1.2.3)
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deployment
+  cancel-in-progress: false
+
+jobs:
+  calculate:
+    name: Calculate npm dist-tag
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    outputs:
+      npm_tag: ${{ steps.npm_tag.outputs.latest-tag }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup
+        uses: ./.github/actions/setup
+
+      - name: Set version
+        run: bun run set-version
+        env:
+          VERSION: ${{ inputs.version }}
+
+      - name: Calculate npm tag
+        uses: tobysmith568/npm-publish-latest-tag@v1
+        id: npm_tag
+        with:
+          package-json: ./packages/core/package.json
+
+  integration:
+    name: Run Integration
+    needs:
+      - calculate
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    uses: ./.github/workflows/integration.yml
+    secrets: inherit
+    with:
+      version: ${{ inputs.version }}
+
+  publish-npm:
+    name: Publish to npm
+    needs:
+      - calculate
+      - integration
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup
+        uses: ./.github/actions/setup
+
+      - name: Download tarballs
+        uses: actions/download-artifact@v8
+        with:
+          name: npm-tarballs
+          path: .
+
+      - name: Setup Node.js for npm auth
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org/
+
+      - name: Upgrade npm for trusted publishing
+        run: npm install --global npm@latest
+
+      - name: Publish
+        run: NPM_TAG=${{ needs.calculate.outputs.npm_tag }} bun run publish
+
+  release:
+    name: Create GitHub Release
+    needs:
+      - publish-npm
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download binaries
+        uses: actions/download-artifact@v8
+        with:
+          name: binaries
+          path: dist-bin
+
+      - name: Checksum the binaries
+        run: |
+          cd dist-bin
+          sha256sum * > SHA256SUMS.txt
+          cat SHA256SUMS.txt
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: v${{ inputs.version }}
+          generate_release_notes: true
+          files: dist-bin/*
+          body: |
+            # Release v${{ inputs.version }}
+
+            ## npm
+
+            ```sh
+            npm install -g gramdown@${{ inputs.version }}
+            ```
+
+            The gramdown programmatic interface is published separately as
+            [`@gramdown/core`](https://www.npmjs.com/package/@gramdown/core/v/${{ inputs.version }}).
+
+            ## Standalone binaries
+
+            Download the binary for your platform from the assets below — no
+            Node, Bun, or npm required.

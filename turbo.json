@@ -15,6 +15,20 @@
     "test": {
       "dependsOn": ["^build"],
       "outputs": []
+    },
+    "set-version": {
+      "cache": false,
+      "passThroughEnv": ["VERSION"]
+    },
+    "pack": {
+      "dependsOn": ["build"],
+      "cache": false,
+      "outputs": ["*.tgz"]
+    },
+    "publish": {
+      "dependsOn": ["^publish"],
+      "cache": false,
+      "passThroughEnv": ["NPM_TAG"]
     }
   }
 }

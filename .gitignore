@@ -9,3 +9,4 @@ coverage
 /gramdown
 /gramdown-*
 *.exe
+dist-bin

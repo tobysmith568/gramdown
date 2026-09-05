@@ -14,10 +14,14 @@
     "build": "turbo run build",
     "test": "turbo run test",
     "typecheck": "turbo run typecheck",
-    "lint": "turbo run lint",
+    "lint": "turbo run lint && eslint scripts",
     "check": "turbo run build typecheck lint test",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "set-version": "turbo run set-version",
+    "compile:binaries": "bun run scripts/compile-binaries.ts",
+    "pack": "turbo run pack",
+    "publish": "turbo run publish"
   },
   "devDependencies": {
     "@tobysmith568/eslint-config": "^2.7.1",
