@@ -46,7 +46,8 @@ export async function run(argv: string[], io: Io = defaultIo): Promise<number> {
 
   let markdown: string;
   try {
-    const bytes = new Uint8Array(await readFile(input));
+    const fileBuffer = await readFile(input);
+    const bytes = new Uint8Array(fileBuffer);
     markdown = await convert(bytes, { onWarning: warning => io.stderr(`warning: ${warning}\n`) });
   } catch (error) {
     if (error instanceof InvalidDocxError) {

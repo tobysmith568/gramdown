@@ -1,26 +1,32 @@
-import { RUN_RE, hasText } from "../xml";
+import { runRe, hasText } from "../xml";
 import { isMonospace } from "./monospace";
 import { mapOtherParagraphs } from "./paragraph";
 import type { StyleDescriptor } from "./style";
 
-const INLINE_CODE_STYLE_ID = "VerbatimChar";
+const inlineCodeStyleId = "VerbatimChar";
 
 /** The character style mammoth maps to `<code>`. */
 export const inlineCodeStyle: StyleDescriptor = {
-  id: INLINE_CODE_STYLE_ID,
+  id: inlineCodeStyleId,
   name: "Verbatim Char",
   type: "character",
   htmlPath: "code"
 };
 
-const R_STYLE = `<w:rStyle w:val="${INLINE_CODE_STYLE_ID}"/>`;
+const rStyle = `<w:rStyle w:val="${inlineCodeStyleId}"/>`;
 
 const tagInlineCode = (paragraph: string): string =>
-  paragraph.replace(RUN_RE, run => {
-    if (!hasText(run) || !isMonospace(run) || run.includes(R_STYLE)) return run;
-    if (run.includes("<w:rPr>")) return run.replace("<w:rPr>", `<w:rPr>${R_STYLE}`);
-    if (run.includes("<w:rPr/>")) return run.replace("<w:rPr/>", `<w:rPr>${R_STYLE}</w:rPr>`);
-    return run.replace(/^<w:r(?:\s[^>]*)?>/, open => `${open}<w:rPr>${R_STYLE}</w:rPr>`);
+  paragraph.replace(runRe, run => {
+    if (!hasText(run) || !isMonospace(run) || run.includes(rStyle)) {
+      return run;
+    }
+    if (run.includes("<w:rPr>")) {
+      return run.replace("<w:rPr>", `<w:rPr>${rStyle}`);
+    }
+    if (run.includes("<w:rPr/>")) {
+      return run.replace("<w:rPr/>", `<w:rPr>${rStyle}</w:rPr>`);
+    }
+    return run.replace(/^<w:r(?:\s[^>]*)?>/, open => `${open}<w:rPr>${rStyle}</w:rPr>`);
   });
 
 /**

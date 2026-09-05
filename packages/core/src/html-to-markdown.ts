@@ -2,9 +2,9 @@ import TurndownService from "turndown";
 import { gfm } from "turndown-plugin-gfm";
 
 /** Grammarly indents code with U+00A0, which is not copy-pasteable as code. */
-const NBSP_RE = /\u00a0/g;
+const nbspRe = /\u00a0/g;
 
-const unpadded = (code: string): string => code.replace(NBSP_RE, " ").replace(/\n+$/, "");
+const unpadded = (code: string): string => code.replace(nbspRe, " ").replace(/\n+$/, "");
 
 /** A backtick fence long enough not to collide with backticks in the content. */
 const fenceFor = (code: string, minimum: number): string => {
@@ -55,8 +55,10 @@ export const createTurndown = (options: MarkdownOptions = {}): TurndownService =
   turndown.addRule("inlineCode", {
     filter: node => node.nodeName === "CODE" && node.parentNode?.nodeName !== "PRE",
     replacement: (_content, node) => {
-      const code = (node.textContent ?? "").replace(NBSP_RE, " ");
-      if (code === "") return "";
+      const code = (node.textContent ?? "").replace(nbspRe, " ");
+      if (code === "") {
+        return "";
+      }
 
       // A leading or trailing backtick (or space) needs padding to survive.
       const fence = fenceFor(code, 1);

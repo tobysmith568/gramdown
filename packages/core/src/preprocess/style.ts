@@ -5,7 +5,7 @@
  * it in `word/styles.xml`; `docx-to-html.ts` uses `name`/`type`/`htmlPath` to
  * map it onto HTML in mammoth's style map. Keeping both here, exported by the
  * same module that decides which paragraphs get the style, means a new quirk
- * only has to be registered once — see document.ts's `PARAGRAPH_STYLES`.
+ * only has to be registered once — see document.ts's `paragraphStyles`.
  */
 export interface StyleDescriptor {
   readonly id: string;
@@ -25,7 +25,9 @@ export const ensureStyles = (stylesXml: string, styles: readonly StyleDescriptor
         `<w:name w:val="${style.name}"/><w:qFormat/></w:style>`
     );
 
-  if (additions.length === 0) return stylesXml;
+  if (additions.length === 0) {
+    return stylesXml;
+  }
   return stylesXml.replace("</w:styles>", `${additions.join("")}</w:styles>`);
 };
 

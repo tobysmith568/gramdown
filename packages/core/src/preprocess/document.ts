@@ -5,7 +5,7 @@ import { inlineCodeStyle, styleInlineCode } from "./inline-code";
 import type { StyleDescriptor } from "./style";
 
 /** Every style any pass below might apply — the input to `ensureStyles`. */
-export const PARAGRAPH_STYLES: StyleDescriptor[] = [
+export const paragraphStyles: StyleDescriptor[] = [
   ...codeBlockStyles,
   inlineCodeStyle,
   blockQuoteStyle,

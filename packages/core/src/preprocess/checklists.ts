@@ -2,10 +2,10 @@ import { addParagraphStyle, mapOtherParagraphs } from "./paragraph";
 import { indentTwip } from "./spacing";
 import type { StyleDescriptor } from "./style";
 
-const CHECKLIST_STYLE_PREFIX = "GrammarlyChecklist";
-const MAX_CHECKLIST_LEVEL = 5;
+const checklistStylePrefix = "GrammarlyChecklist";
+const maxChecklistLevel = 5;
 
-const checklistStyleId = (level: number): string => `${CHECKLIST_STYLE_PREFIX}${level}`;
+const checklistStyleId = (level: number): string => `${checklistStylePrefix}${level}`;
 
 /** A `ul > li` path nested `level` lists deep, matching the shape mammoth's own
  * default style map uses for `p:unordered-list(N)` / `p:ordered-list(N)`. */
@@ -22,7 +22,7 @@ const nestedListItemPath = (level: number): string =>
  * task-list item.
  */
 export const checklistStyles: StyleDescriptor[] = Array.from(
-  { length: MAX_CHECKLIST_LEVEL },
+  { length: maxChecklistLevel },
   (_, level) => ({
     id: checklistStyleId(level),
     name: `Checklist Level ${level}`,
@@ -43,7 +43,9 @@ export const isChecklistItem = (paragraph: string): boolean => paragraph.include
 
 const readBoolean = (xml: string, tag: string): boolean | undefined => {
   const match = new RegExp(`<w:${tag}(?:\\s+w:val="([^"]*)")?\\s*/>`).exec(xml);
-  if (!match) return undefined;
+  if (!match) {
+    return undefined;
+  }
   const value = match[1];
   return value === undefined || (value !== "0" && value.toLowerCase() !== "false");
 };
@@ -54,22 +56,27 @@ const readBoolean = (xml: string, tag: string): boolean | undefined => {
  */
 export const isChecked = (paragraph: string): boolean => {
   const checkbox = /<w:checkBox>([\s\S]*?)<\/w:checkBox>/.exec(paragraph)?.[1];
-  if (checkbox === undefined) return false;
+  if (checkbox === undefined) {
+    return false;
+  }
   return readBoolean(checkbox, "checked") ?? readBoolean(checkbox, "default") ?? false;
 };
 
-const CHECKLIST_INDENT_STEP = 720; // twips per level — matches Grammarly's own step
+const checklistIndentStep = 720; // twips per level — matches Grammarly's own step
 
 /** How deeply a checklist item is nested, clamped to what we declare styles for. */
 export const checklistLevel = (paragraph: string): number => {
-  const level = Math.round(indentTwip(paragraph, "left") / CHECKLIST_INDENT_STEP) - 1;
-  return Math.min(Math.max(level, 0), MAX_CHECKLIST_LEVEL - 1);
+  const level = Math.round(indentTwip(paragraph, "left") / checklistIndentStep) - 1;
+  return Math.min(Math.max(level, 0), maxChecklistLevel - 1);
 };
 
 /** Restyle Grammarly's checklist items as GFM task-list items, at their nesting depth. */
 export const styleChecklists = (documentXml: string): string =>
-  mapOtherParagraphs(documentXml, paragraph =>
-    isChecklistItem(paragraph)
-      ? addParagraphStyle(paragraph, checklistStyleId(checklistLevel(paragraph)))
-      : paragraph
-  );
+  mapOtherParagraphs(documentXml, paragraph => {
+    if (!isChecklistItem(paragraph)) {
+      return paragraph;
+    }
+    const level = checklistLevel(paragraph);
+    const styleId = checklistStyleId(level);
+    return addParagraphStyle(paragraph, styleId);
+  });

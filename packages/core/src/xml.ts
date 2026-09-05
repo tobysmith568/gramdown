@@ -9,23 +9,23 @@
  */
 
 /** A `<w:p>…</w:p>` (or self-closing `<w:p/>`) containing no nested `<w:p>`. */
-export const PARAGRAPH_RE =
+export const paragraphRe =
   /<w:p(?:\s[^>]*)?\/>|<w:p(?:\s[^>]*)?>(?:(?!<w:p[\s/>])[\s\S])*?<\/w:p>/g;
 
 /** A `<w:r>…</w:r>` (or self-closing `<w:r/>`) containing no nested `<w:r>`. */
-export const RUN_RE = /<w:r(?:\s[^>]*)?\/>|<w:r(?:\s[^>]*)?>(?:(?!<w:r[\s/>])[\s\S])*?<\/w:r>/g;
+export const runRe = /<w:r(?:\s[^>]*)?\/>|<w:r(?:\s[^>]*)?>(?:(?!<w:r[\s/>])[\s\S])*?<\/w:r>/g;
 
-const TEXT_RE = /<w:t(?:\s[^>]*)?>([\s\S]*?)<\/w:t>/g;
+const textRe = /<w:t(?:\s[^>]*)?>([\s\S]*?)<\/w:t>/g;
 
 /** Every `<w:r>` in an element, in document order. */
-export const runs = (xml: string): string[] => xml.match(RUN_RE) ?? [];
+export const runs = (xml: string): string[] => xml.match(runRe) ?? [];
 
 /** True if a run carries any `<w:t>` text (as opposed to a break, tab, drawing). */
 export const hasText = (run: string): boolean => /<w:t[\s>]/.test(run);
 
 /** The concatenated `<w:t>` content of an element, still XML-escaped. */
 export const textOf = (xml: string): string =>
-  [...xml.matchAll(TEXT_RE)].map(match => match[1] ?? "").join("");
+  [...xml.matchAll(textRe)].map(match => match[1] ?? "").join("");
 
 /**
  * The run properties block of a run — `<w:rPr>…</w:rPr>` — or `""` if it has

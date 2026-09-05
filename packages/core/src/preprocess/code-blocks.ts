@@ -1,10 +1,10 @@
-import { PARAGRAPH_RE } from "../xml";
+import { paragraphRe } from "../xml";
 import { addParagraphStyle, classify, type Kind } from "./paragraph";
 import { spacingTwip } from "./spacing";
 import type { StyleDescriptor } from "./style";
 
-const CODE_STYLE_ID = "SourceCode";
-const CODE_START_STYLE_ID = "SourceCodeStart";
+const codeStyleId = "SourceCode";
+const codeStartStyleId = "SourceCodeStart";
 
 /**
  * The two styles mammoth maps to `<pre>`. `Source Code` merges with the
@@ -15,13 +15,13 @@ const CODE_START_STYLE_ID = "SourceCodeStart";
  */
 export const codeBlockStyles: StyleDescriptor[] = [
   {
-    id: CODE_STYLE_ID,
+    id: codeStyleId,
     name: "Source Code",
     type: "paragraph",
     htmlPath: "pre:separator('\n')"
   },
   {
-    id: CODE_START_STYLE_ID,
+    id: codeStartStyleId,
     name: "Source Code Start",
     type: "paragraph",
     htmlPath: "pre:fresh:separator('\n')"
@@ -36,8 +36,12 @@ export const codeBlockStyles: StyleDescriptor[] = [
  */
 export const codeBlockMembership = (kinds: Kind[]): boolean[] =>
   kinds.map((kind, index) => {
-    if (kind === "code") return true;
-    if (kind !== "empty") return false;
+    if (kind === "code") {
+      return true;
+    }
+    if (kind !== "empty") {
+      return false;
+    }
 
     let before = index - 1;
     while (before >= 0 && kinds[before] === "empty") before--;
@@ -68,11 +72,17 @@ export const startsNewCodeBlock = (
   inCodeBlock: boolean[]
 ): boolean[] =>
   kinds.map((kind, index) => {
-    if (kind !== "code") return false;
+    if (kind !== "code") {
+      return false;
+    }
 
     const previous = index - 1;
-    if (previous < 0 || !inCodeBlock[previous]) return true; // nothing to continue from
-    if (kinds[previous] === "empty") return false; // blank-line-separated, still merges by design
+    if (previous < 0 || !inCodeBlock[previous]) {
+      return true; // nothing to continue from
+    }
+    if (kinds[previous] === "empty") {
+      return false; // blank-line-separated, still merges by design
+    }
 
     // kinds[previous] === "code": directly adjacent, no blank line at all — only
     // the spacing tells us whether this is really the same block or a new one.
@@ -91,15 +101,17 @@ export const startsNewCodeBlock = (
  * before mammoth ever sees the file.
  */
 export const styleCodeBlocks = (documentXml: string): string => {
-  const paragraphs = [...documentXml.matchAll(PARAGRAPH_RE)].map(match => match[0]);
+  const paragraphs = [...documentXml.matchAll(paragraphRe)].map(match => match[0]);
   const kinds = paragraphs.map(classify);
   const inCodeBlock = codeBlockMembership(kinds);
   const newBlock = startsNewCodeBlock(paragraphs, kinds, inCodeBlock);
 
   let index = 0;
-  return documentXml.replace(PARAGRAPH_RE, paragraph => {
+  return documentXml.replace(paragraphRe, paragraph => {
     const at = index++;
-    if (!inCodeBlock[at]) return paragraph;
-    return addParagraphStyle(paragraph, newBlock[at] ? CODE_START_STYLE_ID : CODE_STYLE_ID);
+    if (!inCodeBlock[at]) {
+      return paragraph;
+    }
+    return addParagraphStyle(paragraph, newBlock[at] ? codeStartStyleId : codeStyleId);
   });
 };

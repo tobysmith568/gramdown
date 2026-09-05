@@ -1,8 +1,8 @@
 import mammoth from "mammoth";
-import { PARAGRAPH_STYLES, styleMapEntry } from "./preprocess/index";
+import { paragraphStyles, styleMapEntry } from "./preprocess/index";
 
 /**
- * Maps the styles the preprocessing pass injects (see `PARAGRAPH_STYLES`) onto
+ * Maps the styles the preprocessing pass injects (see `paragraphStyles`) onto
  * HTML, plus two mappings that aren't tied to any of our own injected styles:
  *
  * - `p[style-name='Quote']` — Word's own built-in "Quote" style, in case a
@@ -12,8 +12,8 @@ import { PARAGRAPH_STYLES, styleMapEntry } from "./preprocess/index";
  *   the HTML is converted to Markdown — but underline used deliberately in
  *   prose survives.
  */
-export const STYLE_MAP = [
-  ...PARAGRAPH_STYLES.map(styleMapEntry),
+export const styleMap = [
+  ...paragraphStyles.map(styleMapEntry),
   "p[style-name='Quote'] => blockquote > p:fresh",
   "u => u"
 ];
@@ -39,8 +39,9 @@ export interface HtmlResult {
 
 /** Convert `.docx` bytes to mammoth's semantic HTML. */
 export const docxToHtml = async (bytes: Uint8Array): Promise<HtmlResult> => {
-  const result = await mammoth.convertToHtml(inputFor(bytes), {
-    styleMap: STYLE_MAP,
+  const mammothInput = inputFor(bytes);
+  const result = await mammoth.convertToHtml(mammothInput, {
+    styleMap,
     // Blank lines inside a code block arrive as empty paragraphs; dropping them
     // would silently close up the gaps in the code.
     ignoreEmptyParagraphs: false

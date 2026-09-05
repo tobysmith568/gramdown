@@ -32,7 +32,9 @@ export class InvalidDocxError extends Error {
  * (CLI, library, browser) is a thin wrapper around this function.
  */
 export async function convert(bytes: Uint8Array, options: ConvertOptions = {}): Promise<string> {
-  if (bytes.byteLength === 0) throw new InvalidDocxError("the file is empty");
+  if (bytes.byteLength === 0) {
+    throw new InvalidDocxError("the file is empty");
+  }
 
   let restyled: Uint8Array;
   try {
@@ -50,5 +52,6 @@ export async function convert(bytes: Uint8Array, options: ConvertOptions = {}): 
     throw new InvalidDocxError("the file is not a Word document", { cause });
   }
 
-  return postprocess(htmlToMarkdown(html, { guessLanguage: options.guessLanguage }));
+  const markdown = htmlToMarkdown(html, { guessLanguage: options.guessLanguage });
+  return postprocess(markdown);
 }

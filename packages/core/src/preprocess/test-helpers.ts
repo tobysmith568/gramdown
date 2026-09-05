@@ -2,10 +2,10 @@
 // well-formed `<w:p>`/`<w:r>` XML, just enough for each module's own regexes
 // to work on.
 
-const MONO = '<w:rFonts w:ascii="Courier New" w:hAnsi="Courier New" />';
+const mono = '<w:rFonts w:ascii="Courier New" w:hAnsi="Courier New" />';
 
 export const run = (text: string, monospace = false): string =>
-  `<w:r><w:rPr>${monospace ? MONO : ""}</w:rPr><w:t>${text}</w:t></w:r>`;
+  `<w:r><w:rPr>${monospace ? mono : ""}</w:rPr><w:t>${text}</w:t></w:r>`;
 
 export const paragraph = (...children: string[]): string =>
   `<w:p><w:pPr><w:jc w:val="left" /></w:pPr>${children.join("")}</w:p>`;

@@ -1,4 +1,4 @@
-const FENCE_RE = /^(`{3,})/;
+const fenceRe = /^(`{3,})/;
 
 /**
  * At most one blank line between blocks, no trailing whitespace, exactly one
@@ -14,10 +14,12 @@ export const normaliseBlankLines = (markdown: string): string => {
   let openFence: string | undefined;
 
   for (const line of markdown.split("\n")) {
-    const fence = FENCE_RE.exec(line)?.[1];
+    const fence = fenceRe.exec(line)?.[1];
 
     if (openFence === undefined) {
-      if (fence) openFence = fence;
+      if (fence) {
+        openFence = fence;
+      }
     } else if (fence && fence.length >= openFence.length && line.trim() === fence) {
       openFence = undefined;
     }
@@ -28,7 +30,9 @@ export const normaliseBlankLines = (markdown: string): string => {
     }
 
     const trimmed = line.replace(/[ \t]+$/, "");
-    if (trimmed === "" && output.at(-1) === "") continue;
+    if (trimmed === "" && output.at(-1) === "") {
+      continue;
+    }
     output.push(trimmed);
   }
 

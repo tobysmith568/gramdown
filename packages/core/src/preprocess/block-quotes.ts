@@ -3,11 +3,11 @@ import { addParagraphStyle, mapOtherParagraphs } from "./paragraph";
 import { indentTag, indentTwip } from "./spacing";
 import type { StyleDescriptor } from "./style";
 
-const QUOTE_STYLE_ID = "GrammarlyBlockQuote";
+const quoteStyleId = "GrammarlyBlockQuote";
 
 /** The paragraph style mammoth maps to `<blockquote>`. */
 export const blockQuoteStyle: StyleDescriptor = {
-  id: QUOTE_STYLE_ID,
+  id: quoteStyleId,
   name: "Block Quote",
   type: "paragraph",
   htmlPath: "blockquote > p:fresh"
@@ -24,10 +24,14 @@ export const blockQuoteStyle: StyleDescriptor = {
  */
 export const isBlockQuote = (paragraph: string): boolean => {
   const properties = paragraphProperties(paragraph);
-  if (properties.includes("<w:numPr") || properties.includes("<w:pStyle")) return false;
+  if (properties.includes("<w:numPr") || properties.includes("<w:pStyle")) {
+    return false;
+  }
 
   const indent = indentTag(paragraph);
-  if (!indent || indent.includes("w:hanging")) return false;
+  if (!indent || indent.includes("w:hanging")) {
+    return false;
+  }
 
   return indentTwip(paragraph, "left") > 0 && indentTwip(paragraph, "right") > 0;
 };
@@ -35,5 +39,5 @@ export const isBlockQuote = (paragraph: string): boolean => {
 /** Restyle Grammarly's block quotes so mammoth can see them. */
 export const styleBlockQuotes = (documentXml: string): string =>
   mapOtherParagraphs(documentXml, paragraph =>
-    isBlockQuote(paragraph) ? addParagraphStyle(paragraph, QUOTE_STYLE_ID) : paragraph
+    isBlockQuote(paragraph) ? addParagraphStyle(paragraph, quoteStyleId) : paragraph
   );

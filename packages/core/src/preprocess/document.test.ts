@@ -1,10 +1,10 @@
 import { describe, expect, it } from "bun:test";
-import { PARAGRAPH_STYLES, preprocessDocumentXml } from "./document";
+import { paragraphStyles, preprocessDocumentXml } from "./document";
 import { body, paragraph, run } from "./test-helpers";
 
-describe("PARAGRAPH_STYLES", () => {
+describe("paragraphStyles", () => {
   it("aggregates every quirk's styles", () => {
-    const ids = PARAGRAPH_STYLES.map(style => style.id);
+    const ids = paragraphStyles.map(style => style.id);
 
     expect(ids).toContain("SourceCode");
     expect(ids).toContain("SourceCodeStart");
@@ -15,7 +15,7 @@ describe("PARAGRAPH_STYLES", () => {
   });
 
   it("has no duplicate ids", () => {
-    const ids = PARAGRAPH_STYLES.map(style => style.id);
+    const ids = paragraphStyles.map(style => style.id);
     expect(new Set(ids).size).toBe(ids.length);
   });
 });
