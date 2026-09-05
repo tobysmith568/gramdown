@@ -10,6 +10,7 @@ import {
   removeConversion,
   type Conversion
 } from "../../lib/converter/store";
+import styles from "./converter.module.css";
 
 /**
  * The docked panel that lists every conversion and its state, and carries the
@@ -55,18 +56,18 @@ const ConversionTray = () => {
 
   if (!open) {
     return (
-      <button type="button" class="gd-fab" onClick={() => setOpen(true)}>
+      <button type="button" class={styles.fab} onClick={() => setOpen(true)}>
         Convert a <code>.docx</code>
-        {items.length > 0 && <span class="gd-fab__badge">{items.length}</span>}
+        {items.length > 0 && <span class={styles.fabBadge}>{items.length}</span>}
       </button>
     );
   }
 
   return (
-    <section class="gd-tray" aria-label="Conversions">
-      <header class="gd-tray__bar">
-        <strong class="gd-tray__title">Conversions</strong>
-        <div class="gd-tray__bar-actions">
+    <section class={styles.tray} aria-label="Conversions">
+      <header class={styles.trayBar}>
+        <strong class={styles.trayTitle}>Conversions</strong>
+        <div class={styles.trayBarActions}>
           {readyItems.length > 1 && (
             <button type="button" onClick={() => void downloadAllAsZip()}>
               Download all (.zip)
@@ -79,7 +80,7 @@ const ConversionTray = () => {
           )}
           <button
             type="button"
-            class="gd-tray__collapse"
+            class={styles.trayCollapse}
             aria-label="Collapse"
             onClick={() => setOpen(false)}>
             ▾
@@ -87,35 +88,35 @@ const ConversionTray = () => {
         </div>
       </header>
 
-      <p class="gd-sr-only" role="status" aria-live="polite">
+      <p class="sr-only" role="status" aria-live="polite">
         {describeProgress(convertingCount, readyItems.length)}
       </p>
 
-      {rejection !== null && <p class="gd-tray__note">{rejection}</p>}
+      {rejection !== null && <p class={styles.trayNote}>{rejection}</p>}
 
       {items.length === 0 ? (
-        <p class="gd-tray__empty">
+        <p class={styles.trayEmpty}>
           Drop a Grammarly <code>.docx</code> anywhere on the page, or pick one below.
         </p>
       ) : (
-        <ul class="gd-tray__list">
+        <ul class={styles.trayList}>
           {items.map(item => (
-            <li key={item.id} class="gd-row" data-status={item.status}>
-              <div class="gd-row__head">
-                <span class="gd-row__name" title={item.sourceName}>
+            <li key={item.id} class={styles.row} data-status={item.status}>
+              <div class={styles.rowHead}>
+                <span class={styles.rowName} title={item.sourceName}>
                   {item.outputName}
                 </span>
-                <span class="gd-row__size">{formatSize(item.sizeBytes)}</span>
+                <span class={styles.rowSize}>{formatSize(item.sizeBytes)}</span>
               </div>
 
-              {item.status === "converting" && <p class="gd-row__state">Converting…</p>}
+              {item.status === "converting" && <p class={styles.rowState}>Converting…</p>}
 
               {item.status === "error" && (
-                <p class="gd-row__state gd-row__state--error">{item.error}</p>
+                <p class={`${styles.rowState} ${styles.rowStateError}`}>{item.error}</p>
               )}
 
               {item.status === "ready" && item.warnings.length > 0 && (
-                <details class="gd-row__warnings">
+                <details class={styles.rowWarnings}>
                   <summary>{formatWarningCount(item.warnings.length)}</summary>
                   <ul>
                     {item.warnings.map((warning, index) => (
@@ -125,7 +126,7 @@ const ConversionTray = () => {
                 </details>
               )}
 
-              <div class="gd-row__actions">
+              <div class={styles.rowActions}>
                 {item.status === "ready" && (
                   <>
                     <button type="button" onClick={() => downloadConversion(item.id)}>
@@ -145,12 +146,12 @@ const ConversionTray = () => {
         </ul>
       )}
 
-      <label class="gd-tray__add">
+      <label class={styles.trayAdd}>
         <span>Add .docx files</span>
         <input type="file" accept=".docx" multiple onChange={onPick} />
       </label>
 
-      <label class="gd-tray__pref">
+      <label class={styles.trayPref}>
         <input
           type="checkbox"
           checked={autoDownload.value}

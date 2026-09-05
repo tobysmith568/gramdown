@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "preact/hooks";
 import { enqueueFiles } from "../../lib/converter/store";
+import styles from "./converter.module.css";
 
 /**
  * A full-viewport scrim shown while a file is dragged anywhere over the page.
@@ -78,10 +79,10 @@ const DropOverlay = () => {
   }
 
   return (
-    <div class="gd-scrim" role="presentation">
-      <div class="gd-scrim__card">
-        <p class="gd-scrim__title">Drop to convert</p>
-        <p class="gd-scrim__hint">
+    <div class={styles.scrim} role="presentation">
+      <div class={styles.scrimCard}>
+        <p class={styles.scrimTitle}>Drop to convert</p>
+        <p class={styles.scrimHint}>
           Grammarly <code>.docx</code> exports become Markdown right here in your browser
         </p>
       </div>

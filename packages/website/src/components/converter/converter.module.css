@@ -1,25 +1,14 @@
 /*
- * Styling for the client-side converter islands (`components/converter/`).
- * These are Preact `.tsx` components, so they can't carry Astro-scoped
- * `<style>` — the rules live here and are pulled in once by `BaseLayout`.
- * Every class is `gd-` prefixed to stay clear of page styles.
+ * Styling for the client-side converter islands in this folder. These are
+ * Preact `.tsx` components, so they can't carry Astro-scoped `<style>` — the
+ * rules are a CSS module, imported for their hashed class names by the two
+ * components that use them (`DropOverlay`, `ConversionTray`). The generic
+ * `.sr-only` helper lives in `styles/global.css`.
  */
-
-.gd-sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
-  border: 0;
-}
 
 /* --- full-page drag scrim ------------------------------------------------- */
 
-.gd-scrim {
+.scrim {
   position: fixed;
   inset: 0;
   z-index: 1000;
@@ -30,7 +19,7 @@
   backdrop-filter: blur(2px);
 }
 
-.gd-scrim__card {
+.scrimCard {
   pointer-events: none;
   text-align: center;
   padding: var(--sp-7) var(--sp-6);
@@ -39,14 +28,14 @@
   background: var(--surface);
 }
 
-.gd-scrim__title {
+.scrimTitle {
   margin: 0;
   font-family: var(--f-display);
   font-size: var(--text-xl);
   font-weight: 600;
 }
 
-.gd-scrim__hint {
+.scrimHint {
   margin: var(--sp-2) 0 0;
   color: var(--muted);
   font-size: var(--text-sm);
@@ -54,7 +43,7 @@
 
 /* --- collapsed launcher ------------------------------------------------- */
 
-.gd-fab {
+.fab {
   position: fixed;
   right: var(--sp-5);
   bottom: var(--sp-5);
@@ -73,14 +62,14 @@
   box-shadow: 0 6px 20px color-mix(in srgb, var(--ink) 22%, transparent);
 }
 
-.gd-fab code {
+.fab code {
   background: none;
   border: none;
   padding: 0;
   color: inherit;
 }
 
-.gd-fab__badge {
+.fabBadge {
   display: inline-grid;
   place-items: center;
   min-width: 1.4em;
@@ -94,7 +83,7 @@
 
 /* --- tray -------------------------------------------------------------- */
 
-.gd-tray {
+.tray {
   position: fixed;
   right: var(--sp-5);
   bottom: var(--sp-5);
@@ -110,7 +99,7 @@
   font-size: var(--text-sm);
 }
 
-.gd-tray__bar {
+.trayBar {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -119,41 +108,41 @@
   border-bottom: 1px solid var(--border);
 }
 
-.gd-tray__title {
+.trayTitle {
   font-family: var(--f-display);
 }
 
-.gd-tray__bar-actions {
+.trayBarActions {
   display: flex;
   align-items: center;
   gap: var(--sp-2);
 }
 
-.gd-tray__collapse {
+.trayCollapse {
   line-height: 1;
 }
 
-.gd-tray__note {
+.trayNote {
   margin: 0;
   padding: var(--sp-2) var(--sp-4);
   color: var(--muted);
   border-bottom: 1px solid var(--border);
 }
 
-.gd-tray__empty {
+.trayEmpty {
   margin: 0;
   padding: var(--sp-4);
   color: var(--muted);
 }
 
-.gd-tray__list {
+.trayList {
   margin: 0;
   padding: 0;
   list-style: none;
   overflow-y: auto;
 }
 
-.gd-tray__add {
+.trayAdd {
   display: flex;
   align-items: center;
   gap: var(--sp-3);
@@ -162,13 +151,13 @@
   color: var(--muted);
 }
 
-.gd-tray__add input {
+.trayAdd input {
   font: inherit;
   font-size: var(--text-sm);
   min-width: 0;
 }
 
-.gd-tray__pref {
+.trayPref {
   display: flex;
   align-items: center;
   gap: var(--sp-3);
@@ -178,13 +167,13 @@
   font-size: var(--text-sm);
 }
 
-.gd-tray__pref input {
+.trayPref input {
   flex-shrink: 0;
 }
 
 /* --- one conversion row ---------------------------------------------- */
 
-.gd-row {
+.row {
   display: flex;
   flex-direction: column;
   gap: var(--sp-2);
@@ -192,53 +181,53 @@
   border-bottom: 1px solid var(--border);
 }
 
-.gd-row:last-child {
+.row:last-child {
   border-bottom: none;
 }
 
-.gd-row__head {
+.rowHead {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: var(--sp-3);
 }
 
-.gd-row__name {
+.rowName {
   font-family: var(--f-mono);
   overflow-wrap: anywhere;
 }
 
-.gd-row__size {
+.rowSize {
   flex: none;
   color: var(--muted);
 }
 
-.gd-row__state {
+.rowState {
   margin: 0;
   color: var(--muted);
 }
 
-.gd-row__state--error {
+.rowStateError {
   color: #c62828;
 }
 
-.gd-row__warnings {
+.rowWarnings {
   color: var(--muted);
 }
 
-.gd-row__warnings ul {
+.rowWarnings ul {
   margin: var(--sp-2) 0 0;
   padding-left: var(--sp-5);
 }
 
-.gd-row__actions {
+.rowActions {
   display: flex;
   flex-wrap: wrap;
   gap: var(--sp-2);
 }
 
-.gd-tray button,
-.gd-row__actions button {
+.tray button,
+.rowActions button {
   font: inherit;
   font-size: var(--text-sm);
   padding: 0.2em 0.6em;
@@ -249,20 +238,20 @@
   cursor: pointer;
 }
 
-.gd-tray button:hover,
-.gd-row__actions button:hover {
+.tray button:hover,
+.rowActions button:hover {
   border-color: var(--accent);
   color: var(--accent-strong);
 }
 
 @media (prefers-color-scheme: dark) {
-  .gd-row__state--error {
+  .rowStateError {
     color: #ff6b6b;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .gd-scrim {
+  .scrim {
     backdrop-filter: none;
   }
 }
