@@ -1,0 +1,10 @@
+{
+  "name": "@gramdown/fixtures",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Real Grammarly .docx exports, shared by every package's tests",
+  "type": "module",
+  "exports": {
+    ".": "./index.ts"
+  }
+}

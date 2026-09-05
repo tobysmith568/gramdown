@@ -36,5 +36,8 @@
     "@gramdown/core": "workspace:*",
     "flourite": "^1.3.0",
     "zod": "^4.5.4"
+  },
+  "devDependencies": {
+    "@gramdown/fixtures": "workspace:*"
   }
 }

@@ -1,14 +1,10 @@
+import { readFixture, fixturePath as sharedFixturePath } from "@gramdown/fixtures";
 import { describe, expect, it } from "bun:test";
-import { readFile } from "node:fs/promises";
-import { fileURLToPath } from "node:url";
 import type { ConvertOptions } from "../args/schema";
 import { fakeIo } from "../test-helpers";
 import { runConvert } from "./convert";
-
-const fixtureUrl = new URL("../../../core/test/fixtures/headings.docx", import.meta.url);
-const fixturePath = fileURLToPath(fixtureUrl);
-const fixtureFile = await readFile(fixtureUrl);
-const fixtureBytes = new Uint8Array(fixtureFile);
+const fixturePath = sharedFixturePath("headings");
+const fixtureBytes = await readFixture("headings");
 
 const options = (overrides: Partial<ConvertOptions> = {}): ConvertOptions => ({
   input: fixturePath,

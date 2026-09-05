@@ -1,3 +1,4 @@
+import { fixtureNames } from "@gramdown/fixtures";
 import { describe, expect, it } from "bun:test";
 import { InvalidDocxError, convert } from "../src/core";
 import { convertFixture, expectedMarkdown, readFixture } from "./helpers";
@@ -12,10 +13,8 @@ import { convertFixture, expectedMarkdown, readFixture } from "./helpers";
  * (headings.test.ts, lists.test.ts, styles.test.ts, quotes.test.ts,
  * code.test.ts); this file only guards the exact output byte-for-byte.
  */
-const fixtures = ["headings", "lists", "styles", "quotes", "code"];
-
 describe("convert", () => {
-  for (const name of fixtures) {
+  for (const name of fixtureNames) {
     it(`matches the expected output for ${name}.docx`, async () => {
       const actual = await convertFixture(name);
 
@@ -66,7 +65,7 @@ describe("convert", () => {
 
   it("surfaces mammoth's warnings via onWarning", async () => {
     const warnings: string[] = [];
-    const bytes = await readFixture("styles.docx");
+    const bytes = await readFixture("styles");
 
     await convert(bytes, { onWarning: w => warnings.push(w) });
 

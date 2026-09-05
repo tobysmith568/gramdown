@@ -7,7 +7,7 @@ installable from npm and compilable to a single self-contained binary with
 ## Workspace layout
 
 | Package         | npm name         | Purpose                                          |
-| --------------- | ---------------- | ----------------------------------------------- |
+| --------------- | ---------------- | ------------------------------------------------ |
 | `packages/core` | `@gramdown/core` | Pure, I/O-free `convert(bytes, opts) -> string`. |
 | `packages/cli`  | `gramdown`       | `gramdown <file.docx>` CLI wrapper + `bin`.      |
 

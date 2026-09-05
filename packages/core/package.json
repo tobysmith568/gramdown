@@ -39,6 +39,7 @@
     "turndown-plugin-gfm": "^1.0.2"
   },
   "devDependencies": {
+    "@gramdown/fixtures": "workspace:*",
     "@types/turndown": "^5.0.6"
   }
 }
