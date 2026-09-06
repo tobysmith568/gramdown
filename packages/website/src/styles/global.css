@@ -40,6 +40,13 @@ main {
   padding-inline: var(--sp-5);
 }
 
+/* Tighten the gutter on the narrowest phones so a 320px screen isn't all margin. */
+@media (max-width: 25rem) {
+  .wrap {
+    padding-inline: var(--sp-4);
+  }
+}
+
 /* Headings are set in the mono display face - gramdown's output is plain text and code, so the
    type that names it looks like it belongs in an editor. Tight leading and negative tracking
    keep the mono from reading loose at large sizes; page-level rules pick the size. */
@@ -58,11 +65,12 @@ h1 {
   letter-spacing: -0.035em;
 }
 
-/* Body links carry a quiet resting underline (never colour alone - there is no link colour in
-   this system), promoted to a firm ink underline on hover/focus. Prose.astro repeats this for
-   markdown-authored links once it's restyled in 8.10.6. */
+/* Body links are set in --brand-ink (the site's one link colour) with a quiet resting
+   underline, promoted to a firm ink underline on hover/focus - colour marks "this is a link",
+   the underline shift marks "you're pointing at it". Chrome nav (Header, Footer's nav row)
+   opts out with its own muted/ink treatment - this is the prose-link default. */
 a {
-  color: inherit;
+  color: var(--brand-ink);
   text-decoration: underline;
   text-decoration-color: var(--underline);
   text-decoration-thickness: 1px;

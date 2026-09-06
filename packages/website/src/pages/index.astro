@@ -90,7 +90,7 @@ gramdown draft.docx -o draft.md</code></pre>
     </div>
   </section>
 
-  <section class="wrap band">
+  <section id="downloads" class="wrap band">
     <h2>Download a standalone binary</h2>
     <p class="band-lead">
       {
@@ -223,11 +223,14 @@ gramdown draft.docx -o draft.md</code></pre>
     font-size: var(--text-base);
   }
 
+  /* The install command is the input side of the story as much as the drop zone is, so
+     its accent rule is --source green rather than a plain border. */
   .snippet pre {
     margin: 0;
     padding: var(--sp-4);
     background: var(--surface);
     border: 1px solid var(--border);
+    border-left: 3px solid var(--source);
     border-radius: var(--radius);
     white-space: pre-wrap;
     overflow-wrap: anywhere;

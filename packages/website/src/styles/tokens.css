@@ -2,11 +2,12 @@
  * Design tokens - the single source of truth for colour, type, spacing and motion. Components
  * read these rather than hard-coding values.
  *
- * The system (milestone 8.10.1): near-monochrome - warm paper, true ink - with a single
- * Grammarly-derived green as the ONLY chroma, reserved for "source / input" affordances (the
- * drop zone, the "from Grammarly" side of a before/after). Actions, links and the converted
- * "output" side stay ink-on-paper. The idea: colour drains out as Grammarly's formatting is
- * stripped. See docs/milestone-8.10-polish.md.
+ * The system (milestone 8.10.1, amended 8.10.2): a warm neutral ground with two deliberate
+ * hues on top. Grammarly-derived green stays reserved for "source / input" affordances (the
+ * drop zone, the "from Grammarly" side of a before/after) - colour drains out as Grammarly's
+ * formatting is stripped. A second hue, amber (--brand), was added after 8.10.2 shipped an
+ * all-ink chrome that read as flat rather than disciplined - it marks links and the current
+ * page, never input. See docs/milestone-8.10-polish.md ("Amendment: a second hue").
  *
  * Light + dark ship via prefers-color-scheme only; an explicit toggle is deferred past launch,
  * at which point a :root[data-theme="dark"] block joins the media query and the two must stay
@@ -15,24 +16,27 @@
 
 :root {
   /* --- colour: light (the default) --- */
-  --paper: #fbfaf7; /* page ground - barely-warm off-white, deliberately not a cool grey */
-  --surface: #ffffff; /* raised panels: the tray, code frames */
-  --ink: #1b1a18; /* body text, headings, actions, links - the "output" side */
-  --muted: #6b6a65; /* secondary text */
-  --border: #e5e2db; /* hairline rules and frames */
-  --underline: #cfccc4; /* resting underline on body links; hover promotes it to --ink */
+  --paper: #f5efe3; /* page ground - warm parchment, deliberately not a cool grey */
+  --surface: #faf6ec; /* raised panels: the tray, code frames - close to --paper, not stark white */
+  --ink: #211d15; /* body text, headings, the "output" side */
+  --muted: #78715e; /* secondary text */
+  --border: #e1d7c1; /* hairline rules and frames */
+  --underline: #d7cbac; /* resting underline on body links; hover promotes it to --ink */
 
   --source: #0c8c6a; /* "input" affordance: drop-zone border/fill, the Grammarly side */
   --source-ink: #06603f; /* green set as text on paper (meets AA) */
-  --source-wash: #edf5f1; /* faint green fill behind a drop target */
+  --source-wash: #eaf3ec; /* faint green fill behind a drop target */
+
+  --brand: #c98a2e; /* second hue (amber) - fills and larger marks */
+  --brand-ink: #8a5200; /* amber set as text on paper (meets AA) - links, current-page nav */
 
   --error: #b3312a;
 
   /* Legacy aliases - components not yet restyled in 8.10 still read --accent*. They resolve to
-     ink so nothing looks broken mid-milestone; 8.10.5 (converter) and 8.10.6 (Prose/docs)
-     delete the last references, then these can go. */
-  --accent: var(--ink);
-  --accent-strong: #3d3a34;
+     --brand-ink so nothing looks stuck in the pre-amendment palette; 8.10.5 (converter) and
+     8.10.6 (Prose/docs) delete the last references, then these can go. */
+  --accent: var(--brand-ink);
+  --accent-strong: var(--brand-ink);
 
   color-scheme: light;
 
@@ -52,6 +56,7 @@
 
   /* --- layout --- */
   --measure: 38rem; /* prose column - a readable line length (~68ch at --text-base) */
+  --measure-wide: 44rem; /* lead paragraphs and two-up grids - wider than prose, still bounded */
   --shell: 56rem; /* page shell */
 
   /* --- space: 4px base unit --- */
@@ -80,21 +85,24 @@
  */
 @media (prefers-color-scheme: dark) {
   :root {
-    --paper: #14130f;
-    --surface: #1c1b17;
-    --ink: #eae7df;
-    --muted: #9a968b;
-    --border: #302e28;
-    --underline: #45423b;
+    --paper: #1a160f;
+    --surface: #221d14;
+    --ink: #ece6d8;
+    --muted: #a89c85;
+    --border: #3a331f;
+    --underline: #4a4230;
 
     --source: #2fbe91;
     --source-ink: #57d2a9;
-    --source-wash: #17241f;
+    --source-wash: #1a2620;
+
+    --brand: #e0a94a;
+    --brand-ink: #f0c77a;
 
     --error: #f0776e;
 
-    --accent: var(--ink);
-    --accent-strong: #cfccc4;
+    --accent: var(--brand-ink);
+    --accent-strong: var(--brand-ink);
 
     color-scheme: dark;
   }

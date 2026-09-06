@@ -1,54 +1,71 @@
 ---
-import { repoUrl } from "../consts";
+import { cliNpmUrl, repoUrl } from "../consts";
 
 const year = new Date().getUTCFullYear();
+
+const nav = [
+  { href: "/docs", label: "Docs" },
+  { href: "/#downloads", label: "Downloads" },
+  { href: repoUrl, label: "GitHub" },
+  { href: cliNpmUrl, label: "npm" }
+];
+
+const legal = [
+  { href: "/terms", label: "Terms" },
+  { href: "/privacy", label: "Privacy" },
+  { href: "/cookies", label: "Cookies" }
+];
 ---
 
 <footer>
-  <div class="wrap bar">
-    <span>© Toby Smith {year}</span>
-    <span class="note">Your documents never leave your browser</span>
-    <nav class="links" aria-label="Legal">
-      <a href="/terms">Terms</a>
-      <a href="/privacy">Privacy</a>
-      <a href="/cookies">Cookies</a>
-      <a href={repoUrl}>GitHub</a>
-    </nav>
+  <div class="wrap inner">
+    <div class="row nav">
+      {nav.map(({ href, label }) => <a href={href}>{label}</a>)}
+    </div>
+    <div class="row meta">
+      <span>© Toby Smith {year}</span>
+      <span>ISC licence</span>
+      {legal.map(({ href, label }) => <a href={href}>{label}</a>)}
+    </div>
   </div>
 </footer>
 
 <style>
   footer {
     border-top: 1px solid var(--border);
-    color: var(--muted);
-    padding-block: var(--sp-5) var(--sp-7);
+    padding-block: var(--sp-6) var(--sp-7);
     font-size: var(--text-sm);
+    color: var(--muted);
   }
 
-  .bar {
+  .inner {
     display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: column;
     gap: var(--sp-3);
   }
 
-  .note {
-    font-style: italic;
-  }
-
-  .links {
+  /* Two independent rows - each wraps on its own, items separated by space, not dots. */
+  .row {
     display: flex;
-    gap: var(--sp-4);
+    flex-wrap: wrap;
+    gap: var(--sp-2) var(--sp-5);
   }
 
-  .links a {
+  /* Nav links match the header: no resting underline, muted lifting to ink. */
+  .nav a {
     color: var(--muted);
-    text-decoration: underline;
-    text-underline-offset: 0.15em;
+    text-decoration: none;
+    transition: color var(--dur-fast) var(--ease-out);
   }
 
-  .links a:hover {
-    color: var(--accent);
+  .nav a:hover {
+    color: var(--ink);
+  }
+
+  /* Legal links read as prose references, so they keep the site-wide link treatment
+     (colour + underline, set on the bare `a` in global.css) rather than the nav row's
+     muted/ink chrome pattern; only the hover colour needs restating here. */
+  .meta a:hover {
+    color: var(--ink);
   }
 </style>

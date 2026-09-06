@@ -1,23 +1,36 @@
 ---
-import { cliNpmUrl, repoUrl, siteName } from "../consts";
+import { repoUrl, siteName } from "../consts";
 
 const links = [
   { href: "/docs", label: "Docs" },
-  { href: repoUrl, label: "GitHub" },
-  { href: cliNpmUrl, label: "npm" }
+  { href: "/#downloads", label: "Downloads" },
+  { href: repoUrl, label: "GitHub" }
 ];
 
 const currentPath = Astro.url.pathname.replace(/\.html$/, "").replace(/(.)\/$/, "$1");
 
 const isActive = (href: string) =>
-  href.startsWith("/") && (currentPath === href || currentPath.startsWith(href + "/"));
+  href.startsWith("/") &&
+  !href.includes("#") &&
+  (currentPath === href || currentPath.startsWith(href + "/"));
 ---
 
-<header>
+<header data-nav-open="false">
   <nav class="wrap bar" aria-label="Primary">
-    <a class="id" href="/">{siteName}</a>
+    <a class="wordmark" href="/" aria-label={`${siteName} home`}>
+      <svg class="mark" viewBox="5 5 25 26" aria-hidden="true" focusable="false">
+        <circle cx="13" cy="13.2" r="6"></circle>
+        <path d="M19 13.2 V23.4 q0 4.6 -6.6 4.9"></path>
+        <line class="rule" x1="12" y1="28.1" x2="26.4" y2="28.1"></line>
+      </svg>
+      {siteName}
+    </a>
 
-    <div class="links">
+    <button type="button" class="toggle" aria-expanded="false" aria-controls="primary-nav">
+      Menu
+    </button>
+
+    <div class="links" id="primary-nav">
       {
         links.map(({ href, label }) => (
           <a href={href} aria-current={isActive(href) ? "page" : undefined}>
@@ -32,23 +45,62 @@ const isActive = (href: string) =>
 <style>
   header {
     border-bottom: 1px solid var(--border);
-    background: var(--surface);
   }
 
   .bar {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: var(--sp-4);
     padding-block: var(--sp-4);
   }
 
-  .id {
+  /* The wordmark is deliberately the quietest thing in the frame - the name in the mono
+     display face, all ink, no accent. The mark to its left carries the identity: a green
+     "g" (the Grammarly source) resolving onto a plain ink rule (the Markdown output). */
+  .wordmark {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.42em;
     font-family: var(--f-display);
     font-weight: 600;
     font-size: var(--text-lg);
     letter-spacing: -0.02em;
     text-decoration: none;
     color: var(--ink);
+    white-space: nowrap;
+  }
+
+  .mark {
+    height: 1.32em;
+    width: auto;
+    flex: none;
+    overflow: visible;
+  }
+
+  .mark circle,
+  .mark path {
+    fill: none;
+    stroke: var(--source-ink);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .mark .rule {
+    stroke: var(--ink);
+  }
+
+  .toggle {
+    display: none;
+    padding: var(--sp-2) var(--sp-3);
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-family: var(--f-body);
+    font-size: var(--text-sm);
+    color: var(--ink);
+    cursor: pointer;
   }
 
   .links {
@@ -57,14 +109,72 @@ const isActive = (href: string) =>
     font-size: var(--text-sm);
   }
 
+  /* Nav links opt out of the site-wide resting underline - they are navigation, not
+     prose - and lean on position + weight, with the shared focus ring still applying. */
   .links a {
     color: var(--muted);
     text-decoration: none;
     transition: color var(--dur-fast) var(--ease-out);
   }
 
-  .links a:hover,
-  .links a[aria-current="page"] {
+  .links a:hover {
     color: var(--ink);
   }
+
+  /* The current page gets the site's one accent hue, not ink - "here" and "hovering"
+     stay visually distinct. */
+  .links a[aria-current="page"] {
+    color: var(--brand-ink);
+  }
+
+  @media (max-width: 33.99rem) {
+    .bar {
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .toggle {
+      display: inline-block;
+    }
+
+    .links {
+      display: none;
+      flex-basis: 100%;
+      flex-direction: column;
+      gap: var(--sp-3);
+      margin-top: var(--sp-3);
+      padding-top: var(--sp-3);
+      border-top: 1px solid var(--border);
+      font-size: var(--text-base);
+    }
+
+    header[data-nav-open="true"] .links {
+      display: flex;
+    }
+  }
 </style>
+
+<script>
+  const header = document.querySelector<HTMLElement>("header[data-nav-open]");
+  const toggle = header?.querySelector<HTMLButtonElement>(".toggle");
+
+  if (header && toggle) {
+    const setOpen = (open: boolean) => {
+      header.dataset.navOpen = String(open);
+      toggle.setAttribute("aria-expanded", String(open));
+    };
+
+    toggle.addEventListener("click", () => setOpen(header.dataset.navOpen !== "true"));
+
+    header.querySelectorAll(".links a").forEach(link => {
+      link.addEventListener("click", () => setOpen(false));
+    });
+
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape" && header.dataset.navOpen === "true") {
+        setOpen(false);
+        toggle.focus();
+      }
+    });
+  }
+</script>

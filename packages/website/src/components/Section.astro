@@ -1,0 +1,29 @@
+---
+// The page-level section primitive: the shell width + the vertical rhythm + the one
+// hairline rule that separates stacked sections, in one place so content pages don't
+// each re-declare it (milestone 8.10.2). A section flush against the top of <main> (a
+// hero) renders its own <section class="wrap"> instead of this and stays rule-less.
+interface Props {
+  id?: string;
+  class?: string;
+  "aria-labelledby"?: string;
+}
+
+const { id, class: className, ...rest } = Astro.props;
+---
+
+<section id={id} class:list={["wrap", "section", className]} {...rest}>
+  <slot />
+</section>
+
+<style>
+  .section {
+    padding-block: var(--sp-7);
+  }
+
+  /* Two adjacent sections are divided by a single hairline - that rule *is* the
+     structure. The first section on a page (or the one after a hero) gets none. */
+  .section + .section {
+    border-top: 1px solid var(--border);
+  }
+</style>

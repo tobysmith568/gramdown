@@ -25,6 +25,10 @@ const { title: pageTitle, description, noIndex } = Astro.props;
 const title = pageTitle && pageTitle !== siteName ? `${pageTitle} - ${siteName}` : siteName;
 
 const canonical = new URL(Astro.url.pathname, Astro.site);
+
+// Social-card image - the 8.10.3 lockup, rendered to public/og.png. Milestone 8.10.8 folds
+// this (and the title/description/canonical/robots block above) into a dedicated Seo partial.
+const ogImage = new URL("/og.png", Astro.site);
 ---
 
 <!doctype html>
@@ -33,6 +37,8 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="theme-color" content="#f5efe3" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1a160f" media="(prefers-color-scheme: dark)" />
     <meta name="generator" content={Astro.generator} />
 
     <link rel="preload" as="font" type="font/woff2" href={ibmPlexSansWoff2} crossorigin />
@@ -41,6 +47,13 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
     {
       indexingDisabled ? (
         <meta name="robots" content="noindex, nofollow" />
