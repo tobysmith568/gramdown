@@ -1,19 +1,20 @@
 /**
- * The conversion queue: the single source of truth for what the drop overlay
- * and the tray both show. Plain module state (Preact signals) so the two
- * islands share it without a common component root.
+ * The conversion queue: the single source of truth shared by the index-page
+ * editor panel, the site-wide drag overlay and the bottom-right counter. Plain
+ * module state (Preact signals) so the islands share it without a common
+ * component root.
  *
- * Milestone 8.4 adds persistence: `initPersistence` (called once from the
- * `Converter` island) rehydrates the queue from IndexedDB, keeps it written
- * back on every mutation, and syncs it across tabs. Milestone 8.5 wires in the
- * "guess code languages" preference and re-runs affected files when it flips.
+ * `initPersistence` (called once from the `Converter` island) rehydrates the
+ * queue from IndexedDB, keeps it written back on every mutation, and syncs it
+ * across tabs. `updateGuessLanguages` re-runs affected files when the
+ * "guess code languages" preference flips.
  */
 
 import { effect, signal } from "@preact/signals";
 import { downloadBytes, downloadMarkdown } from "./download";
 import { dedupeName, toMarkdownName } from "./filenames";
 import { applyRetention, clearStore, loadConversions, saveConversions } from "./persistence";
-import { autoDownload, guessLanguages, setGuessLanguages } from "./preferences";
+import { guessLanguages, setGuessLanguages } from "./preferences";
 import type { ConversionClient } from "./worker-client";
 
 export type ConversionStatus = "converting" | "ready" | "error";
@@ -42,6 +43,13 @@ export const conversions = signal<Conversion[]>([]);
 /** A transient note when a drop / pick included files that were not `.docx`. */
 export const lastRejection = signal<string | null>(null);
 
+/**
+ * Flips `true` once `initPersistence` has read the saved queue (or determined
+ * there is none). The index panel waits for this before it renders, so a
+ * persisted queue doesn't flash in a beat after the sample.
+ */
+export const hydrated = signal<boolean>(false);
+
 const broadcastChannelName = "gramdown-conversions";
 const persistDebounceMs = 150;
 
@@ -59,6 +67,7 @@ export const initPersistence = async (): Promise<() => void> => {
   const stored = await loadConversions();
   lastPersisted = stored;
   conversions.value = stored;
+  hydrated.value = true;
 
   // Anything caught mid-conversion by a navigation or reload restarts from its
   // retained source bytes.
@@ -129,14 +138,17 @@ export const enqueueFiles = async (files: readonly File[]): Promise<void> => {
  * Persist the "guess code languages" preference and re-run every finished
  * conversion whose Markdown was produced the other way, from its retained
  * source bytes — no re-drop needed.
+ *
+ * The re-run leaves the row's `status` on `ready` and swaps the Markdown in
+ * place when it lands, so the editor shows a quiet live update rather than
+ * flickering through a "converting" state.
  */
 export const updateGuessLanguages = (enabled: boolean): void => {
   setGuessLanguages(enabled);
 
   for (const entry of conversions.value) {
     if (entry.status === "ready" && entry.langGuessed !== enabled) {
-      patchConversion(entry.id, { status: "converting", langGuessed: enabled });
-      void runConversion(entry.id, entry.sourceBytes, enabled);
+      void reguessLanguages(entry.id, entry.sourceBytes, enabled);
     }
   }
 };
@@ -160,6 +172,16 @@ export const downloadConversion = (id: string): void => {
     return;
   }
   downloadMarkdown(entry.outputName, entry.markdown);
+};
+
+/**
+ * Write the current queue to storage now, skipping the debounce. Call before a
+ * deliberate navigation (e.g. a drop on a non-index page that routes to the
+ * converter) so the just-enqueued file survives the page load.
+ */
+export const flushQueue = async (): Promise<void> => {
+  clearTimeout(persistTimer);
+  await persist();
 };
 
 /** Zip every finished file (in the worker) and hand the archive to the browser. */
@@ -189,12 +211,32 @@ const runConversion = async (
       warnings: result.warnings,
       langGuessed: guessLanguage
     });
-    if (autoDownload.value) {
-      downloadConversion(id);
-    }
   } catch (cause) {
     const message = cause instanceof Error ? cause.message : String(cause);
     patchConversion(id, { status: "error", error: message });
+  }
+};
+
+/**
+ * Re-convert a finished file with the other language-guessing setting, swapping
+ * the Markdown in place without touching `status` — see `updateGuessLanguages`.
+ * A failure leaves the previous Markdown untouched.
+ */
+const reguessLanguages = async (
+  id: string,
+  bytes: Uint8Array,
+  guessLanguage: boolean
+): Promise<void> => {
+  try {
+    const client = await getClient();
+    const result = await client.convert(bytes, guessLanguage);
+    patchConversion(id, {
+      markdown: result.markdown,
+      warnings: result.warnings,
+      langGuessed: guessLanguage
+    });
+  } catch (cause) {
+    console.warn("[gramdown] could not re-run a conversion for the language toggle:", cause);
   }
 };
 

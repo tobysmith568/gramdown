@@ -22,18 +22,18 @@ The in-browser `.docx` converter does use two other browser storage mechanisms.
 These are **not cookies** — they are never sent to any server, including ours —
 but they are listed here for completeness:
 
-| Storage      | What it holds                                                                                                | Why                                                         |
-| ------------ | ------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------- |
-| IndexedDB    | Your recent conversions: the original `.docx` bytes, the Markdown output, warnings, timestamps and filenames | So the conversion tray survives page navigation and reloads |
-| localStorage | Two on/off preferences: "download automatically" and "guess code languages"                                  | So your choices persist between visits                      |
+| Storage      | What it holds                                                                                                | Why                                                           |
+| ------------ | ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------- |
+| IndexedDB    | Your recent conversions: the original `.docx` bytes, the Markdown output, warnings, timestamps and filenames | So the browser converter survives page navigation and reloads |
+| localStorage | One on/off preference: "guess code languages"                                                                | So your choice persists between visits                        |
 
 All of this stays on your device. See the [Privacy Policy](/privacy) for detail.
 
 ## Managing and clearing it
 
-- Use **Clear all** in the conversion tray to wipe every stored conversion.
+- Remove stored conversions one at a time in the browser converter.
 - Clear site data for `gramdown.tobythe.dev` in your browser settings to remove
-  everything, including the two preferences.
+  everything, including the saved preference.
 - Browsing in a private/incognito window keeps nothing after the window closes.
 
 Your browser's help pages describe how to view and clear site data:

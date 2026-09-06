@@ -1,12 +1,449 @@
 /*
- * Styling for the client-side converter islands in this folder. These are
- * Preact `.tsx` components, so they can't carry Astro-scoped `<style>` — the
- * rules are a CSS module, imported for their hashed class names by the two
- * components that use them (`DropOverlay`, `ConversionTray`). The generic
- * `.sr-only` helper lives in `styles/global.css`.
+ * Styling for the client-side converter islands in this folder — Preact `.tsx`
+ * components, so they can't carry Astro-scoped `<style>`. These rules are a CSS
+ * module, imported for their hashed class names by `DropOverlay` (the drag
+ * scrim), `ConverterPanel` (the index-page editor) and `DropHint` (the
+ * site-wide corner hint). The generic `.sr-only` helper lives in `styles/global.css`.
+ *
+ * The editor keeps its own palette (the `--e-*` tokens) — cooler and more
+ * neutral than the warm page, so it reads as a code surface dropped into the
+ * document. It still follows the site's light/dark switch (see the dark block).
  */
 
-/* --- full-page drag scrim ------------------------------------------------- */
+.editor {
+  --e-bg: #eef0ec;
+  --e-deep: #e4e6e1;
+  --e-line: #d6d8d1;
+  --e-border: #d6d8d1;
+  --e-text: #2c2b28;
+  --e-dim: #6c6b63;
+  --e-faint: #9a988e;
+  --e-sel: #e0e2db;
+  --e-head-h: 2.85rem; /* shared height for the explorer + pane header bars */
+
+  display: grid;
+  grid-template-columns: 15rem 1fr;
+  /* One capped row: the file list and the Markdown each scroll inside their own
+     column instead of the whole editor growing with the number of files. */
+  grid-template-rows: minmax(0, 37rem);
+  border: 1px solid var(--e-border);
+  border-radius: calc(var(--radius) + 1px);
+  overflow: hidden;
+  background: var(--e-bg);
+  color: var(--e-text);
+  font-size: var(--text-sm);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.14),
+    0 20px 50px -14px rgba(0, 0, 0, 0.32);
+  animation: editorIn var(--dur-base) var(--ease-out) both;
+}
+
+/* Placeholder held in the layout while the saved queue loads — same footprint as
+   the editor, so there's no shift when it swaps in. */
+.editorLoading {
+  display: grid;
+  place-items: center;
+  min-height: 37rem;
+  border: 1px solid var(--e-border);
+  border-radius: calc(var(--radius) + 1px);
+  background: var(--e-bg);
+  color: var(--e-faint);
+  font-family: var(--f-mono);
+  font-size: var(--text-xs);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.14),
+    0 20px 50px -14px rgba(0, 0, 0, 0.32);
+}
+
+.editorLoading span {
+  animation: editorPulse 1.3s var(--ease-out) infinite alternate;
+}
+
+@keyframes editorIn {
+  from {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+}
+
+@keyframes editorPulse {
+  from {
+    opacity: 0.4;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .editor {
+    animation: none;
+  }
+
+  .editorLoading {
+    animation: none;
+    opacity: 0.7;
+  }
+}
+
+.icon {
+  display: block;
+}
+
+@media (prefers-color-scheme: dark) {
+  .editor {
+    --e-bg: #24221e;
+    --e-deep: #1c1b17;
+    --e-line: #383630;
+    --e-border: #14130f;
+    --e-text: #e6e3dc;
+    --e-dim: #948f85;
+    --e-faint: #6d6a60;
+    --e-sel: #2f2d27;
+  }
+}
+
+/* --- explorer -------------------------------------------------------------- */
+
+.explorer {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--e-deep);
+  border-right: 1px solid var(--e-line);
+}
+
+.explorerHead {
+  flex: none;
+  display: flex;
+  align-items: center;
+  min-height: var(--e-head-h);
+  margin: 0;
+  padding: 0 var(--sp-4);
+  border-bottom: 1px solid var(--e-line);
+  font-family: var(--f-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.04em;
+  color: var(--e-faint);
+}
+
+/* Takes the slack between the header and the pinned drop zone / tools, and
+   scrolls when the file list outgrows it. */
+.efList {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ef {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+  border-left: 2px solid transparent;
+}
+
+.ef:hover {
+  background: color-mix(in srgb, var(--e-sel) 60%, transparent);
+}
+
+.ef[data-selected] {
+  background: var(--e-sel);
+  border-left-color: var(--brand-ink);
+}
+
+.ef[data-status="error"] .efMeta {
+  color: var(--error);
+}
+
+.efMain {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1em;
+  padding: var(--sp-2) var(--sp-2) var(--sp-2) var(--sp-4);
+  font: inherit;
+  text-align: left;
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.efName {
+  font-family: var(--f-mono);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.efMeta {
+  font-size: var(--text-xs);
+  color: var(--e-faint);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.efIcons {
+  display: inline-flex;
+  gap: 0.15rem;
+  flex: none;
+  padding-right: var(--sp-3);
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease-out);
+}
+
+.ef:hover .efIcons,
+.ef:focus-within .efIcons,
+.ef[data-selected] .efIcons {
+  opacity: 1;
+}
+
+.efIcons button {
+  font: inherit;
+  width: 1.7em;
+  height: 1.7em;
+  display: grid;
+  place-items: center;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  color: var(--e-dim);
+  cursor: pointer;
+}
+
+.efIcons button:hover {
+  border-color: var(--e-line);
+  color: var(--e-text);
+}
+
+.drop {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1em;
+  margin: var(--sp-3);
+  padding: var(--sp-4) var(--sp-3);
+  text-align: center;
+  color: var(--source-ink);
+  background: color-mix(in srgb, var(--source) 9%, transparent);
+  border: 1px dashed color-mix(in srgb, var(--source) 45%, var(--e-line));
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.drop:hover,
+.drop:focus-within {
+  background: color-mix(in srgb, var(--source) 16%, transparent);
+  border-color: var(--source);
+}
+
+.dropTitle {
+  font-family: var(--f-display);
+  font-weight: 600;
+}
+
+.dropTitle code {
+  padding: 0;
+  background: none;
+  border: none;
+}
+
+.dropHint {
+  font-size: var(--text-xs);
+  color: var(--e-dim);
+}
+
+.efNote {
+  flex: none;
+  margin: 0;
+  padding: 0 var(--sp-4) var(--sp-3);
+  font-size: var(--text-xs);
+  color: var(--e-dim);
+}
+
+.efTools {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-4);
+  border-top: 1px solid var(--e-line);
+  font-size: var(--text-xs);
+  color: var(--e-dim);
+}
+
+.efToggle {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  cursor: pointer;
+}
+
+.efToggle input {
+  flex: none;
+}
+
+.efZip {
+  font: inherit;
+  align-self: flex-start;
+  padding: 0.3em 0.7em;
+  background: none;
+  border: 1px solid var(--e-line);
+  border-radius: var(--radius);
+  color: var(--e-text);
+  cursor: pointer;
+}
+
+.efZip:hover {
+  border-color: var(--e-dim);
+}
+
+/* --- editor pane -------------------------------------------------------- */
+
+.pane {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+
+.paneHead {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  min-height: var(--e-head-h);
+  padding: 0 var(--sp-2) 0 var(--sp-4);
+  background: var(--e-deep);
+  border-bottom: 1px solid var(--e-line);
+}
+
+.paneFile {
+  font-family: var(--f-mono);
+  font-size: var(--text-xs);
+  color: var(--e-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.paneActions {
+  display: inline-flex;
+  gap: var(--sp-2);
+  margin-left: auto;
+  flex: none;
+}
+
+.paneActions button {
+  font: inherit;
+  font-size: var(--text-xs);
+  padding: 0.35em 0.9em;
+  color: var(--e-text);
+  background: transparent;
+  border: 1px solid var(--e-line);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.paneActions button:hover:not(:disabled) {
+  border-color: var(--e-dim);
+  background: var(--e-sel);
+}
+
+.paneActions button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.paneState {
+  flex: 1;
+  margin: 0;
+  padding: var(--sp-5) var(--sp-5);
+  font-family: var(--f-mono);
+  font-size: var(--text-xs);
+  color: var(--e-dim);
+}
+
+.paneStateError {
+  color: var(--error);
+}
+
+.code {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-block: var(--sp-4);
+  font-family: var(--f-mono);
+  font-size: var(--text-xs);
+  line-height: 1.9;
+}
+
+/* One grid row per source line: the number cell and the text cell share a row, so a
+   long prose line that soft-wraps keeps its single number top-aligned beside it. */
+.ln {
+  display: grid;
+  grid-template-columns: 3rem 1fr;
+}
+
+.lnNo {
+  padding-right: var(--sp-4);
+  text-align: right;
+  color: var(--e-faint);
+  user-select: none;
+}
+
+.lnText {
+  padding-right: var(--sp-5);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  min-height: 1.9em;
+}
+
+.code :global(.mk) {
+  color: var(--e-faint);
+}
+
+.statusbar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  padding: var(--sp-2) var(--sp-4);
+  background: var(--e-deep);
+  border-top: 1px solid var(--e-line);
+  font-family: var(--f-mono);
+  font-size: var(--text-xs);
+  color: var(--e-dim);
+}
+
+.statusGrow {
+  flex: 1;
+}
+
+.statusOk {
+  color: var(--source-ink);
+}
+
+.statusOk::before {
+  content: "";
+  display: inline-block;
+  width: 0.5em;
+  height: 0.5em;
+  margin-right: 0.5em;
+  border-radius: 50%;
+  background: var(--source);
+  vertical-align: middle;
+}
+
+/* --- full-page drag scrim --------------------------------------------- */
 
 .scrim {
   position: fixed;
@@ -15,17 +452,32 @@
   display: grid;
   place-items: center;
   padding: var(--sp-5);
-  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  background: color-mix(in srgb, var(--paper) 80%, transparent);
   backdrop-filter: blur(2px);
+  animation: scrimIn var(--dur-fast) var(--ease-out) both;
 }
 
 .scrimCard {
   pointer-events: none;
   text-align: center;
   padding: var(--sp-7) var(--sp-6);
-  border: 2px dashed var(--accent);
+  border: 2px dashed var(--source);
   border-radius: calc(var(--radius) * 2);
   background: var(--surface);
+  animation: scrimCardIn var(--dur-base) var(--ease-out) both;
+}
+
+@keyframes scrimIn {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes scrimCardIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
 }
 
 .scrimTitle {
@@ -41,320 +493,69 @@
   font-size: var(--text-sm);
 }
 
-/* --- index-page hero dropzone ----------------------------------------- */
-
-.hero {
-  margin-top: var(--sp-6);
-}
-
-.heroZone {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--sp-2);
-  padding: var(--sp-7) var(--sp-5);
-  text-align: center;
-  border: 2px dashed var(--border);
-  border-radius: calc(var(--radius) * 2);
-  background: var(--surface);
-  cursor: pointer;
-  transition: border-color var(--dur-fast) var(--ease-out);
-}
-
-.heroZone:hover,
-.heroZone:focus-within {
-  border-color: var(--accent);
-}
-
-.heroZoneTitle {
-  font-family: var(--f-display);
-  font-size: var(--text-lg);
-  font-weight: 600;
-}
-
-.heroZoneTitle code {
+.scrimHint code {
+  padding: 0;
   background: none;
   border: none;
-  padding: 0;
 }
 
-.heroZoneHint {
-  color: var(--muted);
-  font-size: var(--text-sm);
-}
+/* --- site-wide corner hint ---------------------------------------------------- */
 
-.heroNote {
-  margin: var(--sp-3) 0 0;
-  color: var(--muted);
-  font-size: var(--text-sm);
-}
-
-.heroResults {
-  margin: var(--sp-4) 0 0;
-  padding: 0;
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-2);
-}
-
-.heroResult {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-3);
-  padding: var(--sp-3) var(--sp-4);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--surface);
-}
-
-.heroResultName {
-  flex: 1;
-  font-family: var(--f-mono);
-  font-size: var(--text-sm);
-  overflow-wrap: anywhere;
-}
-
-.heroResultState {
-  color: var(--muted);
-  font-size: var(--text-sm);
-}
-
-.heroResult button {
-  font: inherit;
-  font-size: var(--text-sm);
-  padding: 0.2em 0.7em;
-  color: var(--surface);
-  background: var(--accent);
-  border: 1px solid var(--accent);
-  border-radius: var(--radius);
-  cursor: pointer;
-}
-
-.heroResult button:hover {
-  background: var(--accent-strong);
-  border-color: var(--accent-strong);
-}
-
-/* --- collapsed launcher ------------------------------------------------- */
-
-.fab {
+/* A whisper, not a control: points out that a drop works on any page. `DropHint`
+   renders it `aria-hidden` and nothing here is interactive. */
+.pageHint {
   position: fixed;
   right: var(--sp-5);
   bottom: var(--sp-5);
   z-index: 900;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--sp-2);
-  padding: var(--sp-3) var(--sp-4);
-  font: inherit;
-  font-size: var(--text-sm);
-  color: var(--surface);
-  background: var(--accent);
-  border: none;
-  border-radius: 999px;
-  cursor: pointer;
-  box-shadow: 0 6px 20px color-mix(in srgb, var(--ink) 22%, transparent);
-}
-
-.fab code {
-  background: none;
-  border: none;
-  padding: 0;
-  color: inherit;
-}
-
-.fabBadge {
-  display: inline-grid;
-  place-items: center;
-  min-width: 1.4em;
-  height: 1.4em;
-  padding: 0 0.3em;
-  border-radius: 999px;
-  background: var(--surface);
-  color: var(--accent-strong);
-  font-weight: 600;
-}
-
-/* --- tray -------------------------------------------------------------- */
-
-.tray {
-  position: fixed;
-  right: var(--sp-5);
-  bottom: var(--sp-5);
-  z-index: 900;
-  width: min(24rem, calc(100vw - 2 * var(--sp-4)));
-  max-height: min(32rem, calc(100vh - 2 * var(--sp-5)));
-  display: flex;
-  flex-direction: column;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  box-shadow: 0 12px 34px color-mix(in srgb, var(--ink) 24%, transparent);
-  font-size: var(--text-sm);
-}
-
-.trayBar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--sp-3);
-  padding: var(--sp-3) var(--sp-4);
-  border-bottom: 1px solid var(--border);
-}
-
-.trayTitle {
-  font-family: var(--f-display);
-}
-
-.trayBarActions {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-2);
-}
-
-.trayCollapse {
-  line-height: 1;
-}
-
-.trayNote {
   margin: 0;
-  padding: var(--sp-2) var(--sp-4);
-  color: var(--muted);
-  border-bottom: 1px solid var(--border);
-}
-
-.trayEmpty {
-  margin: 0;
-  padding: var(--sp-4);
-  color: var(--muted);
-}
-
-.trayList {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  overflow-y: auto;
-}
-
-.trayAdd {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-3);
-  padding: var(--sp-3) var(--sp-4);
-  border-top: 1px solid var(--border);
-  color: var(--muted);
-}
-
-.trayAdd input {
-  font: inherit;
-  font-size: var(--text-sm);
-  min-width: 0;
-}
-
-.trayPref {
-  padding: var(--sp-3) var(--sp-4);
-  border-top: 1px solid var(--border);
-  color: var(--muted);
-  font-size: var(--text-sm);
-}
-
-.trayPrefRow {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-3);
-}
-
-.trayPref input {
-  flex-shrink: 0;
-}
-
-.trayPrefNote {
-  margin: var(--sp-2) 0 0;
-  font-size: var(--text-sm);
-}
-
-/* --- one conversion row ---------------------------------------------- */
-
-.row {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-2);
-  padding: var(--sp-3) var(--sp-4);
-  border-bottom: 1px solid var(--border);
-}
-
-.row:last-child {
-  border-bottom: none;
-}
-
-.rowHead {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--sp-3);
-}
-
-.rowName {
+  padding: var(--sp-2) var(--sp-3);
+  pointer-events: none;
+  text-align: right;
+  white-space: nowrap;
   font-family: var(--f-mono);
-  overflow-wrap: anywhere;
-}
-
-.rowSize {
-  flex: none;
+  font-size: var(--text-xs);
+  line-height: 1.5;
   color: var(--muted);
-}
-
-.rowState {
-  margin: 0;
-  color: var(--muted);
-}
-
-.rowStateError {
-  color: #c62828;
-}
-
-.rowWarnings {
-  color: var(--muted);
-}
-
-.rowWarnings ul {
-  margin: var(--sp-2) 0 0;
-  padding-left: var(--sp-5);
-}
-
-.rowActions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--sp-2);
-}
-
-.tray button,
-.rowActions button {
-  font: inherit;
-  font-size: var(--text-sm);
-  padding: 0.2em 0.6em;
-  color: var(--ink);
-  background: var(--bg);
-  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--paper) 72%, transparent);
+  backdrop-filter: blur(3px);
   border-radius: var(--radius);
-  cursor: pointer;
-}
-
-.tray button:hover,
-.rowActions button:hover {
-  border-color: var(--accent);
-  color: var(--accent-strong);
-}
-
-@media (prefers-color-scheme: dark) {
-  .rowStateError {
-    color: #ff6b6b;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .scrim,
+  .scrimCard {
+    animation: none;
+  }
+
   .scrim {
     backdrop-filter: none;
+  }
+}
+
+@media (max-width: 44rem) {
+  /* No cursor to drag with, and it would crowd the stacked editor. */
+  .pageHint {
+    display: none;
+  }
+
+  /* Stack the two columns; let each take its own height rather than sharing one
+     capped row. The file list caps its own scroll, the Markdown caps its own. */
+  .editor {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+  }
+
+  .explorer {
+    border-right: none;
+    border-bottom: 1px solid var(--e-line);
+  }
+
+  .efList {
+    max-height: 20rem;
+  }
+
+  .code {
+    max-height: 26rem;
   }
 }

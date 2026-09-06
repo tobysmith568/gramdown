@@ -1,0 +1,96 @@
+---
+// The standalone-binary table, driven by the latest GitHub release (looked up at
+// build time in lib/release.ts). Lived on the index page until milestone 8.10.4
+// stripped it down; it now sits on the /docs/downloads page.
+import { releaseDownloads } from "../lib/release";
+
+const publishedDate = releaseDownloads.publishedAt ? new Date(releaseDownloads.publishedAt) : null;
+
+const publishedLabel = publishedDate
+  ? publishedDate.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })
+  : null;
+
+const versionLine = releaseDownloads.version
+  ? `${releaseDownloads.version}${publishedLabel ? `, released ${publishedLabel}` : ""}`
+  : "the latest release";
+---
+
+<figure class="downloads">
+  <figcaption>
+    Self-contained executables from {versionLine} — no Node, Bun or npm required.
+  </figcaption>
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Platform</th>
+        <th scope="col">Size</th>
+        <th scope="col"><span class="sr-only">Download</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      {
+        releaseDownloads.platforms.map(platform => (
+          <tr>
+            <td>{platform.label}</td>
+            <td>{platform.sizeLabel ?? "—"}</td>
+            <td>
+              <a href={platform.downloadUrl}>Download</a>
+            </td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+  <p class="note">
+    Verify a download against <a href={releaseDownloads.checksumsUrl}>SHA256SUMS.txt</a>.
+    {
+      releaseDownloads.notesUrl && (
+        <>
+          {" "}
+          <a href={releaseDownloads.notesUrl}>Release notes</a>.
+        </>
+      )
+    }
+  </p>
+</figure>
+
+<style>
+  .downloads {
+    margin: 0;
+  }
+
+  figcaption {
+    margin-bottom: var(--sp-4);
+    color: var(--muted);
+    font-size: var(--text-sm);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--text-sm);
+  }
+
+  th,
+  td {
+    padding: var(--sp-3) var(--sp-4);
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  th {
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  td:last-child,
+  th:last-child {
+    text-align: right;
+  }
+
+  .note {
+    margin: var(--sp-4) 0 0;
+    color: var(--muted);
+    font-size: var(--text-sm);
+  }
+</style>

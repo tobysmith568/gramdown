@@ -1,8 +1,21 @@
 ---
 title: How it works
 description: The preprocess → mammoth → turndown → postprocess pipeline, the Grammarly assumptions it makes, and its known limitations.
-order: 4
+order: 5
 ---
+
+## Why not a general-purpose converter?
+
+The obvious tool for "turn a `.docx` into Markdown" is [pandoc](https://pandoc.org)
+— it converts between dozens of document formats. But Grammarly's export is not a
+normal `.docx`: it has no "Code" style (code is just paragraphs in a monospace
+font), it indents with non-breaking spaces, and Word auto-underlines every link.
+A general converter takes those at face value and the result needs a lot of
+hand-cleaning, the code blocks especially. gramdown is built for this one export
+and leans on its quirks instead of fighting them — and it does it in pure
+JavaScript, so there is no separate binary to install.
+
+## The pipeline
 
 gramdown runs a Grammarly `.docx` through four stages:
 

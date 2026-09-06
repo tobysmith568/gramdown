@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from "preact/hooks";
-import { enqueueFiles } from "../../lib/converter/store";
+import { enqueueFiles, flushQueue } from "../../lib/converter/store";
 import styles from "./converter.module.css";
 
 /**
  * A full-viewport scrim shown while a file is dragged anywhere over the page.
  * Mounted once, site-wide, from `BaseLayout` — drag-and-drop works on every
- * page, not just the index. The visible `<input>` fallback lives in the tray.
+ * page, not just the index. The click/keyboard fallback (a real file `<input>`)
+ * lives in the editor panel on the index (`ConverterPanel`).
  */
 const DropOverlay = () => {
   const [active, setActive] = useState(false);
@@ -59,7 +60,19 @@ const DropOverlay = () => {
         return;
       }
       const files = Array.from(dropped);
-      void enqueueFiles(files);
+
+      // The converter UI lives on the index. A drop from any other page routes
+      // there (the panel's anchor); a drop already on the index lets
+      // `ConverterPanel` scroll itself into view.
+      if (window.location.pathname === "/") {
+        void enqueueFiles(files);
+        return;
+      }
+      void enqueueFiles(files)
+        .then(() => flushQueue())
+        .then(() => {
+          window.location.href = "/#converter";
+        });
     };
 
     window.addEventListener("dragenter", onDragEnter);

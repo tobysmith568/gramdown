@@ -5,7 +5,7 @@ const year = new Date().getUTCFullYear();
 
 const nav = [
   { href: "/docs", label: "Docs" },
-  { href: "/#downloads", label: "Downloads" },
+  { href: "/docs/downloads", label: "Downloads" },
   { href: repoUrl, label: "GitHub" },
   { href: cliNpmUrl, label: "npm" }
 ];
@@ -24,7 +24,6 @@ const legal = [
     </div>
     <div class="row meta">
       <span>© Toby Smith {year}</span>
-      <span>ISC licence</span>
       {legal.map(({ href, label }) => <a href={href}>{label}</a>)}
     </div>
   </div>

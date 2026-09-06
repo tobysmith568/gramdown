@@ -32,9 +32,9 @@
 
   --error: #b3312a;
 
-  /* Legacy aliases - components not yet restyled in 8.10 still read --accent*. They resolve to
-     --brand-ink so nothing looks stuck in the pre-amendment palette; 8.10.5 (converter) and
-     8.10.6 (Prose/docs) delete the last references, then these can go. */
+  /* Legacy aliases - `Prose` (docs) is the last consumer still reading --accent*. It resolves to
+     --brand-ink so nothing looks stuck in the pre-amendment palette; 8.10.6 (Prose/docs) removes
+     the last references, then these can go. */
   --accent: var(--brand-ink);
   --accent-strong: var(--brand-ink);
 
