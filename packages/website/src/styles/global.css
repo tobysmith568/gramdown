@@ -86,7 +86,10 @@ a:focus-visible {
   text-decoration-thickness: 2px;
 }
 
-code {
+/* Inline code only - the `> code` inside a Shiki `pre.astro-code` gets its frame from
+   Prose.astro, and must not also pick up this chip treatment (an inline border fragments
+   across every wrapped line). */
+:not(pre) > code {
   font-family: var(--f-mono);
   font-size: 0.9em;
   background: var(--surface);
