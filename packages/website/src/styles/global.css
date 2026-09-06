@@ -1,3 +1,9 @@
+/*
+ * Global reset + base element styles + a couple of shared utilities. Unscoped by design
+ * (imported once from BaseLayout), so components don't each redeclare html-element defaults.
+ * Everything reads from tokens.css.
+ */
+
 *,
 *::before,
 *::after {
@@ -6,6 +12,7 @@
 
 html {
   -webkit-text-size-adjust: 100%;
+  background: var(--paper); /* paint the overscroll area, not the host white */
 }
 
 body {
@@ -13,11 +20,13 @@ body {
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
-  background: var(--bg);
+  background: var(--paper);
   color: var(--ink);
   font-family: var(--f-body);
   font-size: var(--text-base);
-  line-height: 1.6;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 main {
@@ -31,23 +40,42 @@ main {
   padding-inline: var(--sp-5);
 }
 
+/* Headings are set in the mono display face - gramdown's output is plain text and code, so the
+   type that names it looks like it belongs in an editor. Tight leading and negative tracking
+   keep the mono from reading loose at large sizes; page-level rules pick the size. */
 h1,
 h2,
-h3 {
+h3,
+h4 {
+  margin: 0;
   font-family: var(--f-display);
   font-weight: 600;
+  line-height: 1.15;
   letter-spacing: -0.02em;
-  line-height: 1.2;
 }
 
+h1 {
+  letter-spacing: -0.035em;
+}
+
+/* Body links carry a quiet resting underline (never colour alone - there is no link colour in
+   this system), promoted to a firm ink underline on hover/focus. Prose.astro repeats this for
+   markdown-authored links once it's restyled in 8.10.6. */
 a {
-  color: var(--accent);
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--underline);
   text-decoration-thickness: 1px;
   text-underline-offset: 0.15em;
+  transition:
+    text-decoration-color var(--dur-fast) var(--ease-out),
+    text-decoration-thickness var(--dur-fast) var(--ease-out);
 }
 
-a:hover {
-  color: var(--accent-strong);
+a:hover,
+a:focus-visible {
+  text-decoration-color: var(--ink);
+  text-decoration-thickness: 2px;
 }
 
 code {
@@ -60,8 +88,14 @@ code {
 }
 
 :focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--ink);
   outline-offset: 2px;
+}
+
+/* Selecting text tints it the "source" green - a small nod to what the tool does to the words
+   you drop in. */
+::selection {
+  background: color-mix(in srgb, var(--source) 22%, transparent);
 }
 
 .sr-only {
@@ -76,10 +110,10 @@ code {
   border: 0;
 }
 
-/* Shiki (see astro.config.mjs) inlines the light-plus colours and emits a --shiki-dark*
-   custom property per token. Under the dark palette, swap every token to its dark value.
-   Only prefers-color-scheme for now — an explicit theme toggle is 8.10, at which point a
-   :root[data-theme="dark"] variant joins this block. */
+/* Shiki (see astro.config.mjs) inlines the light-plus colours and emits a --shiki-dark* custom
+   property per token. Under the dark palette, swap every token to its dark value. Only
+   prefers-color-scheme for now - an explicit theme toggle is deferred past launch, at which
+   point a :root[data-theme="dark"] variant joins this block. */
 @media (prefers-color-scheme: dark) {
   .astro-code,
   .astro-code span {

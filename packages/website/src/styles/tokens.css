@@ -1,59 +1,100 @@
 /*
  * Design tokens - the single source of truth for colour, type, spacing and motion. Components
- * read these rather than hard-coding values. Loosely borrowed from ../tobysmith.uk but kept
- * self-contained (no dependency on that project).
+ * read these rather than hard-coding values.
  *
- * Milestone 8.1 ships light + dark via prefers-color-scheme only; an explicit toggle is a
- * later polish step (8.10), at which point a :root[data-theme="dark"] block joins the media
- * query and the two must stay in sync.
+ * The system (milestone 8.10.1): near-monochrome - warm paper, true ink - with a single
+ * Grammarly-derived green as the ONLY chroma, reserved for "source / input" affordances (the
+ * drop zone, the "from Grammarly" side of a before/after). Actions, links and the converted
+ * "output" side stay ink-on-paper. The idea: colour drains out as Grammarly's formatting is
+ * stripped. See docs/milestone-8.10-polish.md.
+ *
+ * Light + dark ship via prefers-color-scheme only; an explicit toggle is deferred past launch,
+ * at which point a :root[data-theme="dark"] block joins the media query and the two must stay
+ * in sync.
  */
 
 :root {
-  --bg: #f6f7f9;
-  --surface: #ffffff;
-  --ink: #16181d;
-  --muted: #6b7280;
-  --border: #e1e4e8;
-  --accent: #1e90ff;
-  --accent-strong: #0f6fd1;
+  /* --- colour: light (the default) --- */
+  --paper: #fbfaf7; /* page ground - barely-warm off-white, deliberately not a cool grey */
+  --surface: #ffffff; /* raised panels: the tray, code frames */
+  --ink: #1b1a18; /* body text, headings, actions, links - the "output" side */
+  --muted: #6b6a65; /* secondary text */
+  --border: #e5e2db; /* hairline rules and frames */
+  --underline: #cfccc4; /* resting underline on body links; hover promotes it to --ink */
+
+  --source: #0c8c6a; /* "input" affordance: drop-zone border/fill, the Grammarly side */
+  --source-ink: #06603f; /* green set as text on paper (meets AA) */
+  --source-wash: #edf5f1; /* faint green fill behind a drop target */
+
+  --error: #b3312a;
+
+  /* Legacy aliases - components not yet restyled in 8.10 still read --accent*. They resolve to
+     ink so nothing looks broken mid-milestone; 8.10.5 (converter) and 8.10.6 (Prose/docs)
+     delete the last references, then these can go. */
+  --accent: var(--ink);
+  --accent-strong: #3d3a34;
 
   color-scheme: light;
 
-  --f-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
-  --f-body: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --f-mono: ui-monospace, "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+  /* --- type --- */
+  --f-display: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --f-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 
+  --text-xs: 0.8125rem;
   --text-sm: 0.9375rem;
   --text-base: 1.0625rem;
-  --text-lg: 1.25rem;
-  --text-xl: 1.5rem;
-  --text-3xl: 2.5rem;
+  --text-lg: 1.1875rem;
+  --text-xl: 1.4375rem;
+  --text-2xl: 1.75rem;
+  --text-3xl: 2.25rem;
+  --text-4xl: 3rem;
 
-  --shell: 60rem;
+  /* --- layout --- */
+  --measure: 38rem; /* prose column - a readable line length (~68ch at --text-base) */
+  --shell: 56rem; /* page shell */
 
+  /* --- space: 4px base unit --- */
+  --sp-1: 0.25rem;
   --sp-2: 0.5rem;
   --sp-3: 0.75rem;
   --sp-4: 1rem;
   --sp-5: 1.5rem;
   --sp-6: 2rem;
   --sp-7: 3rem;
+  --sp-8: 4rem;
   --sp-9: 6rem;
 
-  --radius: 6px;
+  --radius: 3px;
 
+  /* --- motion --- */
   --dur-fast: 120ms;
+  --dur-base: 220ms;
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/*
+ * Dark palette - a warm near-black, the light theme's counterpart (not an inversion). Only the
+ * colour roles change; type, space and motion are shared. When the explicit toggle lands this
+ * block splits into :root[data-theme="dark"] + a guarded media query (see ../tobysmith.uk).
+ */
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #10131a;
-    --surface: #191d26;
-    --ink: #e7e9ec;
-    --muted: #8b94a3;
-    --border: #2a2f3a;
-    --accent: #4da6ff;
-    --accent-strong: #7cbeff;
+    --paper: #14130f;
+    --surface: #1c1b17;
+    --ink: #eae7df;
+    --muted: #9a968b;
+    --border: #302e28;
+    --underline: #45423b;
+
+    --source: #2fbe91;
+    --source-ink: #57d2a9;
+    --source-wash: #17241f;
+
+    --error: #f0776e;
+
+    --accent: var(--ink);
+    --accent-strong: #cfccc4;
 
     color-scheme: dark;
   }
