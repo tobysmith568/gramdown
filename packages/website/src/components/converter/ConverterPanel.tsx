@@ -27,7 +27,7 @@ const sampleId = "__sample__";
  * converted files on the left, the selected file's Markdown (with the syntax
  * dimmed) on the right, and a status bar underneath. It shares the site-wide
  * queue signal from `lib/converter/store`, so a file dropped anywhere on the
- * page — caught by `DropOverlay` — shows up here too.
+ * page - caught by `DropOverlay` - shows up here too.
  *
  * A baked-in worked example is always pinned to the bottom of the list so a
  * cold visitor sees real converter output without doing anything.
@@ -52,7 +52,7 @@ const ConverterPanel = ({ sample }: Props) => {
   }, []);
   const ready = hydrated.value || waitedTooLong;
 
-  // Select the newest file as it arrives. Scroll to it too — but not for the
+  // Select the newest file as it arrives. Scroll to it too - but not for the
   // queue that rehydrates from storage in the first moment after mount (that
   // would yank the page on load); only for a genuine drop while the visitor is
   // here.
@@ -85,7 +85,7 @@ const ConverterPanel = ({ sample }: Props) => {
     }
   }, [queue, selectedId]);
 
-  // The sample tracks the "guess code languages" toggle too — both variants are
+  // The sample tracks the "guess code languages" toggle too - both variants are
   // produced at build time (see lib/converter/sample.ts).
   const sampleMarkdown = guessing ? sample.markdownGuessed : sample.markdown;
 
@@ -118,7 +118,7 @@ const ConverterPanel = ({ sample }: Props) => {
 
   const [copied, setCopied] = useState(false);
 
-  // Announce progress for screen readers — the pane shows it visually, but a
+  // Announce progress for screen readers - the pane shows it visually, but a
   // drop otherwise moves the selection and lands silently.
   const [announcement, setAnnouncement] = useState("");
   useEffect(() => {
@@ -131,7 +131,7 @@ const ConverterPanel = ({ sample }: Props) => {
       setAnnouncement(`${selected.sourceName} could not be converted`);
     } else if (selected.status === "ready" && selected.markdown !== null) {
       const lineCount = countLines(selected.markdown);
-      setAnnouncement(`${selected.outputName} ready — ${lineCount} lines of Markdown`);
+      setAnnouncement(`${selected.outputName} ready: ${lineCount} lines of Markdown`);
     }
   }, [selected.id, selected.status, selected.markdown, selected.sourceName, selected.outputName]);
 
@@ -264,7 +264,7 @@ const ConverterPanel = ({ sample }: Props) => {
           <span>Markdown</span>
           {selected.markdown !== null && <span>{countLines(selected.markdown)} lines</span>}
           <span class={styles.statusGrow} />
-          <span class={styles.statusOk}>converted locally — nothing uploaded</span>
+          <span class={styles.statusOk}>converted locally, nothing uploaded</span>
         </div>
       </div>
     </div>

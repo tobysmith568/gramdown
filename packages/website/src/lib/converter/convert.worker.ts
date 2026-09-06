@@ -4,13 +4,13 @@
 // The dedicated Web Worker that runs `@gramdown/core`'s `convert()` off the main
 // thread, and (same worker, same bundle) zips a batch of finished Markdown files
 // with `jszip`. `mammoth` is old CJS that pokes at globals and a large document
-// can take a noticeable moment to parse — both reasons to keep the pipeline out
+// can take a noticeable moment to parse - both reasons to keep the pipeline out
 // of the UI thread. `jszip` is already in this chunk because `@gramdown/core`
 // pulls it in for the preprocess pass, so the "download all" path costs no extra
 // bytes. Vite bundles all of it (and mammoth's browser build, picked up via
 // mammoth's own `package.json#browser` field) into this worker chunk.
 
-import "./dom-shim"; // installs window.DOMParser for turndown — keep first
+import "./dom-shim"; // installs window.DOMParser for turndown - keep first
 import { convert } from "@gramdown/core";
 import { languageGuesser } from "@gramdown/core/guess-lang";
 import JSZip from "jszip";

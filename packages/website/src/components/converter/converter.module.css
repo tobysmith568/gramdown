@@ -1,11 +1,11 @@
 /*
- * Styling for the client-side converter islands in this folder — Preact `.tsx`
+ * Styling for the client-side converter islands in this folder - Preact `.tsx`
  * components, so they can't carry Astro-scoped `<style>`. These rules are a CSS
  * module, imported for their hashed class names by `DropOverlay` (the drag
  * scrim), `ConverterPanel` (the index-page editor) and `DropHint` (the
  * site-wide corner hint). The generic `.sr-only` helper lives in `styles/global.css`.
  *
- * The editor keeps its own palette (the `--e-*` tokens) — cooler and more
+ * The editor keeps its own palette (the `--e-*` tokens) - cooler and more
  * neutral than the warm page, so it reads as a code surface dropped into the
  * document. It still follows the site's light/dark switch (see the dark block).
  */
@@ -38,7 +38,7 @@
   animation: editorIn var(--dur-base) var(--ease-out) both;
 }
 
-/* Placeholder held in the layout while the saved queue loads — same footprint as
+/* Placeholder held in the layout while the saved queue loads - same footprint as
    the editor, so there's no shift when it swaps in. */
 .editorLoading {
   display: grid;

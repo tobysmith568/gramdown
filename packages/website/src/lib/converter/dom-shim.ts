@@ -1,7 +1,7 @@
 // A dedicated Web Worker has no `document` and no `DOMParser`, but turndown (via
 // `@gramdown/core`) needs to parse an HTML string into a DOM. turndown's browser
 // build looks for `window.DOMParser`; not finding it in a worker, it falls back
-// to code that dereferences `document` — hence `ReferenceError: document is not
+// to code that dereferences `document` - hence `ReferenceError: document is not
 // defined`.
 //
 // Give it exactly what it probes for: a `window.DOMParser` whose `parseFromString`
@@ -21,7 +21,7 @@ class DominoDOMParser {
 }
 
 // `globalThis` is typed with the full DOM `Window` here; the double assertion is
-// deliberate — in a worker `window` is genuinely absent until this runs.
+// deliberate - in a worker `window` is genuinely absent until this runs.
 const shimTarget = globalThis as unknown as { window?: { DOMParser?: unknown } };
 
 shimTarget.window ??= {};

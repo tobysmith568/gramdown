@@ -1,62 +1,63 @@
 ---
 title: Overview
-description: What gramdown is, how to install it, and how to run your first conversion.
+description: What gramdown is, the ways to run it, and your first conversion.
 order: 1
 ---
 
-**gramdown** converts a Grammarly `.docx` export into clean, GitHub-Flavored
-Markdown. It is built for one job — Grammarly's export, with its Courier New code
-paragraphs, non-breaking-space indentation and auto-underlined links — and leans
-on those assumptions rather than trying to be a general-purpose `.docx`
-converter.
+**gramdown** converts the `.docx` file you get from Grammarly's export into
+clean, GitHub-Flavored Markdown.
 
-It is pure JavaScript: no pandoc, no system dependencies, and the same
-conversion code runs in Node, in a standalone binary, and entirely in your
-browser on the [home page](/).
+It is built for that one file. Grammarly's export has a handful of quirks (code
+set in a plain monospace font with no language, links that arrive underlined,
+indentation made of invisible characters), and gramdown is designed around them
+rather than trying to be a general-purpose `.docx` converter. [How it
+works](/docs/how-it-works) has the detail.
 
-## Install
+## Ways to run it
 
-### The CLI, globally
+### npm
 
 ```sh
 npm install -g gramdown
 gramdown draft.docx -o draft.md
 ```
 
-### Without installing
+Or without installing anything:
 
 ```sh
 npx gramdown draft.docx -o draft.md
 ```
 
-### A standalone binary
+Every flag and exit code is in the [CLI reference](/docs/cli).
 
-Download a self-contained executable for Linux, macOS or Windows — no Node, Bun
-or npm required. [Downloads](/docs/downloads) lists each one with its size and
-the current version.
+### Standalone binary
+
+A single file that runs on its own, for Linux, macOS or Windows, with nothing
+else to install. [Downloads](/docs/downloads) lists each one with its size.
 
 ### In the browser
 
-Nothing to install: drop a `.docx` anywhere on this site and it converts locally.
-See [Browser converter](/docs/browser-converter).
+Nothing to install: drop a `.docx` anywhere on this site and it converts on your
+device. Nothing is uploaded. See [Browser converter](/docs/browser-converter).
+
+### From your own code
+
+```sh
+npm install @gramdown/core
+```
+
+`@gramdown/core` is the conversion engine behind all of the above. See the
+[convert() API](/docs/api).
 
 ## Your first conversion
 
 ```sh
-# write Markdown to stdout
+# print the Markdown to your terminal
 gramdown draft.docx
 
 # write it to a file instead
 gramdown draft.docx -o draft.md
 
-# also guess a language for each code fence (always double-check these)
+# also guess a language for each code block (always double-check these)
 gramdown draft.docx -o draft.md --guess-lang
 ```
-
-## Where to go next
-
-- [CLI reference](/docs/cli) — every flag, exit code and message.
-- [convert() API](/docs/api) — using `@gramdown/core` from your own code.
-- [How it works](/docs/how-it-works) — the pipeline and its known limitations.
-- [Browser converter](/docs/browser-converter) — the in-browser tool and its
-  privacy story.

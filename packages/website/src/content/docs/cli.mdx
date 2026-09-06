@@ -1,20 +1,21 @@
 ---
 title: CLI reference
-description: The gramdown command — its positional argument, flags, output, warnings and exit codes.
+description: "The gramdown command: its positional argument, flags, output, warnings and exit codes."
 order: 2
 ---
+
+The `gramdown` command converts one Grammarly `.docx` export to Markdown and, by
+default, prints it to your terminal.
 
 ```
 gramdown <input.docx> [options]
 ```
 
-Convert a Grammarly `.docx` export to Markdown, written to stdout by default.
-
 ## Positional argument
 
 ### `<input.docx>`
 
-The Grammarly export to convert. The path must end in `.docx` — gramdown rejects
+The Grammarly export to convert. The path must end in `.docx`; gramdown rejects
 anything else before it reads a byte. Required, unless `--help` or `--version` is
 passed.
 
@@ -32,12 +33,12 @@ passed.
 Grammarly records no language anywhere in the `.docx`, so this is a pure
 heuristic (backed by [`flourite`](https://www.npmjs.com/package/flourite)).
 It is reliable for things like JSON and shell, shakier on JavaScript-vs-TypeScript,
-and **always needs a human pass**. That is why it is off by default — a bare
-fence is more honest than a confidently wrong one.
+and **always needs a human pass**. That is why it is off by default: a bare fence
+is more honest than a confidently wrong one.
 
 ## Output
 
-Without `-o`, the Markdown goes to **stdout** and nothing else does — so
+Without `-o`, the Markdown goes to **stdout** and nothing else does, so
 `gramdown draft.docx | pbcopy` and `gramdown draft.docx > draft.md` both work
 cleanly.
 
@@ -45,10 +46,9 @@ With `-o <file>`, the Markdown is written there and stdout stays empty.
 
 ## Warnings
 
-Any warning mammoth raises while reading the document (an unrecognised style, a
-dropped element) is printed to **stderr**, prefixed `warning:`, and does not
-change the exit code. Conversion still completes and the Markdown is still
-written.
+Any warning raised while reading the document (an unrecognised style, a dropped
+element) is printed to **stderr**, prefixed `warning:`, and does not change the
+exit code. Conversion still completes and the Markdown is still written.
 
 ## Exit codes
 

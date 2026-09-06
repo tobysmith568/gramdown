@@ -4,7 +4,7 @@ import styles from "./converter.module.css";
 
 /**
  * A full-viewport scrim shown while a file is dragged anywhere over the page.
- * Mounted once, site-wide, from `BaseLayout` — drag-and-drop works on every
+ * Mounted once, site-wide, from `BaseLayout` - drag-and-drop works on every
  * page, not just the index. The click/keyboard fallback (a real file `<input>`)
  * lives in the editor panel on the index (`ConverterPanel`).
  */

@@ -1,52 +1,26 @@
 ---
 title: Browser converter
 description: How this site converts .docx files locally, where they are stored, and how to clear them.
-order: 6
+order: 4
 ---
 
-Every page on this site can convert a Grammarly `.docx` **in your browser** —
-drop one anywhere on the page, or use the file picker. Nothing is uploaded.
-
-## How it runs
-
-- The same `@gramdown/core` `convert()` from the [API](/docs/api) runs in a
-  dedicated **Web Worker**, so a large document never freezes the page.
-- A drop target covers every page. A drop on the home page opens straight in the
-  converter; a drop on any other page carries the file to the home page and
-  opens it there. Non-`.docx` files are rejected with a message.
-- The converter itself is the panel on the [home page](/): a list of your
-  converted files on the left, the selected file's Markdown on the right, with
-  **Copy** and **Download** per file and **Download all** (a `.zip`) once you
-  have more than one. The button bottom-right of every page shows how many files
-  you have and links back to the panel.
-
-## Guessing code languages
-
-Grammarly records no language for a code block, so the converter can add a
-**guessed** one. The **Guess code languages** toggle in the panel is on by
-default here (it is off in the CLI). Flipping it re-labels the files already
-converted — no need to drop them again — and updates what **Copy** and
-**Download** produce. The guesses still need a human check.
-
-The choice is remembered in your browser's `localStorage` as a single on/off
-flag.
+Every page on this site can convert a Grammarly `.docx` **in your browser**. Drop
+one anywhere on the page, or use the file picker. Nothing is uploaded.
 
 ## Where your files are stored
 
-State has to survive navigating between pages, so it is kept in your browser's
-**IndexedDB** (database `gramdown-conversions`). Each record holds the output
-Markdown and the original `.docx` bytes, so re-labelling languages works after a
-reload.
-
-- Only the **25 most recent** conversions are kept, or about **25 MB** of
-  retained data — whichever limit is reached first — evicting oldest first.
-- Other open tabs are told of changes via a `BroadcastChannel` and re-read the
-  store, so the list stays consistent across tabs.
-- If your browser blocks storage (private mode, an extension, a full disk), the
-  converter still works — the list just won't persist across page loads.
+All files are kept locally on your machine. They are never uploaded anywhere.
 
 ## Clearing everything
 
 Remove files one at a time with the delete button on each row. To wipe the whole
 store and the saved preference, clear this site's data in your browser's normal
 site-data controls.
+
+## Guessing code languages
+
+Grammarly records no language for a code block, so the converter can add a
+**guessed** one. The **Guess code languages** toggle in the panel is on by
+default here (it is off in the CLI). Flipping it re-labels the files already
+converted (no need to drop them again) and updates what **Copy** and **Download**
+produce. The guesses still need a human check.

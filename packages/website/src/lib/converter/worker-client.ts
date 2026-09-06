@@ -8,11 +8,11 @@ export interface ConversionResult {
 
 /**
  * A typed wrapper around the conversion Web Worker. One instance owns one
- * worker and multiplexes concurrent requests — `convert()` and `zip()` alike —
+ * worker and multiplexes concurrent requests - `convert()` and `zip()` alike -
  * over it by request id.
  *
  * This is also the seam where a later `SharedWorker` progressive enhancement
- * would branch (see the milestone doc) — nothing downstream touches the worker
+ * would branch (see the milestone doc) - nothing downstream touches the worker
  * directly.
  */
 export class ConversionClient {

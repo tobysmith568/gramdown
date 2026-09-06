@@ -4,7 +4,7 @@
  * (via `idb-keyval`) is the source of truth; `store.ts` rehydrates from it on
  * mount and writes back on every mutation.
  *
- * Everything here fails soft — private-browsing modes, a full disk, or a
+ * Everything here fails soft - private-browsing modes, a full disk, or a
  * storage-blocking extension must degrade to "the queue just doesn't persist",
  * never to a thrown error the UI has to handle.
  */
@@ -12,7 +12,7 @@
 import { clear, createStore, get, set } from "idb-keyval";
 import type { Conversion } from "./store";
 
-/** The persisted shape is the in-memory one verbatim — every field structured-clones. */
+/** The persisted shape is the in-memory one verbatim - every field structured-clones. */
 export type ConversionRecord = Conversion;
 
 /** Keep at most this many records, newest first. */
@@ -21,7 +21,7 @@ export const maxRecords = 25;
 /** …or this many bytes of retained source + Markdown, whichever bites first. */
 export const maxRetainedBytes = 25 * 1024 * 1024;
 
-// One IndexedDB database (`gramdown-conversions`), one object store, one key —
+// One IndexedDB database (`gramdown-conversions`), one object store, one key -
 // the whole queue is a single value. `createStore` runs eagerly, so it lives up
 // here rather than down with the helpers that read it.
 const conversionStore = createStore("gramdown-conversions", "conversions");
@@ -57,7 +57,7 @@ export const saveConversions = async (conversions: readonly Conversion[]): Promi
   }
 };
 
-/** Wipe the store entirely — backs the tray's "Clear all". */
+/** Wipe the store entirely - backs the tray's "Clear all". */
 export const clearStore = async (): Promise<void> => {
   if (!storageAvailable()) {
     return;
@@ -71,7 +71,7 @@ export const clearStore = async (): Promise<void> => {
 
 /**
  * Trim to the retention budget, evicting the oldest finished records first.
- * In-flight (`converting`) records are always kept regardless of the cap — they
+ * In-flight (`converting`) records are always kept regardless of the cap - they
  * still count toward the byte total, but they're never the ones dropped.
  */
 export const applyRetention = (conversions: readonly Conversion[]): Conversion[] => {

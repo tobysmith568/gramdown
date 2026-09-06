@@ -63,8 +63,11 @@ const hrefFor = (id: string) => (id === "index" ? "/docs" : `/docs/${id}`);
 
   .sidebar-title {
     margin: 0 0 var(--sp-3);
+    padding-left: calc(var(--sp-4) + 2px);
     font-family: var(--f-mono);
-    font-size: var(--text-sm);
+    font-size: var(--text-xs);
+    letter-spacing: 0.02em;
+    text-transform: lowercase;
     color: var(--muted);
   }
 
@@ -73,13 +76,16 @@ const hrefFor = (id: string) => (id === "index" ? "/docs" : `/docs/${id}`);
     padding: 0;
     list-style: none;
     display: grid;
-    gap: var(--sp-2);
+    gap: var(--sp-1);
   }
 
+  /* The list reads as a rail: each item sits behind a 2px marker channel that stays
+     transparent until the page is current, when it turns amber - the same current-page
+     language the Header uses. No box, no fill. */
   .sidebar a {
     display: block;
-    padding: var(--sp-2) var(--sp-3);
-    border-radius: var(--radius);
+    padding: var(--sp-2) 0 var(--sp-2) var(--sp-4);
+    border-left: 2px solid transparent;
     font-size: var(--text-sm);
     color: var(--muted);
     text-decoration: none;
@@ -91,10 +97,8 @@ const hrefFor = (id: string) => (id === "index" ? "/docs" : `/docs/${id}`);
   }
 
   .sidebar a[aria-current="page"] {
-    color: var(--ink);
-    background: var(--surface);
-    border: 1px solid var(--border);
-    padding-block: calc(var(--sp-2) - 1px);
+    color: var(--brand-ink);
+    border-left-color: var(--brand);
   }
 
   @media (min-width: 48rem) {

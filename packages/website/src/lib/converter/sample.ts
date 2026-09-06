@@ -4,7 +4,7 @@
  * run through `@gramdown/core` here at build time so the panel always shows
  * genuine converter output rather than a hand-copied approximation.
  *
- * Both variants are produced — with and without code-language guessing — so the
+ * Both variants are produced - with and without code-language guessing - so the
  * panel can switch between them live when the visitor toggles the checkbox, the
  * same as it does for a file they dropped.
  *

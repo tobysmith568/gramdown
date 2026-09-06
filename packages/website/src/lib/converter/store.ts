@@ -56,7 +56,7 @@ const persistDebounceMs = 150;
 let clientPromise: Promise<ConversionClient> | null = null;
 let channel: BroadcastChannel | null = null;
 let persistTimer: ReturnType<typeof setTimeout> | undefined;
-/** The exact array last written to storage — reference-compared to skip no-op saves. */
+/** The exact array last written to storage - reference-compared to skip no-op saves. */
 let lastPersisted: Conversion[] | null = null;
 
 /**
@@ -137,7 +137,7 @@ export const enqueueFiles = async (files: readonly File[]): Promise<void> => {
 /**
  * Persist the "guess code languages" preference and re-run every finished
  * conversion whose Markdown was produced the other way, from its retained
- * source bytes — no re-drop needed.
+ * source bytes - no re-drop needed.
  *
  * The re-run leaves the row's `status` on `ready` and swaps the Markdown in
  * place when it lands, so the editor shows a quiet live update rather than
@@ -219,7 +219,7 @@ const runConversion = async (
 
 /**
  * Re-convert a finished file with the other language-guessing setting, swapping
- * the Markdown in place without touching `status` — see `updateGuessLanguages`.
+ * the Markdown in place without touching `status` - see `updateGuessLanguages`.
  * A failure leaves the previous Markdown untouched.
  */
 const reguessLanguages = async (

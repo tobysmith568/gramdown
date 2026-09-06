@@ -1,13 +1,13 @@
 /**
  * Small, per-device UI preferences for the converter. `localStorage` (not
- * IndexedDB) — a single scalar read synchronously at island mount, and losing
+ * IndexedDB) - a single scalar read synchronously at island mount, and losing
  * it is inconsequential.
  */
 
 import { signal } from "@preact/signals";
 
 // `readFlag` and the key are read during this module's eager evaluation (the
-// `initialGuessLanguages` const below), so they sit above the export — `const`
+// `initialGuessLanguages` const below), so they sit above the export - `const`
 // bindings aren't hoisted. `writeFlag` is only touched inside the setter, so it
 // lives at the bottom.
 const guessLanguagesKey = "gramdown:guess-lang";
@@ -47,7 +47,7 @@ const writeFlag = (key: string, value: boolean): void => {
   try {
     globalThis.localStorage?.setItem(key, value ? "true" : "false");
   } catch {
-    // Private-browsing quota or a storage-blocking extension — the toggle still
+    // Private-browsing quota or a storage-blocking extension - the toggle still
     // works for this page, it just won't be remembered.
   }
 };

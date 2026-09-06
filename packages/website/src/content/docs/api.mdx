@@ -1,11 +1,11 @@
 ---
 title: convert() API
-description: Using @gramdown/core from your own code — convert(), its options, InvalidDocxError and the guess-lang subexport.
-order: 4
+description: "Using @gramdown/core from your own code: convert(), its options, InvalidDocxError and the guess-lang subexport."
+order: 5
 ---
 
 `@gramdown/core` is the conversion engine the CLI and this website are both thin
-wrappers around. It is pure and I/O-free — no `fs`, no paths, no `process` — so
+wrappers around. It is pure and I/O-free (no `fs`, no paths, no `process`), so
 the same call works in Node, in a bundler, and in a Web Worker.
 
 ```sh
@@ -24,18 +24,18 @@ GitHub-Flavored Markdown string. In the browser, pass
 
 ### `ConvertOptions`
 
-| Property        | Type                        | Description                                                                                       |
-| --------------- | --------------------------- | ------------------------------------------------------------------------------------------------- |
-| `guessLanguage` | `LanguageGuesser`           | Called with each code block's text to produce a fence info string. Unset means unlabelled fences. |
-| `onWarning`     | `(warning: string) => void` | Receives every warning mammoth raised while reading the document.                                 |
+| Property        | Type                        | Description                                                                                          |
+| --------------- | --------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `guessLanguage` | `LanguageGuesser`           | Called with each code block's text to produce a fence info string. Unset means unlabelled fences.    |
+| `onWarning`     | `(warning: string) => void` | Receives every warning raised while reading the document (an unrecognised style, a dropped element). |
 
-`LanguageGuesser` is `(code: string) => string | undefined` — return the
-language name, or `undefined` to leave the fence bare.
+`LanguageGuesser` is `(code: string) => string | undefined`: return the language
+name, or `undefined` to leave the fence bare.
 
 ### `InvalidDocxError`
 
 Thrown when the input is not a readable `.docx`: the bytes are empty, the archive
-cannot be opened, or it is not a Word document. Nothing else is thrown — a
+cannot be opened, or it is not a Word document. Nothing else is thrown; a
 successful parse always resolves, warnings and all.
 
 ## `@gramdown/core/guess-lang`

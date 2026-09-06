@@ -6,7 +6,7 @@ export const getStaticPaths = async () => {
   const docs = await getCollection("docs");
   const navItems = docs.sort((a, b) => a.data.order - b.data.order);
 
-  // `index` is the section landing page — Astro maps `slug: undefined` on a rest
+  // `index` is the section landing page - Astro maps `slug: undefined` on a rest
   // param to the bare `/docs` route.
   const paths = navItems.map(entry => ({
     params: { slug: entry.id === "index" ? undefined : entry.id },

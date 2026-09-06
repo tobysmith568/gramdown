@@ -1,87 +1,107 @@
 ---
 title: How it works
-description: The preprocess → mammoth → turndown → postprocess pipeline, the Grammarly assumptions it makes, and its known limitations.
-order: 5
+description: What a Grammarly .docx export looks like, the four stages gramdown runs it through, and the limitations that come with it.
+order: 6
 ---
 
-## Why not a general-purpose converter?
+gramdown does one job: turn the `.docx` file Grammarly hands you when you export
+a document into Markdown. This page covers what that file looks like, how the
+conversion works, and where it has limits.
 
-The obvious tool for "turn a `.docx` into Markdown" is [pandoc](https://pandoc.org)
-— it converts between dozens of document formats. But Grammarly's export is not a
-normal `.docx`: it has no "Code" style (code is just paragraphs in a monospace
-font), it indents with non-breaking spaces, and Word auto-underlines every link.
-A general converter takes those at face value and the result needs a lot of
-hand-cleaning, the code blocks especially. gramdown is built for this one export
-and leans on its quirks instead of fighting them — and it does it in pure
-JavaScript, so there is no separate binary to install.
+## What a Grammarly export looks like
 
-## The pipeline
+A Grammarly export is a Word document, but not a tidy one. It is consistent in a
+few specific, awkward ways, and gramdown is built around exactly these:
 
-gramdown runs a Grammarly `.docx` through four stages:
+- **Code is body text in a monospace font.** Grammarly sets code in Courier New
+  (the font it uses for anything it treats as code) but leaves it as an ordinary
+  paragraph. There is no "Code" style, no language, no syntax colours: nothing
+  marks it as code except the font.
+- **Code is indented with non-breaking spaces.** The invisible `U+00A0`
+  character, not ordinary spaces or a tab. Paste that text elsewhere and the
+  indentation collapses.
+- **Every link is underlined.** Word underlines hyperlinks automatically, whether
+  or not anyone intended it.
+
+A converter that takes this document at face value produces Markdown that needs a
+lot of hand-cleaning, the code blocks worst of all. gramdown assumes it is always
+looking at a Grammarly export and reads those quirks as the structure they stand
+in for.
+
+## The four stages
+
+gramdown runs the file through four stages:
 
 ```
 .docx bytes
-  → preprocess   rewrite word/document.xml in memory
-  → mammoth      .docx → semantic HTML
-  → turndown     HTML → GitHub-Flavored Markdown
-  → postprocess  final tidy-up
-  → Markdown string
+   │
+   │  preprocess    expose the document's structure
+   │  mammoth       .docx  →  HTML
+   │  turndown      HTML  →  Markdown
+   │  postprocess   tidy up the Markdown
+   ▼
+Markdown string
 ```
 
-## The Grammarly assumptions
-
-Grammarly's export is consistent in a few specific, awkward ways, and gramdown is
-built around them:
-
-- **Code is Courier New body text.** Grammarly exports code as ordinary
-  paragraphs set in Courier New — no "Code" style, no language, no colours.
-- **Code is indented with non-breaking spaces** (`U+00A0`), which don't survive a
-  copy-paste as real indentation.
-- **Every hyperlink is underlined** by Word automatically, whether or not the
-  underline was intentional.
-
-## The stages
+`mammoth` and `turndown` are libraries: one turns a `.docx` into simple HTML, the
+other turns HTML into GitHub-Flavored Markdown. `preprocess` and `postprocess`
+are gramdown's own work on either side of them.
 
 ### Preprocess
 
-mammoth deliberately ignores direct formatting and only acts on _named_ styles,
-so gramdown rewrites `word/document.xml` first (unzipping and rezipping the
-archive with `jszip`): every all-monospace paragraph is tagged with a "Source
-Code" paragraph style, and monospace runs inside prose get a character style.
-Consecutive code paragraphs — blank lines included — are merged so they become
-one block rather than many. This is where "Courier New" turns into something
-mammoth can see.
+mammoth (the next stage) deliberately ignores direct formatting like fonts and
+colours and only acts on _named_ styles. So gramdown rewrites the document first:
+it unzips the `.docx`, edits `word/document.xml`, and rezips it (with a library
+called jszip). Every all-monospace paragraph is tagged with a "Source Code"
+paragraph style, and monospace stretches inside normal prose get a character
+style. Consecutive code paragraphs, blank lines included, are merged into a
+single block. After this step, the code Grammarly left as plain Courier New
+paragraphs is something the next stage can recognise.
 
 ### mammoth
 
-Converts the rewritten `.docx` to semantic HTML. Because it works from styles
-rather than direct formatting, the injected styles become `<pre>` and `<code>`,
-and Word's automatic link underline mostly disappears on its own — a `<u>` that
-_was_ deliberate is re-enabled through the style map and kept.
+[mammoth](https://github.com/mwilliamson/mammoth.js) converts the rewritten
+`.docx` into simple, semantic HTML. Because it works from styles rather than
+formatting, the styles injected in the previous step come out as `<pre>` and
+`<code>` elements, and Word's automatic link underline mostly falls away on its
+own. An underline that _was_ deliberate is kept, through mammoth's style map.
 
 ### turndown
 
-HTML to Markdown, with `turndown-plugin-gfm` for tables and the rest of GFM.
-Configured for ATX (`#`) headings, fenced ` ``` ` code blocks, `-` bullets,
-`_`/`**` emphasis, inlined links, and **no line wrapping** — one line per
-paragraph. `<u>`, `<sub>` and `<sup>` are kept as inline HTML, since GFM has no
-syntax for them. A custom rule handles mammoth's bare `<pre>` (no inner
-`<code>`), and the non-breaking-space indentation is swapped back to real spaces
-here so the code is pasteable.
+[turndown](https://github.com/mixmark-io/turndown) converts that HTML into
+Markdown, with the `turndown-plugin-gfm` add-on for tables and the rest of
+GitHub-Flavored Markdown. It is configured for `#` headings, fenced ` ``` ` code
+blocks, `-` bullets, `_` and `**` for emphasis, inline links, and no line
+wrapping (one line per paragraph). Underline, subscript and superscript are kept
+as inline HTML tags, since Markdown has no syntax for them. The non-breaking-space
+indentation inside code is swapped back to real spaces here, so the code is safe
+to copy.
 
 ### Postprocess
 
-Collapses runs of blank lines to at most one, trims trailing whitespace, and
-ensures a single final newline — while leaving the insides of code blocks
-exactly as they are, because their blank lines and spacing are part of the code.
+A final pass over the Markdown: runs of blank lines collapse to one, trailing
+whitespace is trimmed, and the file ends with exactly one newline. The insides of
+code blocks are left exactly as they are: their blank lines and spacing are part
+of the code.
+
+## Why not pandoc?
+
+[pandoc](https://pandoc.org) is the usual answer to "convert a document to
+Markdown". It handles dozens of formats and it is very good at it. But it is a
+general-purpose tool, so it reads a Grammarly export literally: monospace
+paragraphs stay paragraphs, the non-breaking-space indentation comes through
+unchanged, every link keeps its underline. The result compiles but reads badly,
+and cleaning up the code blocks by hand is most of the work.
+
+gramdown only has to handle one input, so it can do the opposite: treat those
+quirks as signal. It is also plain JavaScript with no system dependencies, so
+there is nothing to install alongside it. pandoc is a separate binary.
 
 ## Known limitations
 
-- **No language on code fences.** Grammarly records none, so there is nothing to
-  recover. `--guess-lang` (CLI) / `guessLanguage` (API) is a heuristic guess that
-  always needs a human pass; without it, fences are bare.
-- **Courier New that isn't code** would be misdetected as a code block. This is
-  accepted: Grammarly only ever uses Courier New for code formatting, so in
-  practice it doesn't happen.
+- **Code fences have no language.** Grammarly records none, so there is nothing
+  to recover. `--guess-lang` on the command line, or the `guessLanguage` option
+  in the [API](/docs/api), makes a heuristic guess that always needs a human
+  pass. Without it, fences are left bare.
 - **Underline, subscript and superscript** come through as inline HTML, not
-  Markdown — there is no GFM equivalent to convert them to.
+  Markdown. There is no GitHub-Flavored Markdown equivalent to convert them to.

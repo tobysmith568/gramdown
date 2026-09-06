@@ -17,7 +17,7 @@ const versionLine = releaseDownloads.version
 
 <figure class="downloads">
   <figcaption>
-    Self-contained executables from {versionLine} — no Node, Bun or npm required.
+    One file per platform, from {versionLine}. Nothing else to install.
   </figcaption>
   <table>
     <thead>
@@ -32,7 +32,7 @@ const versionLine = releaseDownloads.version
         releaseDownloads.platforms.map(platform => (
           <tr>
             <td>{platform.label}</td>
-            <td>{platform.sizeLabel ?? "—"}</td>
+            <td>{platform.sizeLabel ?? "n/a"}</td>
             <td>
               <a href={platform.downloadUrl}>Download</a>
             </td>

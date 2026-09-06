@@ -1,14 +1,13 @@
 ---
 title: Downloads
-description: Standalone gramdown binaries for Linux, macOS and Windows — no Node, Bun or npm required.
+description: Download gramdown as a single self-contained file for Linux, macOS or Windows, with nothing else to install.
 order: 3
 ---
 
 import Downloads from "../../components/Downloads.astro";
 
-Every release ships a single self-contained executable per platform. There is
-nothing to install alongside it — no Node, no Bun, no npm — so it works on a
-machine that has never had a JavaScript runtime.
+The download below is a single file that runs on its own. Save it, run it, and
+you can convert documents straight away.
 
 <Downloads />
 
@@ -22,7 +21,7 @@ machine that has never had a JavaScript runtime.
 ## Running it
 
 ```sh
-# macOS / Linux — make it executable, then run it
+# macOS / Linux: make it executable, then run it
 chmod +x gramdown-*
 ./gramdown-* draft.docx -o draft.md
 ```
@@ -31,9 +30,10 @@ On macOS the first run is blocked by Gatekeeper; allow it under **System
 Settings → Privacy & Security**, or remove the quarantine flag with
 `xattr -d com.apple.quarantine gramdown-*`.
 
-## Prefer a package manager?
+## Already have Node.js?
 
-If the machine has Node, the CLI installs the usual way and updates with it:
+If Node.js is set up on the machine, you can install the CLI with npm instead and
+update it the same way:
 
 ```sh
 npm install -g gramdown

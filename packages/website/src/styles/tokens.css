@@ -32,12 +32,6 @@
 
   --error: #b3312a;
 
-  /* Legacy aliases - `Prose` (docs) is the last consumer still reading --accent*. It resolves to
-     --brand-ink so nothing looks stuck in the pre-amendment palette; 8.10.6 (Prose/docs) removes
-     the last references, then these can go. */
-  --accent: var(--brand-ink);
-  --accent-strong: var(--brand-ink);
-
   color-scheme: light;
 
   /* --- type --- */
@@ -100,9 +94,6 @@
     --brand-ink: #f0c77a;
 
     --error: #f0776e;
-
-    --accent: var(--brand-ink);
-    --accent-strong: var(--brand-ink);
 
     color-scheme: dark;
   }

@@ -5,7 +5,7 @@ import DropOverlay from "./DropOverlay";
 
 /**
  * The single hydration island `BaseLayout` mounts on every page. It's just a
- * shell around the two site-wide pieces of converter UI — the full-page drag
+ * shell around the two site-wide pieces of converter UI - the full-page drag
  * scrim and the bottom-right drop hint. `DropOverlay` shares state through
  * `lib/converter/store` rather than through this tree and `DropHint` is inert,
  * so they could equally be two islands; one keeps the hydration cost and the
