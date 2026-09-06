@@ -1,68 +1,231 @@
 ---
+import HeroDropzone from "../components/converter/HeroDropzone";
 import BaseLayout from "../layouts/BaseLayout.astro";
 
+const repo = "https://github.com/tobysmith568/gramdown";
+const releases = `${repo}/releases`;
+
 const description =
-  "Convert Grammarly .docx exports to Markdown. Pure JavaScript, no pandoc, and a converter that runs entirely in your browser.";
+  "Convert Grammarly .docx exports to clean Markdown. Pure JavaScript, no pandoc, and a converter that runs entirely in your browser.";
+
+const quirks = [
+  {
+    title: "Courier New becomes code",
+    body: "Grammarly exports code as plain paragraphs set in Courier New — no styles, no language. gramdown spots them and emits fenced code blocks, merging consecutive lines into one block."
+  },
+  {
+    title: "Indentation you can paste",
+    body: "Grammarly indents code with non-breaking spaces. gramdown swaps them back to real spaces, so the code still runs when you copy it out."
+  },
+  {
+    title: "No underlined links",
+    body: "Word adds an automatic underline to every hyperlink. gramdown strips it while leaving deliberately-underlined body text alone."
+  },
+  {
+    title: "GFM, the way you'd write it",
+    body: "ATX (#) headings, fenced code blocks, one line per paragraph — never indented code, never wrapped prose."
+  }
+];
+
+const features = [
+  "Runs 100% in your browser — your documents never leave your device",
+  "Pure JavaScript: no pandoc, no system dependencies",
+  "A CLI (gramdown) and a library (@gramdown/core) for your own scripts",
+  "Standalone binaries for Linux, macOS and Windows — no Node needed",
+  "Open source under the ISC licence"
+];
+
+const links = [
+  { href: repo, label: "GitHub" },
+  { href: "https://www.npmjs.com/package/gramdown", label: "gramdown on npm" },
+  { href: "https://www.npmjs.com/package/@gramdown/core", label: "@gramdown/core on npm" },
+  { href: releases, label: "Release binaries" }
+];
 ---
 
 <BaseLayout title="gramdown" description={description}>
   <section class="wrap hero">
-    <h1>gramdown</h1>
+    <p class="kicker">Grammarly <code>.docx</code> → Markdown</p>
+    <h1>Clean Markdown from your Grammarly exports</h1>
     <p class="lead">{description}</p>
+    <HeroDropzone client:idle />
+    <p class="badge">Converts in your browser · nothing is uploaded</p>
+  </section>
 
-    <p class="status">This site is under construction. For now, grab the CLI:</p>
+  <section class="wrap band">
+    <h2>Why not just use pandoc?</h2>
+    <p class="band-lead">
+      Grammarly's <code>.docx</code> export has its own quirks, and a general-purpose converter mangles
+      them — the code blocks especially. gramdown is built for this one job.
+    </p>
+    <ul class="quirks">
+      {
+        quirks.map(({ title, body }) => (
+          <li>
+            <h3>{title}</h3>
+            <p>{body}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
 
-    <pre class="install"><code>npm install -g gramdown</code></pre>
+  <section class="wrap band">
+    <h2>Prefer the command line?</h2>
+    <div class="install">
+      <div class="snippet">
+        <h3>Install it globally</h3>
+        <pre><code>npm install -g gramdown
+gramdown draft.docx -o draft.md</code></pre>
+      </div>
+      <div class="snippet">
+        <h3>Run it once</h3>
+        <pre><code>npx gramdown draft.docx -o draft.md</code></pre>
+      </div>
+      <div class="snippet">
+        <h3>Grab a binary</h3>
+        <p>
+          Standalone executables for Linux, macOS and Windows are on the <a href={releases}
+            >releases page</a
+          > — no Node required.
+        </p>
+      </div>
+    </div>
+  </section>
 
+  <section class="wrap band">
+    <h2>What you get</h2>
+    <ul class="features">
+      {features.map(feature => <li>{feature}</li>)}
+    </ul>
     <p class="links">
-      <a href="https://github.com/tobysmith568/gramdown">GitHub</a>
-      <span aria-hidden="true">·</span>
-      <a href="https://www.npmjs.com/package/gramdown">gramdown on npm</a>
-      <span aria-hidden="true">·</span>
-      <a href="https://www.npmjs.com/package/@gramdown/core">@gramdown/core on npm</a>
+      {links.map(({ href, label }) => <a href={href}>{label}</a>)}
     </p>
   </section>
 </BaseLayout>
 
 <style>
   .hero {
-    padding-block: var(--sp-9);
+    padding-block: var(--sp-7) var(--sp-6);
+  }
+
+  .kicker {
+    margin: 0 0 var(--sp-3);
+    font-family: var(--f-mono);
+    font-size: var(--text-sm);
+    color: var(--muted);
   }
 
   h1 {
-    font-size: var(--text-3xl);
+    max-width: 20ch;
     margin: 0;
+    font-size: var(--text-3xl);
   }
 
   .lead {
-    max-width: 40rem;
+    max-width: 44rem;
     font-size: var(--text-lg);
     color: var(--muted);
   }
 
-  .status {
-    margin-top: var(--sp-6);
+  .badge {
+    margin-top: var(--sp-4);
+    font-size: var(--text-sm);
+    color: var(--muted);
+  }
+
+  .band {
+    padding-block: var(--sp-6);
+    border-top: 1px solid var(--border);
+  }
+
+  .band h2 {
+    margin: 0 0 var(--sp-4);
+    font-size: var(--text-xl);
+  }
+
+  .band-lead {
+    max-width: 44rem;
+    margin: 0 0 var(--sp-5);
+    color: var(--muted);
+  }
+
+  .quirks {
+    display: grid;
+    gap: var(--sp-5);
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .quirks h3 {
+    margin: 0 0 var(--sp-2);
+    font-size: var(--text-base);
+  }
+
+  .quirks p {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--muted);
   }
 
   .install {
+    display: grid;
+    gap: var(--sp-5);
+    grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  }
+
+  .snippet h3 {
+    margin: 0 0 var(--sp-3);
+    font-size: var(--text-base);
+  }
+
+  .snippet pre {
+    margin: 0;
+    padding: var(--sp-4);
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: var(--sp-4);
-    overflow-x: auto;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    font-family: var(--f-mono);
+    font-size: var(--text-sm);
   }
 
-  .install code {
+  .snippet pre code {
+    padding: 0;
     background: none;
     border: none;
+    font-size: inherit;
+  }
+
+  .snippet p {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--muted);
+  }
+
+  .kicker code,
+  .band-lead code {
     padding: 0;
+    background: none;
+    border: none;
+  }
+
+  .features {
+    display: grid;
+    gap: var(--sp-2);
+    margin: 0 0 var(--sp-5);
+    padding-left: var(--sp-5);
+    color: var(--muted);
   }
 
   .links {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--sp-3);
-    margin-top: var(--sp-6);
+    gap: var(--sp-4);
+    margin: 0;
     font-size: var(--text-sm);
   }
 </style>

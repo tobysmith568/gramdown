@@ -41,6 +41,101 @@
   font-size: var(--text-sm);
 }
 
+/* --- index-page hero dropzone ----------------------------------------- */
+
+.hero {
+  margin-top: var(--sp-6);
+}
+
+.heroZone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-7) var(--sp-5);
+  text-align: center;
+  border: 2px dashed var(--border);
+  border-radius: calc(var(--radius) * 2);
+  background: var(--surface);
+  cursor: pointer;
+  transition: border-color var(--dur-fast) var(--ease-out);
+}
+
+.heroZone:hover,
+.heroZone:focus-within {
+  border-color: var(--accent);
+}
+
+.heroZoneTitle {
+  font-family: var(--f-display);
+  font-size: var(--text-lg);
+  font-weight: 600;
+}
+
+.heroZoneTitle code {
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.heroZoneHint {
+  color: var(--muted);
+  font-size: var(--text-sm);
+}
+
+.heroNote {
+  margin: var(--sp-3) 0 0;
+  color: var(--muted);
+  font-size: var(--text-sm);
+}
+
+.heroResults {
+  margin: var(--sp-4) 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.heroResult {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.heroResultName {
+  flex: 1;
+  font-family: var(--f-mono);
+  font-size: var(--text-sm);
+  overflow-wrap: anywhere;
+}
+
+.heroResultState {
+  color: var(--muted);
+  font-size: var(--text-sm);
+}
+
+.heroResult button {
+  font: inherit;
+  font-size: var(--text-sm);
+  padding: 0.2em 0.7em;
+  color: var(--surface);
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.heroResult button:hover {
+  background: var(--accent-strong);
+  border-color: var(--accent-strong);
+}
+
 /* --- collapsed launcher ------------------------------------------------- */
 
 .fab {
