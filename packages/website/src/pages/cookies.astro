@@ -1,0 +1,20 @@
+---
+import { getCollection, render } from "astro:content";
+import PolicyLayout from "../layouts/PolicyLayout.astro";
+
+const policies = await getCollection("policies");
+const policy = policies.find(p => p.id === "cookies");
+
+if (!policy) {
+  throw new Error("Missing the 'cookies' entry in the policies collection");
+}
+
+const { Content } = await render(policy);
+---
+
+<PolicyLayout
+  title="Cookies Policy"
+  description="The gramdown website sets no cookies. This page explains what it does store."
+  lastUpdated={policy.data.lastUpdated}>
+  <Content />
+</PolicyLayout>

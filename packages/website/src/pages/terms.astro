@@ -1,0 +1,20 @@
+---
+import { getCollection, render } from "astro:content";
+import PolicyLayout from "../layouts/PolicyLayout.astro";
+
+const policies = await getCollection("policies");
+const policy = policies.find(p => p.id === "terms");
+
+if (!policy) {
+  throw new Error("Missing the 'terms' entry in the policies collection");
+}
+
+const { Content } = await render(policy);
+---
+
+<PolicyLayout
+  title="Terms & Conditions"
+  description="The terms and conditions for the gramdown website."
+  lastUpdated={policy.data.lastUpdated}>
+  <Content />
+</PolicyLayout>

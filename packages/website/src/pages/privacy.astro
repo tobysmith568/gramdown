@@ -1,0 +1,20 @@
+---
+import { getCollection, render } from "astro:content";
+import PolicyLayout from "../layouts/PolicyLayout.astro";
+
+const policies = await getCollection("policies");
+const policy = policies.find(p => p.id === "privacy");
+
+if (!policy) {
+  throw new Error("Missing the 'privacy' entry in the policies collection");
+}
+
+const { Content } = await render(policy);
+---
+
+<PolicyLayout
+  title="Privacy Policy"
+  description="How the gramdown website handles your data: it doesn't."
+  lastUpdated={policy.data.lastUpdated}>
+  <Content />
+</PolicyLayout>

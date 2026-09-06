@@ -1,0 +1,94 @@
+---
+lastUpdated: 2026-09-06
+---
+
+# Privacy Policy
+
+This Privacy Policy explains what information the gramdown website
+([gramdown.tobythe.dev](https://gramdown.tobythe.dev), the "Site") collects, and
+what it does not. It was last updated on 6 September 2026.
+
+The Site is operated by Toby Smith ("we", "us", "our"). "You" means anyone who
+visits or uses the Site.
+
+## The short version
+
+- The Site has **no backend**. It is a static site of HTML, CSS and JavaScript
+  files served from GitHub Pages.
+- Documents you convert are processed **entirely in your browser**. They are
+  never uploaded, transmitted, or seen by us or anyone else.
+- We use **no analytics, no advertising, no trackers, and no cookies**.
+- The only data stored is stored by your own browser, on your own device, and
+  you can delete it at any time.
+
+## Documents you convert
+
+When you drop or select a `.docx` file, the conversion runs locally in a Web
+Worker in your browser using the same `@gramdown/core` code as the command-line
+tool. The file's bytes, the Markdown output, and any conversion warnings never
+leave your device.
+
+To make the tool usable across page navigations, the browser's conversion tray
+stores each conversion in your browser's **IndexedDB**, including:
+
+- the original `.docx` bytes (so a conversion can be re-run, e.g. after toggling
+  language guessing),
+- the generated Markdown and any warnings,
+- timestamps and the output filename.
+
+This data stays in your browser. It is capped (most recent 25 conversions, or
+roughly 25&nbsp;MB, whichever is smaller) and older entries are dropped
+automatically. You can remove individual entries, or wipe everything, with the
+**Clear all** button in the tray. Clearing your browser's site data for
+`gramdown.tobythe.dev` also removes it.
+
+## Preferences
+
+Two preferences are saved in your browser's **localStorage**:
+
+- whether to download converted files automatically ("auto-download"), and
+- whether to guess code-block languages.
+
+These are simple on/off flags. They are not shared with us and are cleared when
+you clear the Site's site data.
+
+## Hosting and server logs
+
+The Site is hosted on **GitHub Pages**. When your browser requests a page,
+GitHub's servers necessarily receive standard request metadata such as your IP
+address, user agent, and the URL requested, and may log it for security and
+operational purposes. We do not control that logging and do not receive those
+logs. See the
+[GitHub Privacy Statement](https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement).
+
+Some pages fetch information about the latest release from `api.github.com` at
+**build time only** — that request is made by our build, not by your browser,
+and the result is baked into the static HTML.
+
+## Third-party links
+
+The Site links to third-party sites such as GitHub and npm. We are not
+responsible for their content or their privacy practices. Review their policies
+when you visit them.
+
+## Your rights
+
+Because we do not collect or hold any personal data about you, there is nothing
+for us to access, correct, export, or delete on your behalf. If you are in the
+UK or EU and believe this is incorrect, contact us (below) and we will help.
+
+## Children
+
+The Site is a developer tool and is not directed at children. It does not
+knowingly collect information from anyone.
+
+## Changes
+
+We may update this Privacy Policy from time to time. The "last updated" date
+above reflects the most recent change, and the history is visible in the
+[public Git repository](https://github.com/tobysmith568/gramdown).
+
+## Contact
+
+Questions about this Privacy Policy can be raised as an issue on the
+[gramdown repository](https://github.com/tobysmith568/gramdown/issues).
