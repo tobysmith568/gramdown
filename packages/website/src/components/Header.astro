@@ -18,11 +18,6 @@ const isActive = (href: string) =>
 <header data-nav-open="false">
   <nav class="wrap bar" aria-label="Primary">
     <a class="wordmark" href="/" aria-label={`${siteName} home`}>
-      <svg class="mark" viewBox="5 5 25 26" aria-hidden="true" focusable="false">
-        <circle cx="13" cy="13.2" r="6"></circle>
-        <path d="M19 13.2 V23.4 q0 4.6 -6.6 4.9"></path>
-        <line class="rule" x1="12" y1="28.1" x2="26.4" y2="28.1"></line>
-      </svg>
       {siteName}
     </a>
 
@@ -56,12 +51,11 @@ const isActive = (href: string) =>
   }
 
   /* The wordmark is deliberately the quietest thing in the frame - the name in the mono
-     display face, all ink, no accent. The mark to its left carries the identity: a green
-     "g" (the Grammarly source) resolving onto a plain ink rule (the Markdown output). */
+     display face, all ink, no accent. (The "g" mark that sat to its left is held back
+     until the icon set is ready to ship.) */
   .wordmark {
     display: inline-flex;
     align-items: center;
-    gap: 0.42em;
     font-family: var(--f-display);
     font-weight: 600;
     font-size: var(--text-lg);
@@ -69,26 +63,6 @@ const isActive = (href: string) =>
     text-decoration: none;
     color: var(--ink);
     white-space: nowrap;
-  }
-
-  .mark {
-    height: 1.32em;
-    width: auto;
-    flex: none;
-    overflow: visible;
-  }
-
-  .mark circle,
-  .mark path {
-    fill: none;
-    stroke: var(--source-ink);
-    stroke-width: 3;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-  }
-
-  .mark .rule {
-    stroke: var(--ink);
   }
 
   .toggle {
