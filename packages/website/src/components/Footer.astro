@@ -1,4 +1,6 @@
 ---
+import { repoUrl } from "../consts";
+
 const year = new Date().getUTCFullYear();
 ---
 
@@ -9,7 +11,7 @@ const year = new Date().getUTCFullYear();
     <nav class="links" aria-label="Legal">
       <a href="/terms">Terms</a>
       <a href="/privacy">Privacy</a>
-      <a href="https://github.com/tobysmith568/gramdown">GitHub</a>
+      <a href={repoUrl}>GitHub</a>
     </nav>
   </div>
 </footer>

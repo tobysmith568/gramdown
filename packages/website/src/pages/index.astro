@@ -1,9 +1,7 @@
 ---
 import HeroDropzone from "../components/converter/HeroDropzone";
+import { cliNpmUrl, coreNpmUrl, releasesUrl, repoUrl } from "../consts";
 import BaseLayout from "../layouts/BaseLayout.astro";
-
-const repo = "https://github.com/tobysmith568/gramdown";
-const releases = `${repo}/releases`;
 
 const description =
   "Convert Grammarly .docx exports to clean Markdown. Pure JavaScript, no pandoc, and a converter that runs entirely in your browser.";
@@ -36,14 +34,14 @@ const features = [
 ];
 
 const links = [
-  { href: repo, label: "GitHub" },
-  { href: "https://www.npmjs.com/package/gramdown", label: "gramdown on npm" },
-  { href: "https://www.npmjs.com/package/@gramdown/core", label: "@gramdown/core on npm" },
-  { href: releases, label: "Release binaries" }
+  { href: repoUrl, label: "GitHub" },
+  { href: cliNpmUrl, label: "gramdown on npm" },
+  { href: coreNpmUrl, label: "@gramdown/core on npm" },
+  { href: releasesUrl, label: "Release binaries" }
 ];
 ---
 
-<BaseLayout title="gramdown" description={description}>
+<BaseLayout description={description}>
   <section class="wrap hero">
     <p class="kicker">Grammarly <code>.docx</code> → Markdown</p>
     <h1>Clean Markdown from your Grammarly exports</h1>
@@ -85,7 +83,7 @@ gramdown draft.docx -o draft.md</code></pre>
       <div class="snippet">
         <h3>Grab a binary</h3>
         <p>
-          Standalone executables for Linux, macOS and Windows are on the <a href={releases}
+          Standalone executables for Linux, macOS and Windows are on the <a href={releasesUrl}
             >releases page</a
           > — no Node required.
         </p>

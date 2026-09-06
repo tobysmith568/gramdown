@@ -1,8 +1,10 @@
 ---
+import { cliNpmUrl, repoUrl, siteName } from "../consts";
+
 const links = [
   { href: "/docs", label: "Docs" },
-  { href: "https://github.com/tobysmith568/gramdown", label: "GitHub" },
-  { href: "https://www.npmjs.com/package/gramdown", label: "npm" }
+  { href: repoUrl, label: "GitHub" },
+  { href: cliNpmUrl, label: "npm" }
 ];
 
 const currentPath = Astro.url.pathname.replace(/\.html$/, "").replace(/(.)\/$/, "$1");
@@ -13,7 +15,7 @@ const isActive = (href: string) =>
 
 <header>
   <nav class="wrap bar" aria-label="Primary">
-    <a class="id" href="/">gramdown</a>
+    <a class="id" href="/">{siteName}</a>
 
     <div class="links">
       {
