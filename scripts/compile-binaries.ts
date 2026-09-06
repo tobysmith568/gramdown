@@ -29,7 +29,10 @@ const allTargets: Target[] = [
 
 // `GRAMDOWN_TARGETS=linux-x64,darwin-arm64` narrows the build — CI uses it to
 // compile only one target on pull requests and the full set on a release.
-const requestedLabels = process.env.GRAMDOWN_TARGETS?.split(",").map(label => label.trim());
+const requestedValue = process.env.GRAMDOWN_TARGETS?.trim();
+const requestedLabels = requestedValue
+  ? requestedValue.split(",").map(label => label.trim())
+  : undefined;
 
 const targets = requestedLabels
   ? allTargets.filter(target => requestedLabels.includes(target.label))
