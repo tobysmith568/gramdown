@@ -4,3 +4,4 @@ coverage
 bun.lock
 .astro
 **/test/fixtures/**/*.md
+.agents/skills
