@@ -1,3 +1,4 @@
+import mdx from "@astrojs/mdx";
 import preact from "@astrojs/preact";
 import { defineConfig } from "astro/config";
 
@@ -13,5 +14,17 @@ export default defineConfig({
     format: "file"
   },
 
-  integrations: [preact()]
+  // `mdx()` powers the `docs` content collection (8.8); `sitemap()` lands in 8.10.
+  integrations: [preact(), mdx()],
+
+  markdown: {
+    shikiConfig: {
+      // Dual themes: Shiki inlines the light colours and emits a `--shiki-dark*` custom
+      // property per token. `global.css` swaps to the dark values under the dark palette.
+      themes: {
+        light: "light-plus",
+        dark: "dark-plus"
+      }
+    }
+  }
 });

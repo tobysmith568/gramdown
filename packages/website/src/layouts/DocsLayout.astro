@@ -1,0 +1,112 @@
+---
+import type { CollectionEntry } from "astro:content";
+import Prose from "../components/Prose.astro";
+import BaseLayout from "./BaseLayout.astro";
+
+interface Props {
+  title: string;
+  description: string;
+  navItems: CollectionEntry<"docs">[];
+  currentId: string;
+}
+
+const { title, description, navItems, currentId } = Astro.props;
+
+const hrefFor = (id: string) => (id === "index" ? "/docs" : `/docs/${id}`);
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="wrap docs">
+    <aside class="sidebar">
+      <nav aria-label="Docs">
+        <p class="sidebar-title">Docs</p>
+        <ul>
+          {
+            navItems.map(item => (
+              <li>
+                <a
+                  href={hrefFor(item.id)}
+                  aria-current={item.id === currentId ? "page" : undefined}>
+                  {item.data.title}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+    </aside>
+
+    <article class="content">
+      <h1>{title}</h1>
+      <Prose>
+        <slot />
+      </Prose>
+    </article>
+  </div>
+</BaseLayout>
+
+<style>
+  .docs {
+    display: grid;
+    gap: var(--sp-6);
+    padding-block: var(--sp-6) var(--sp-9);
+  }
+
+  .content h1 {
+    margin: 0 0 var(--sp-5);
+    font-size: var(--text-3xl);
+  }
+
+  .content {
+    min-width: 0;
+  }
+
+  .sidebar-title {
+    margin: 0 0 var(--sp-3);
+    font-family: var(--f-mono);
+    font-size: var(--text-sm);
+    color: var(--muted);
+  }
+
+  .sidebar ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: var(--sp-2);
+  }
+
+  .sidebar a {
+    display: block;
+    padding: var(--sp-2) var(--sp-3);
+    border-radius: var(--radius);
+    font-size: var(--text-sm);
+    color: var(--muted);
+    text-decoration: none;
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+
+  .sidebar a:hover {
+    color: var(--ink);
+  }
+
+  .sidebar a[aria-current="page"] {
+    color: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding-block: calc(var(--sp-2) - 1px);
+  }
+
+  @media (min-width: 48rem) {
+    .docs {
+      grid-template-columns: 13rem 1fr;
+      gap: var(--sp-7);
+    }
+
+    .sidebar {
+      position: sticky;
+      top: var(--sp-5);
+      align-self: start;
+    }
+  }
+</style>

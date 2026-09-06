@@ -1,0 +1,63 @@
+---
+title: Overview
+description: What gramdown is, how to install it, and how to run your first conversion.
+order: 1
+---
+
+**gramdown** converts a Grammarly `.docx` export into clean, GitHub-Flavored
+Markdown. It is built for one job — Grammarly's export, with its Courier New code
+paragraphs, non-breaking-space indentation and auto-underlined links — and leans
+on those assumptions rather than trying to be a general-purpose `.docx`
+converter.
+
+It is pure JavaScript: no pandoc, no system dependencies, and the same
+conversion code runs in Node, in a standalone binary, and entirely in your
+browser on the [home page](/).
+
+## Install
+
+### The CLI, globally
+
+```sh
+npm install -g gramdown
+gramdown draft.docx -o draft.md
+```
+
+### Without installing
+
+```sh
+npx gramdown draft.docx -o draft.md
+```
+
+### A standalone binary
+
+Download a self-contained executable for Linux, macOS or Windows from the
+[releases page](https://github.com/tobysmith568/gramdown/releases/latest) — no
+Node, Bun or npm required. The [home page](/) lists each one with its size and
+the current version.
+
+### In the browser
+
+Nothing to install: drop a `.docx` anywhere on this site and it converts locally.
+See [Browser converter](/docs/browser-converter).
+
+## Your first conversion
+
+```sh
+# write Markdown to stdout
+gramdown draft.docx
+
+# write it to a file instead
+gramdown draft.docx -o draft.md
+
+# also guess a language for each code fence (always double-check these)
+gramdown draft.docx -o draft.md --guess-lang
+```
+
+## Where to go next
+
+- [CLI reference](/docs/cli) — every flag, exit code and message.
+- [convert() API](/docs/api) — using `@gramdown/core` from your own code.
+- [How it works](/docs/how-it-works) — the pipeline and its known limitations.
+- [Browser converter](/docs/browser-converter) — the in-browser tool and its
+  privacy story.

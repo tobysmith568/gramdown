@@ -76,6 +76,21 @@ code {
   border: 0;
 }
 
+/* Shiki (see astro.config.mjs) inlines the light-plus colours and emits a --shiki-dark*
+   custom property per token. Under the dark palette, swap every token to its dark value.
+   Only prefers-color-scheme for now — an explicit theme toggle is 8.10, at which point a
+   :root[data-theme="dark"] variant joins this block. */
+@media (prefers-color-scheme: dark) {
+  .astro-code,
+  .astro-code span {
+    color: var(--shiki-dark) !important;
+    background-color: var(--shiki-dark-bg) !important;
+    font-style: var(--shiki-dark-font-style) !important;
+    font-weight: var(--shiki-dark-font-weight) !important;
+    text-decoration: var(--shiki-dark-text-decoration) !important;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

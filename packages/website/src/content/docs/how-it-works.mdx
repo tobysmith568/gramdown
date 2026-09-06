@@ -1,0 +1,74 @@
+---
+title: How it works
+description: The preprocess → mammoth → turndown → postprocess pipeline, the Grammarly assumptions it makes, and its known limitations.
+order: 4
+---
+
+gramdown runs a Grammarly `.docx` through four stages:
+
+```
+.docx bytes
+  → preprocess   rewrite word/document.xml in memory
+  → mammoth      .docx → semantic HTML
+  → turndown     HTML → GitHub-Flavored Markdown
+  → postprocess  final tidy-up
+  → Markdown string
+```
+
+## The Grammarly assumptions
+
+Grammarly's export is consistent in a few specific, awkward ways, and gramdown is
+built around them:
+
+- **Code is Courier New body text.** Grammarly exports code as ordinary
+  paragraphs set in Courier New — no "Code" style, no language, no colours.
+- **Code is indented with non-breaking spaces** (`U+00A0`), which don't survive a
+  copy-paste as real indentation.
+- **Every hyperlink is underlined** by Word automatically, whether or not the
+  underline was intentional.
+
+## The stages
+
+### Preprocess
+
+mammoth deliberately ignores direct formatting and only acts on _named_ styles,
+so gramdown rewrites `word/document.xml` first (unzipping and rezipping the
+archive with `jszip`): every all-monospace paragraph is tagged with a "Source
+Code" paragraph style, and monospace runs inside prose get a character style.
+Consecutive code paragraphs — blank lines included — are merged so they become
+one block rather than many. This is where "Courier New" turns into something
+mammoth can see.
+
+### mammoth
+
+Converts the rewritten `.docx` to semantic HTML. Because it works from styles
+rather than direct formatting, the injected styles become `<pre>` and `<code>`,
+and Word's automatic link underline mostly disappears on its own — a `<u>` that
+_was_ deliberate is re-enabled through the style map and kept.
+
+### turndown
+
+HTML to Markdown, with `turndown-plugin-gfm` for tables and the rest of GFM.
+Configured for ATX (`#`) headings, fenced ` ``` ` code blocks, `-` bullets,
+`_`/`**` emphasis, inlined links, and **no line wrapping** — one line per
+paragraph. `<u>`, `<sub>` and `<sup>` are kept as inline HTML, since GFM has no
+syntax for them. A custom rule handles mammoth's bare `<pre>` (no inner
+`<code>`), and the non-breaking-space indentation is swapped back to real spaces
+here so the code is pasteable.
+
+### Postprocess
+
+Collapses runs of blank lines to at most one, trims trailing whitespace, and
+ensures a single final newline — while leaving the insides of code blocks
+exactly as they are, because their blank lines and spacing are part of the code.
+
+## Known limitations
+
+- **No language on code fences.** Grammarly records none, so there is nothing to
+  recover. `--guess-lang` (CLI) / `guessLanguage` (API) is a heuristic guess that
+  always needs a human pass; without it, fences are bare.
+- **Courier New that isn't code** would be misdetected as a code block. This is
+  accepted: Grammarly only ever uses Courier New for code formatting, so in
+  practice it doesn't happen.
+- **Underline, subscript and superscript** come through as inline HTML, not
+  Markdown — there is no GFM equivalent to convert them to.

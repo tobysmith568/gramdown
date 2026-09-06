@@ -1,0 +1,58 @@
+---
+title: Browser converter
+description: How this site converts .docx files locally, where they are stored, and how to clear them.
+order: 5
+---
+
+Every page on this site is a working instance of gramdown. Drop a Grammarly
+`.docx` anywhere — or use the file picker in the hero or the tray — and it is
+converted to Markdown **in your browser**. Nothing is uploaded.
+
+## How it runs
+
+- The exact same `@gramdown/core` `convert()` from the [API](/docs/api) runs in a
+  dedicated **Web Worker**, so a large document never janks the page.
+- Dropping a file anywhere works because a drop overlay is mounted on every page.
+  Non-`.docx` files are rejected with a message and nothing is added.
+- Converted files collect in a **tray** (the floating button, bottom-right). Each
+  ready row has its Markdown, any mammoth warnings, and **Download**, **Copy** and
+  **Remove**. The tray header has **Download all** (a `.zip`, built in the worker)
+  and **Clear all**.
+
+## Options
+
+Two toggles live in the tray, each remembered in `localStorage`:
+
+- **Guess code languages** — on by default here (unlike the CLI). It labels each
+  code fence with a heuristic guess; flipping it re-runs the files already in the
+  tray, so you don't need to drop them again. The guesses still need a
+  double-check.
+- **Download automatically when ready** — off by default. When on, each file is
+  saved to your downloads folder as soon as it converts.
+
+## Where your files are stored
+
+State has to survive navigating between pages, so it is kept in your browser's
+**IndexedDB** (database `gramdown-conversions`), plus the two toggle values in
+`localStorage`. Each record holds the output Markdown and the original `.docx`
+bytes (so "re-run with language guessing" works after a reload).
+
+- Only the **25 most recent** conversions are kept, or about **25 MB** of
+  retained data — whichever limit is reached first — evicting oldest first.
+- Other open tabs are notified of changes via a `BroadcastChannel` and re-read
+  the store, so the tray stays consistent across tabs.
+- If your browser blocks storage (private mode, an extension, a full disk), the
+  converter still works — the tray just won't persist across page loads.
+
+## Clearing everything
+
+**Clear all** in the tray header wipes the IndexedDB store completely. The toggle
+preferences in `localStorage` are cleared with your normal browser site-data
+controls.
+
+## Privacy
+
+Your documents never leave your device. There is no server, no upload, no
+analytics and no cookies. The only data at rest is in your own browser's storage,
+described above, and you can clear it at any time. See the
+[Privacy Policy](/privacy) for the full statement.

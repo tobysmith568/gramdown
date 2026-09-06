@@ -1,0 +1,87 @@
+---
+title: convert() API
+description: Using @gramdown/core from your own code — convert(), its options, InvalidDocxError and the guess-lang subexport.
+order: 3
+---
+
+`@gramdown/core` is the conversion engine the CLI and this website are both thin
+wrappers around. It is pure and I/O-free — no `fs`, no paths, no `process` — so
+the same call works in Node, in a bundler, and in a Web Worker.
+
+```sh
+npm install @gramdown/core
+```
+
+## `convert(bytes, options?)`
+
+```ts
+function convert(bytes: Uint8Array, options?: ConvertOptions): Promise<string>;
+```
+
+Takes the raw bytes of a Grammarly `.docx` export and resolves to a
+GitHub-Flavored Markdown string. In the browser, pass
+`new Uint8Array(await file.arrayBuffer())`.
+
+### `ConvertOptions`
+
+| Property        | Type                        | Description                                                                                       |
+| --------------- | --------------------------- | ------------------------------------------------------------------------------------------------- |
+| `guessLanguage` | `LanguageGuesser`           | Called with each code block's text to produce a fence info string. Unset means unlabelled fences. |
+| `onWarning`     | `(warning: string) => void` | Receives every warning mammoth raised while reading the document.                                 |
+
+`LanguageGuesser` is `(code: string) => string | undefined` — return the
+language name, or `undefined` to leave the fence bare.
+
+### `InvalidDocxError`
+
+Thrown when the input is not a readable `.docx`: the bytes are empty, the archive
+cannot be opened, or it is not a Word document. Nothing else is thrown — a
+successful parse always resolves, warnings and all.
+
+## `@gramdown/core/guess-lang`
+
+A ready-made `LanguageGuesser`, so you get the same fence labels as the CLI's
+`--guess-lang` without wiring up a detector yourself.
+
+```ts
+import { languageGuesser } from "@gramdown/core/guess-lang";
+```
+
+It is backed by [`flourite`](https://www.npmjs.com/package/flourite)'s heuristic
+scorer and, like every guess here, needs a human pass. It is a separate subpath
+export so callers who don't want it don't pay for `flourite`. Write your own
+`LanguageGuesser` around an ML detector if you want a heavier guess.
+
+## Example
+
+```ts
+import { readFile } from "node:fs/promises";
+import { convert, InvalidDocxError } from "@gramdown/core";
+import { languageGuesser } from "@gramdown/core/guess-lang";
+
+const bytes = await readFile("draft.docx");
+
+try {
+  const markdown = await convert(bytes, {
+    guessLanguage: languageGuesser,
+    onWarning: warning => console.warn(`warning: ${warning}`)
+  });
+  console.log(markdown);
+} catch (error) {
+  if (error instanceof InvalidDocxError) {
+    console.error(`not a readable .docx: ${error.message}`);
+    process.exit(1);
+  }
+  throw error;
+}
+```
+
+## Exports
+
+| Name               | Kind                                    |
+| ------------------ | --------------------------------------- |
+| `convert`          | function                                |
+| `InvalidDocxError` | error class                             |
+| `ConvertOptions`   | type                                    |
+| `LanguageGuesser`  | type                                    |
+| `languageGuesser`  | value, from `@gramdown/core/guess-lang` |
