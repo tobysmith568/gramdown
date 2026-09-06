@@ -34,9 +34,9 @@ export class ConversionClient {
     });
   }
 
-  convert(bytes: Uint8Array): Promise<ConversionResult> {
+  convert(bytes: Uint8Array, guessLanguage: boolean): Promise<ConversionResult> {
     const id = this.nextId++;
-    const request: ConvertRequest = { kind: "convert", id, bytes };
+    const request: ConvertRequest = { kind: "convert", id, bytes, guessLanguage };
 
     const result = new Promise<ConversionResult>((resolve, reject) => {
       const settle = (response: WorkerResponse): void => {

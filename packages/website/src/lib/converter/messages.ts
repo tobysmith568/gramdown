@@ -13,6 +13,8 @@ export interface ConvertRequest {
   kind: "convert";
   id: number;
   bytes: Uint8Array;
+  /** Label code fences with a best-effort language guess (`./guess-lang`). */
+  guessLanguage: boolean;
 }
 
 /** Main thread → worker: bundle these Markdown files into a single `.zip`. */

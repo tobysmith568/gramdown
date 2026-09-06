@@ -12,6 +12,7 @@
 
 import "./dom-shim"; // installs window.DOMParser for turndown — keep first
 import { convert } from "@gramdown/core";
+import { languageGuesser } from "@gramdown/core/guess-lang";
 import JSZip from "jszip";
 import type {
   ConvertRequest,
@@ -39,7 +40,9 @@ const handleConvert = async (request: ConvertRequest): Promise<void> => {
   const warnings: string[] = [];
 
   try {
+    const guessLanguage = request.guessLanguage ? languageGuesser : undefined;
     const markdown = await convert(request.bytes, {
+      guessLanguage,
       onWarning: warning => warnings.push(warning)
     });
 

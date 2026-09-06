@@ -1,5 +1,5 @@
 import { useEffect, useState } from "preact/hooks";
-import { autoDownload, setAutoDownload } from "../../lib/converter/preferences";
+import { autoDownload, guessLanguages, setAutoDownload } from "../../lib/converter/preferences";
 import {
   clearConversions,
   conversions,
@@ -8,6 +8,7 @@ import {
   enqueueFiles,
   lastRejection,
   removeConversion,
+  updateGuessLanguages,
   type Conversion
 } from "../../lib/converter/store";
 import styles from "./converter.module.css";
@@ -151,7 +152,23 @@ const ConversionTray = () => {
         <input type="file" accept=".docx" multiple onChange={onPick} />
       </label>
 
-      <label class={styles.trayPref}>
+      <div class={styles.trayPref}>
+        <label class={styles.trayPrefRow}>
+          <input
+            type="checkbox"
+            checked={guessLanguages.value}
+            onChange={event =>
+              updateGuessLanguages((event.currentTarget as HTMLInputElement).checked)
+            }
+          />
+          <span>Guess code languages</span>
+        </label>
+        <p class={styles.trayPrefNote}>
+          Languages are guessed from the code — double-check the fence labels.
+        </p>
+      </div>
+
+      <label class={`${styles.trayPref} ${styles.trayPrefRow}`}>
         <input
           type="checkbox"
           checked={autoDownload.value}

@@ -5,14 +5,15 @@
  *
  * Milestone 8.4 adds persistence: `initPersistence` (called once from the
  * `Converter` island) rehydrates the queue from IndexedDB, keeps it written
- * back on every mutation, and syncs it across tabs. Language guessing is 8.5.
+ * back on every mutation, and syncs it across tabs. Milestone 8.5 wires in the
+ * "guess code languages" preference and re-runs affected files when it flips.
  */
 
 import { effect, signal } from "@preact/signals";
 import { downloadBytes, downloadMarkdown } from "./download";
 import { dedupeName, toMarkdownName } from "./filenames";
 import { applyRetention, clearStore, loadConversions, saveConversions } from "./persistence";
-import { autoDownload } from "./preferences";
+import { autoDownload, guessLanguages, setGuessLanguages } from "./preferences";
 import type { ConversionClient } from "./worker-client";
 
 export type ConversionStatus = "converting" | "ready" | "error";
@@ -28,8 +29,10 @@ export interface Conversion {
   markdown: string | null;
   warnings: string[];
   error: string | null;
-  /** Retained so "re-run" (8.5) works after a reload and the record is self-contained. */
+  /** Retained so a re-run works after a reload and the record is self-contained. */
   sourceBytes: Uint8Array;
+  /** Whether the Markdown was produced with code-language guessing on. */
+  langGuessed: boolean;
   /** Epoch millis; drives oldest-first retention eviction. */
   createdAt: number;
 }
@@ -61,7 +64,7 @@ export const initPersistence = async (): Promise<() => void> => {
   // retained source bytes.
   for (const entry of conversions.value) {
     if (entry.status === "converting") {
-      void runConversion(entry.id, entry.sourceBytes);
+      void runConversion(entry.id, entry.sourceBytes, entry.langGuessed);
     }
   }
 
@@ -92,6 +95,8 @@ export const enqueueFiles = async (files: readonly File[]): Promise<void> => {
   const rejectedCount = files.length - docxFiles.length;
   lastRejection.value = describeRejection(rejectedCount);
 
+  const guessLanguage = guessLanguages.value;
+
   for (const file of docxFiles) {
     const takenNames = conversions.value.map(entry => entry.outputName);
     const markdownName = toMarkdownName(file.name);
@@ -110,12 +115,29 @@ export const enqueueFiles = async (files: readonly File[]): Promise<void> => {
       warnings: [],
       error: null,
       sourceBytes: bytes,
+      langGuessed: guessLanguage,
       createdAt: Date.now()
     };
     const withEntry = [...conversions.value, entry];
     conversions.value = applyRetention(withEntry);
 
-    void runConversion(entry.id, bytes);
+    void runConversion(entry.id, bytes, guessLanguage);
+  }
+};
+
+/**
+ * Persist the "guess code languages" preference and re-run every finished
+ * conversion whose Markdown was produced the other way, from its retained
+ * source bytes — no re-drop needed.
+ */
+export const updateGuessLanguages = (enabled: boolean): void => {
+  setGuessLanguages(enabled);
+
+  for (const entry of conversions.value) {
+    if (entry.status === "ready" && entry.langGuessed !== enabled) {
+      patchConversion(entry.id, { status: "converting", langGuessed: enabled });
+      void runConversion(entry.id, entry.sourceBytes, enabled);
+    }
   }
 };
 
@@ -153,14 +175,19 @@ export const downloadAllAsZip = async (): Promise<void> => {
   downloadBytes("gramdown-markdown.zip", bytes, "application/zip");
 };
 
-const runConversion = async (id: string, bytes: Uint8Array): Promise<void> => {
+const runConversion = async (
+  id: string,
+  bytes: Uint8Array,
+  guessLanguage: boolean
+): Promise<void> => {
   try {
     const client = await getClient();
-    const result = await client.convert(bytes);
+    const result = await client.convert(bytes, guessLanguage);
     patchConversion(id, {
       status: "ready",
       markdown: result.markdown,
-      warnings: result.warnings
+      warnings: result.warnings,
+      langGuessed: guessLanguage
     });
     if (autoDownload.value) {
       downloadConversion(id);
