@@ -136,3 +136,13 @@ jobs:
 
             Download the binary for your platform from the assets below — no
             Node, Bun, or npm required.
+
+  deploy-website:
+    name: Redeploy the website
+    needs:
+      - release
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    uses: ./.github/workflows/pages.yml

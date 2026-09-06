@@ -8,7 +8,8 @@
     },
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**"]
+      "outputs": ["dist/**"],
+      "passThroughEnv": ["GITHUB_TOKEN"]
     },
     "typecheck": {
       "dependsOn": ["^build"],

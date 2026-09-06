@@ -2,9 +2,18 @@
 import HeroDropzone from "../components/converter/HeroDropzone";
 import { cliNpmUrl, coreNpmUrl, releasesUrl, repoUrl } from "../consts";
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { releaseDownloads } from "../lib/release";
 
 const description =
   "Convert Grammarly .docx exports to clean Markdown. Pure JavaScript, no pandoc, and a converter that runs entirely in your browser.";
+
+const publishedLabel = releaseDownloads.publishedAt
+  ? new Date(releaseDownloads.publishedAt).toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "long",
+      year: "numeric"
+    })
+  : null;
 
 const quirks = [
   {
@@ -80,15 +89,52 @@ gramdown draft.docx -o draft.md</code></pre>
         <h3>Run it once</h3>
         <pre><code>npx gramdown draft.docx -o draft.md</code></pre>
       </div>
-      <div class="snippet">
-        <h3>Grab a binary</h3>
-        <p>
-          Standalone executables for Linux, macOS and Windows are on the <a href={releasesUrl}
-            >releases page</a
-          > — no Node required.
-        </p>
-      </div>
     </div>
+  </section>
+
+  <section class="wrap band">
+    <h2>Download a standalone binary</h2>
+    <p class="band-lead">
+      {
+        releaseDownloads.version
+          ? `Self-contained executables from ${releaseDownloads.version}${publishedLabel ? `, released ${publishedLabel}` : ""} — no Node, Bun or npm required.`
+          : "Self-contained executables for every platform — no Node, Bun or npm required."
+      }
+    </p>
+    <table class="downloads">
+      <thead>
+        <tr>
+          <th scope="col">Platform</th>
+          <th scope="col">Size</th>
+          <th scope="col"><span class="sr-only">Download</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          releaseDownloads.platforms.map(platform => (
+            <tr>
+              <td>{platform.label}</td>
+              <td>{platform.sizeLabel ?? "—"}</td>
+              <td>
+                <a href={platform.downloadUrl}>Download</a>
+              </td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+    <p class="downloads-note">
+      Verify your download against <a href={releaseDownloads.checksumsUrl}>SHA256SUMS.txt</a>. Or
+      install the CLI with <code>{releaseDownloads.installCommand}</code>.
+      {
+        releaseDownloads.notesUrl && (
+          <>
+            {" "}
+            <a href={releaseDownloads.notesUrl}>Release notes</a>.
+          </>
+        )
+      }
+    </p>
   </section>
 
   <section class="wrap band">
@@ -209,6 +255,41 @@ gramdown draft.docx -o draft.md</code></pre>
     padding: 0;
     background: none;
     border: none;
+  }
+
+  .downloads {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--text-sm);
+  }
+
+  .downloads th,
+  .downloads td {
+    padding: var(--sp-3) var(--sp-4);
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .downloads th {
+    font-size: var(--text-sm);
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  .downloads td:last-child,
+  .downloads th:last-child {
+    text-align: right;
+  }
+
+  .downloads-note {
+    margin: var(--sp-4) 0 0;
+    font-size: var(--text-sm);
+    color: var(--muted);
+  }
+
+  .downloads-note code {
+    padding: 0.1em 0.35em;
+    font-size: 0.95em;
   }
 
   .features {
