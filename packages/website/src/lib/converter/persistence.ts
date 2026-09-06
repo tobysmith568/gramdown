@@ -21,6 +21,12 @@ export const maxRecords = 25;
 /** …or this many bytes of retained source + Markdown, whichever bites first. */
 export const maxRetainedBytes = 25 * 1024 * 1024;
 
+// One IndexedDB database (`gramdown-conversions`), one object store, one key —
+// the whole queue is a single value. `createStore` runs eagerly, so it lives up
+// here rather than down with the helpers that read it.
+const conversionStore = createStore("gramdown-conversions", "conversions");
+const storeKey = "queue";
+
 /** Read the saved queue, oldest-first. Returns `[]` when there's nothing (or on any error). */
 export const loadConversions = async (): Promise<Conversion[]> => {
   if (!storageAvailable()) {
@@ -90,9 +96,6 @@ export const applyRetention = (conversions: readonly Conversion[]): Conversion[]
   const survivors = [...pinned, ...kept];
   return survivors.sort((a, b) => a.createdAt - b.createdAt);
 };
-
-const conversionStore = createStore("gramdown-conversions", "conversions");
-const storeKey = "queue";
 
 const storageAvailable = (): boolean => {
   return typeof indexedDB !== "undefined";

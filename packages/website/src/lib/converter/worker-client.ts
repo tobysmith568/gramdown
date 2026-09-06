@@ -6,13 +6,6 @@ export interface ConversionResult {
   warnings: string[];
 }
 
-interface PendingRequest {
-  /** Hand the matching worker response to the waiting promise. */
-  settle: (response: WorkerResponse) => void;
-  /** Fail the waiting promise (used when the worker is terminated mid-flight). */
-  abort: (error: Error) => void;
-}
-
 /**
  * A typed wrapper around the conversion Web Worker. One instance owns one
  * worker and multiplexes concurrent requests — `convert()` and `zip()` alike —
@@ -98,4 +91,11 @@ export class ConversionClient {
     this.pending.delete(response.id);
     waiting.settle(response);
   }
+}
+
+interface PendingRequest {
+  /** Hand the matching worker response to the waiting promise. */
+  settle: (response: WorkerResponse) => void;
+  /** Fail the waiting promise (used when the worker is terminated mid-flight). */
+  abort: (error: Error) => void;
 }

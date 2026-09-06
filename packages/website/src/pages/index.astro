@@ -7,12 +7,10 @@ import { releaseDownloads } from "../lib/release";
 const description =
   "Convert Grammarly .docx exports to clean Markdown. Pure JavaScript, no pandoc, and a converter that runs entirely in your browser.";
 
-const publishedLabel = releaseDownloads.publishedAt
-  ? new Date(releaseDownloads.publishedAt).toLocaleDateString("en-GB", {
-      day: "numeric",
-      month: "long",
-      year: "numeric"
-    })
+const publishedDate = releaseDownloads.publishedAt ? new Date(releaseDownloads.publishedAt) : null;
+
+const publishedLabel = publishedDate
+  ? publishedDate.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })
   : null;
 
 const quirks = [

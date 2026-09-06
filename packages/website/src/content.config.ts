@@ -6,6 +6,8 @@ import { defineCollection } from "astro:content";
 
 // The docs pages (8.8). `id` "index" renders at `/docs`; every other id at `/docs/<id>`.
 // `order` drives the sidebar; `description` feeds each page's <meta> and the sidebar hint.
+// `docsLoader` / `docsSchema` / `docs` are all built eagerly and feed the `collections`
+// export below it — the rule-5 eager-eval carve-out — so they sit above it.
 const docsLoader = glob({ pattern: "**/*.mdx", base: "./src/content/docs" });
 
 const docsSchema = z.object({
@@ -17,5 +19,4 @@ const docsSchema = z.object({
 const docs = defineCollection({ loader: docsLoader, schema: docsSchema });
 
 // The `policies` collection (Terms, Privacy) lands in 8.9.
-
 export const collections = { docs };

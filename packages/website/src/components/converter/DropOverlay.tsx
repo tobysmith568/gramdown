@@ -17,7 +17,8 @@ const DropOverlay = () => {
       if (!types) {
         return false;
       }
-      return Array.from(types).includes("Files");
+      const typeList = Array.from(types);
+      return typeList.includes("Files");
     };
 
     const onDragEnter = (event: DragEvent): void => {
