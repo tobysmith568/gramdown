@@ -14,6 +14,14 @@ export const releasesUrl = `${repoUrl}/releases`;
 export const cliNpmUrl = `https://www.npmjs.com/package/${cliPackage}`;
 export const coreNpmUrl = `https://www.npmjs.com/package/${corePackage}`;
 
+// The three legal pages, in the order the Footer lists them and the policy rail
+// links them. Shared so the two can't drift apart.
+export const legalPages = [
+  { href: "/terms", label: "Terms" },
+  { href: "/privacy", label: "Privacy" },
+  { href: "/cookies", label: "Cookies" }
+];
+
 // Temporary pre-launch flag: while `true`, the whole site asks search engines not
 // to crawl or index it (robots.txt `Disallow: /` + a site-wide `noindex, nofollow`
 // meta tag). This lets the site ship early - live at the real URL for development

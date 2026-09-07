@@ -1,5 +1,6 @@
 ---
 import Prose from "../components/Prose.astro";
+import { legalPages } from "../consts";
 import BaseLayout from "./BaseLayout.astro";
 
 interface Props {
@@ -18,16 +19,33 @@ const humanDate = lastUpdated.toLocaleDateString("en-GB", {
   timeZone: "UTC"
 });
 const machineDate = lastUpdated.toISOString().slice(0, 10);
+
+const currentPath = Astro.url.pathname.replace(/\.html$/, "").replace(/(.)\/$/, "$1");
 ---
 
 <BaseLayout title={title} description={description} noIndex>
   <div class="wrap policy">
     <div class="rail">
-      <a class="back" href="/">← Home</a>
+      <nav aria-label="Legal">
+        <p class="rail-title">Legal</p>
+        <ul>
+          {
+            legalPages.map(({ href, label }) => (
+              <li>
+                <a href={href} aria-current={currentPath === href ? "page" : undefined}>
+                  {label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
       <time datetime={machineDate}>Updated {humanDate}</time>
     </div>
 
-    <article class="body">
+    <article class="content">
+      <h1>{title}</h1>
       <Prose>
         <slot />
       </Prose>
@@ -36,56 +54,112 @@ const machineDate = lastUpdated.toISOString().slice(0, 10);
 </BaseLayout>
 
 <style>
+  /* The same two-column shell as DocsLayout (13rem rail, --sp-7 gutter) so moving between
+     the docs and the legal pages doesn't shift the text column. */
   .policy {
     display: grid;
     gap: var(--sp-5);
     padding-block: var(--sp-6) var(--sp-9);
   }
 
+  .content {
+    min-width: 0;
+  }
+
+  /* Quieter than the docs' --text-3xl: these are the pages a reader is least here for. */
+  .content h1 {
+    margin: 0 0 var(--sp-5);
+    font-size: var(--text-2xl);
+  }
+
+  /* On phones the rail is a single wrapping line of chrome above the title: the three
+     links, then the date. The "Legal" heading and the marker channel are desktop-only. */
   .rail {
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
     gap: var(--sp-3) var(--sp-5);
-    font-family: var(--f-mono);
+  }
+
+  .rail-title {
+    display: none;
+  }
+
+  .rail ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-3) var(--sp-5);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .rail a {
     font-size: var(--text-sm);
     color: var(--muted);
-  }
-
-  .back {
-    color: var(--muted);
     text-decoration: none;
+    transition: color var(--dur-fast) var(--ease-out);
   }
 
-  .back:hover {
+  .rail a:hover {
     color: var(--ink);
   }
 
-  .body {
-    min-width: 0;
-    font-size: var(--text-base);
+  .rail a[aria-current="page"] {
+    color: var(--brand-ink);
   }
 
-  /* The only <h1> the slotted MDX carries is the policy's own title. Prose.astro sizes h2+
-     but leaves h1 to its callers (DocsLayout renders one itself), so set it here. */
-  .body :global(.prose h1) {
-    margin: 0 0 var(--sp-5);
-    font-size: var(--text-xl);
+  /* The date is a datum, so it stays in the mono face, one step down from the links. */
+  .rail time {
+    font-family: var(--f-mono);
+    font-size: var(--text-xs);
+    color: var(--muted);
   }
 
   @media (min-width: 48rem) {
     .policy {
-      grid-template-columns: 11rem 1fr;
+      grid-template-columns: 13rem 1fr;
       gap: var(--sp-7);
-      padding-block: var(--sp-7) var(--sp-9);
     }
 
     .rail {
       flex-direction: column;
-      gap: var(--sp-3);
+      gap: var(--sp-5);
       position: sticky;
       top: var(--sp-5);
       align-self: start;
+    }
+
+    .rail-title {
+      display: block;
+      margin: 0 0 var(--sp-3);
+      padding-left: calc(var(--sp-4) + 2px);
+      font-family: var(--f-mono);
+      font-size: var(--text-xs);
+      letter-spacing: 0.02em;
+      text-transform: lowercase;
+      color: var(--muted);
+    }
+
+    /* Same rail language as the docs sidebar: a 2px marker channel that stays transparent
+       until the page is current, when it turns amber. */
+    .rail ul {
+      display: grid;
+      gap: var(--sp-1);
+    }
+
+    .rail a {
+      display: block;
+      padding: var(--sp-2) 0 var(--sp-2) var(--sp-4);
+      border-left: 2px solid transparent;
+    }
+
+    .rail a[aria-current="page"] {
+      border-left-color: var(--brand);
+    }
+
+    .rail time {
+      padding-left: calc(var(--sp-4) + 2px);
     }
   }
 </style>
