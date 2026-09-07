@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 349 349" role="img" aria-label="gramdown">
+  <!--
+    gramdown mark. Derived from gramdown.svg: frame, background and the Markdown symbol
+    cluster removed, coordinates re-origined to a 349x349 box (ink 301x280, 24/34 padding).
+
+    Colour comes from the site tokens when this is inlined in the page, and falls back to the
+    literal light-theme values when the file is loaded standalone (<img>, favicon, README).
+    The document is the Grammarly source; the arrow is the conversion, in the second hue -
+    green never appears on the output side.
+  -->
+  <style>
+    .doc { stroke: var(--source, #0c8c6a); }
+    .wedge { fill: var(--source, #0c8c6a); stroke: var(--source, #0c8c6a); }
+    .arrow { stroke: var(--brand-ink, #8a5200); }
+  </style>
+
+  <!-- Dog-ear wedge; its hypotenuse is the fold diagonal. -->
+  <path class="wedge" d="M 163 48 L 217 111 L 163 111 Z"
+        stroke-width="20" stroke-linejoin="round"/>
+
+  <!-- Page outline. Right edge broken for the arrow to pass through. -->
+  <g class="doc" fill="none" stroke-width="20" stroke-linejoin="round" stroke-linecap="butt">
+    <path d="M 218 198
+             L 218 285
+             Q 218 306 197 306
+             L 55 306
+             Q 34 306 34 285
+             L 34 68
+             Q 34 47 55 47
+             L 163 47"/>
+    <path d="M 218 111 L 218 150"/>
+  </g>
+
+  <!-- Body lines. -->
+  <g class="doc" fill="none" stroke-width="20" stroke-linecap="round">
+    <line x1="71" y1="213" x2="181" y2="213"/>
+    <line x1="71" y1="251" x2="181" y2="251"/>
+  </g>
+
+  <!-- Arrow: shaft extends into the chevron so the two read as one stroke. -->
+  <g class="arrow" fill="none" stroke-width="22" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="170" y1="174" x2="298" y2="174"/>
+    <path d="M 263 128 L 315 174 L 263 220"/>
+  </g>
+</svg>

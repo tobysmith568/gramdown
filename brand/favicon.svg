@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 349 349" role="img" aria-label="gramdown">
+  <!--
+    Generated from mark.svg - do not hand-edit. Full-bleed ground, no radius: the browser
+    draws this into its own small square, so a baked radius leaves hard corners against
+    whatever chrome sits behind it. Token values are inlined because a standalone favicon
+    cannot read the page's custom properties.
+  -->
+  <style>
+    .ground { fill: #f5efe3; }
+    .doc, .wedge { stroke: #0c8c6a; }
+    .wedge { fill: #0c8c6a; }
+    .arrow { stroke: #8a5200; }
+    @media (prefers-color-scheme: dark) {
+      .ground { fill: #1a160f; }
+      .doc, .wedge { stroke: #2fbe91; }
+      .wedge { fill: #2fbe91; }
+      .arrow { stroke: #f0c77a; }
+    }
+  </style>
+
+  <rect class="ground" x="0" y="0" width="349" height="349"/>
+
+
+  <!-- Dog-ear wedge; its hypotenuse is the fold diagonal. -->
+  <path class="wedge" d="M 163 48 L 217 111 L 163 111 Z"
+        stroke-width="20" stroke-linejoin="round"/>
+
+  <!-- Page outline. Right edge broken for the arrow to pass through. -->
+  <g class="doc" fill="none" stroke-width="20" stroke-linejoin="round" stroke-linecap="butt">
+    <path d="M 218 198
+             L 218 285
+             Q 218 306 197 306
+             L 55 306
+             Q 34 306 34 285
+             L 34 68
+             Q 34 47 55 47
+             L 163 47"/>
+    <path d="M 218 111 L 218 150"/>
+  </g>
+
+  <!-- Body lines. -->
+  <g class="doc" fill="none" stroke-width="20" stroke-linecap="round">
+    <line x1="71" y1="213" x2="181" y2="213"/>
+    <line x1="71" y1="251" x2="181" y2="251"/>
+  </g>
+
+  <!-- Arrow: shaft extends into the chevron so the two read as one stroke. -->
+  <g class="arrow" fill="none" stroke-width="22" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="170" y1="174" x2="298" y2="174"/>
+    <path d="M 263 128 L 315 174 L 263 220"/>
+  </g>
+</svg>
