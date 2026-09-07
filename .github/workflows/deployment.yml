@@ -121,21 +121,42 @@ jobs:
           generate_release_notes: true
           files: dist-bin/*
           body: |
-            # Release v${{ inputs.version }}
+            Clean Markdown from your Grammarly `.docx` exports.
+            [Documentation](https://gramdown.tobythe.dev/docs) ·
+            [gramdown.tobythe.dev](https://gramdown.tobythe.dev)
 
-            ## npm
+            ## Install or upgrade
 
             ```sh
             npm install -g gramdown@${{ inputs.version }}
             ```
 
-            The gramdown programmatic interface is published separately as
-            [`@gramdown/core`](https://www.npmjs.com/package/@gramdown/core/v/${{ inputs.version }}).
+            Or run it without installing anything:
+
+            ```sh
+            npx gramdown@${{ inputs.version }} draft.docx -o draft.md
+            ```
+
+            The conversion engine is published alongside it as
+            [`@gramdown/core@${{ inputs.version }}`](https://www.npmjs.com/package/@gramdown/core/v/${{ inputs.version }}),
+            for calling from your own code. Both are published with npm provenance.
 
             ## Standalone binaries
 
-            Download the binary for your platform from the assets below — no
-            Node, Bun, or npm required.
+            The assets below are single files that run on their own: no Node.js, Bun
+            or npm needed. There is one for Linux (x64 and arm64), macOS (Intel and
+            Apple silicon) and Windows (x64); see
+            [Downloads](https://gramdown.tobythe.dev/docs/downloads) if you are not
+            sure which you want.
+
+            ```sh
+            chmod +x gramdown-*
+            ./gramdown-* draft.docx -o draft.md
+            ```
+
+            `SHA256SUMS.txt` carries a checksum for every binary in this release.
+            Check the one you downloaded with
+            `sha256sum --check --ignore-missing SHA256SUMS.txt`.
 
   deploy-website:
     name: Redeploy the website

@@ -1,7 +1,7 @@
 {
   "name": "@gramdown/core",
   "version": "0.0.0",
-  "description": "Grammarly .docx export -> Markdown conversion core (pure, no I/O)",
+  "description": "The pure, I/O-free engine that turns a Grammarly .docx export into clean, GitHub-Flavored Markdown.",
   "license": "ISC",
   "author": {
     "name": "Toby Smith",
@@ -12,6 +12,17 @@
     "url": "git+https://github.com/tobysmith568/gramdown.git",
     "directory": "packages/core"
   },
+  "bugs": {
+    "url": "https://github.com/tobysmith568/gramdown/issues"
+  },
+  "homepage": "https://gramdown.tobythe.dev",
+  "keywords": [
+    "grammarly",
+    "docx",
+    "markdown",
+    "gfm",
+    "converter"
+  ],
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",

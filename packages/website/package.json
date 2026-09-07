@@ -2,6 +2,8 @@
   "name": "@gramdown/website",
   "version": "0.0.0",
   "private": true,
+  "description": "https://gramdown.tobythe.dev - The official website for gramdown, the Grammarly .docx to Markdown converter.",
+  "license": "UNLICENSED",
   "type": "module",
   "scripts": {
     "dev": "astro dev",

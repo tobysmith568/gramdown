@@ -1,7 +1,7 @@
 {
   "name": "gramdown",
   "version": "0.0.0",
-  "description": "Convert Grammarly .docx exports to Markdown. Pure JS, no system dependencies.",
+  "description": "Turn a Grammarly .docx export into clean, GitHub-Flavored Markdown, from the command line.",
   "license": "ISC",
   "author": {
     "name": "Toby Smith",
@@ -12,10 +12,16 @@
     "url": "git+https://github.com/tobysmith568/gramdown.git",
     "directory": "packages/cli"
   },
+  "bugs": {
+    "url": "https://github.com/tobysmith568/gramdown/issues"
+  },
+  "homepage": "https://gramdown.tobythe.dev",
   "keywords": [
     "grammarly",
     "docx",
     "markdown",
+    "gfm",
+    "converter",
     "cli"
   ],
   "type": "module",

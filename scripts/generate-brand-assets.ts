@@ -15,6 +15,10 @@
 //                        has no media queries.
 //   apple-touch-icon.png 180x180, opaque and padded, for the iOS home screen.
 //   og.png               the 1200x630 social card.
+// The website itself never links the last pair; they are served from it because it is the
+// brand's canonical host, and the READMEs on github.com and npmjs.com need an absolute URL:
+//   banner.png           the 1200x440 README hero.
+//   banner-dark.png      the same, on the dark palette, for GitHub's dark theme.
 // It also copies the mark into the website's own `src/assets`, for the header to inline.
 // No `.webmanifest` and no `mstile-*`: nothing reads them, and this is not an installable
 // app. That is the whole modern set, which is why there is no favicon-generator service in
@@ -38,6 +42,13 @@ interface RenderOptions {
   background?: string;
   /** Pixels of clear space on every side, inside the given width and height. */
   inset?: number;
+  /**
+   * Custom properties to set on the wrapper's `:root`. A master written with
+   * `var(--token, light-value)` fills renders on its light fallbacks when this is omitted,
+   * and on whatever is passed here when it is not. Only works because the SVG is inlined
+   * into the page (see `render`) - an <img>-loaded one would inherit nothing.
+   */
+  variables?: Record<string, string>;
 }
 
 interface IcoFrame {
@@ -50,6 +61,15 @@ interface IcoFrame {
 // square can never match the tab strip behind it), but an iOS home-screen icon must be
 // opaque or the transparency composites to black.
 const paper = "#f5efe3";
+
+// The dark half of the banner, lifted from the website's `tokens.css`
+// `prefers-color-scheme: dark` block. Only the four roles the banner master names.
+const darkPalette = {
+  "--paper": "#1a160f",
+  "--ink": "#ece6d8",
+  "--source": "#2fbe91",
+  "--brand-ink": "#f0c77a"
+};
 
 // Apple rounds and masks the home-screen icon, so it wants more clear space than a favicon.
 // A tenth of the edge on every side is the usual allowance.
@@ -110,13 +130,17 @@ const render = async (
   height: number,
   options: RenderOptions = {}
 ): Promise<Buffer> => {
-  const { background, inset = 0 } = options;
+  const { background, inset = 0, variables } = options;
+
+  const declarations = Object.entries(variables ?? {}).map(([name, value]) => `${name}: ${value};`);
+  const rootRule = declarations.length > 0 ? `:root { ${declarations.join(" ")} }` : "";
 
   const ground = background ?? "transparent";
   const page = `<!doctype html>
 <meta charset="utf-8">
 <style>
 ${fontCss}
+${rootRule}
 html, body { margin: 0; padding: 0; background: ${ground}; }
 svg { display: block; margin: ${inset}px; width: ${width - inset * 2}px; height: ${height - inset * 2}px; }
 </style>
@@ -260,7 +284,23 @@ try {
   const og = await render(lockupSvg, 1200, 630, { background: paper });
   await writeFile(join(publicDir, "og.png"), og);
 
-  console.log(`Wrote favicon.svg, favicon.ico, apple-touch-icon.png and og.png to ${publicDir}`);
+  // The one master rendered twice. GitHub picks between the pair with a <picture>; npm gets
+  // the light one on its own, since its Markdown renderer is not to be trusted with <source>.
+  const bannerSvg = await readMaster("banner.svg");
+
+  const banner = await render(bannerSvg, 1200, 440, { background: paper });
+  await writeFile(join(publicDir, "banner.png"), banner);
+
+  const bannerDark = await render(bannerSvg, 1200, 440, {
+    background: darkPalette["--paper"],
+    variables: darkPalette
+  });
+  await writeFile(join(publicDir, "banner-dark.png"), bannerDark);
+
+  console.log(
+    `Wrote favicon.svg, favicon.ico, apple-touch-icon.png, og.png, banner.png and ` +
+      `banner-dark.png to ${publicDir}`
+  );
   console.log(`Wrote mark.svg to ${assetsDir}`);
 } finally {
   await rm(workDir, { recursive: true, force: true });

@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 440" role="img"
+     aria-label="gramdown: clean Markdown from your Grammarly .docx exports">
+  <!--
+    README banner master (1200x440). `packages/website/public/banner.png` and
+    `banner-dark.png` are rendered from this by `scripts/generate-brand-assets.ts`, which
+    inlines it into an HTML wrapper so the self-hosted IBM Plex faces resolve. Do not
+    hand-edit those PNGs.
+
+    The social lockup (og-lockup.svg) cut down for the top of a README: a shorter frame,
+    no rule and no subline, because the links and the pitch are in the prose right below
+    it. Same margin, same mark size, same wordmark, so the two read as one family.
+
+    Unlike the social card this one is rendered twice, so its colours are var() with the
+    light value as the fallback: the generator supplies a dark palette on the second pass.
+    (Token names are written without their leading dashes on purpose: XML forbids a double
+    hyphen inside a comment.)
+  -->
+  <rect width="1200" height="440" fill="var(--paper, #f5efe3)"/>
+
+  <!-- The mark, from mark.svg: 349 to 96px, so scale 96/349. -->
+  <g transform="translate(120 88) scale(0.27507)">
+    <path d="M 163 48 L 217 111 L 163 111 Z"
+          fill="var(--source, #0c8c6a)" stroke="var(--source, #0c8c6a)"
+          stroke-width="20" stroke-linejoin="round"/>
+
+    <g fill="none" stroke="var(--source, #0c8c6a)" stroke-width="20" stroke-linejoin="round"
+       stroke-linecap="butt">
+      <path d="M 218 198 L 218 285 Q 218 306 197 306 L 55 306 Q 34 306 34 285 L 34 68 Q 34 47 55 47 L 163 47"/>
+      <path d="M 218 111 L 218 150"/>
+    </g>
+
+    <g fill="none" stroke="var(--source, #0c8c6a)" stroke-width="20" stroke-linecap="round">
+      <line x1="71" y1="213" x2="181" y2="213"/>
+      <line x1="71" y1="251" x2="181" y2="251"/>
+    </g>
+
+    <g fill="none" stroke="var(--brand-ink, #8a5200)" stroke-width="22" stroke-linecap="round"
+       stroke-linejoin="round">
+      <line x1="170" y1="174" x2="298" y2="174"/>
+      <path d="M 263 128 L 315 174 L 263 220"/>
+    </g>
+  </g>
+
+  <!-- Wordmark: IBM Plex Mono 600, lowercase, -0.02em, all ink. Baseline set so the
+       cap-height block centres on the 96px mark beside it. -->
+  <text x="244" y="163" font-family="'IBM Plex Mono', ui-monospace, monospace"
+        font-size="76" font-weight="600" letter-spacing="-1.52" fill="var(--ink, #211d15)">gramdown</text>
+
+  <!-- The pitch, in the display face the site sets every heading in. -->
+  <text font-family="'IBM Plex Mono', ui-monospace, monospace"
+        font-size="52" font-weight="600" letter-spacing="-1.04" fill="var(--ink, #211d15)">
+    <tspan x="120" y="300">Clean Markdown from your</tspan>
+    <tspan x="120" y="366">Grammarly .docx exports.</tspan>
+  </text>
+</svg>
