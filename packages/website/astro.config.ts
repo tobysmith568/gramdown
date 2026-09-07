@@ -1,6 +1,8 @@
 import mdx from "@astrojs/mdx";
 import preact from "@astrojs/preact";
+import sitemap from "@astrojs/sitemap";
 import { defineConfig } from "astro/config";
+import { legalPages } from "./src/consts";
 
 // GitHub Pages on a custom apex-style subdomain (see public/CNAME), so no `base` and no
 // sub-path prefixing. `output: "static"` keeps this to plain files GitHub Pages can serve.
@@ -14,8 +16,19 @@ export default defineConfig({
     format: "file"
   },
 
-  // `mdx()` powers the `docs` content collection (8.8); `sitemap()` lands in 8.10.
-  integrations: [preact(), mdx()],
+  // `mdx()` powers the `docs` content collection (8.8).
+  integrations: [
+    preact(),
+    mdx(),
+    sitemap({
+      filter: page => {
+        const path = new URL(page).pathname;
+        const isLegal = legalPages.some(({ href }) => href === path);
+
+        return !isLegal && path !== "/404";
+      }
+    })
+  ],
 
   markdown: {
     shikiConfig: {

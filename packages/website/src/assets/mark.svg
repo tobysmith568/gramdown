@@ -1,19 +1,8 @@
+<!-- Generated from brand/mark.svg by scripts/generate-brand-assets.ts. Do not edit. -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 349 349" role="img" aria-label="gramdown">
-  <!--
-    gramdown mark. Derived from gramdown.svg: frame, background and the Markdown symbol
-    cluster removed, coordinates re-origined to a 349x349 box (ink 301x280, 24/34 padding).
-    The document is the Grammarly source; the arrow is the conversion, in the second hue.
-    Colour lives in presentation attributes, not a <style> block, so inlining this file into
-    a page adds no CSS to it; each var() falls back to light-theme ink when it stands alone.
-    This file is inlined into the site header, so keep this comment short.
-  -->
-
-  <!-- Dog-ear wedge; its hypotenuse is the fold diagonal. -->
   <path d="M 163 48 L 217 111 L 163 111 Z"
         fill="var(--source, #0c8c6a)" stroke="var(--source, #0c8c6a)"
         stroke-width="20" stroke-linejoin="round"/>
-
-  <!-- Page outline. Right edge broken for the arrow to pass through. -->
   <g fill="none" stroke="var(--source, #0c8c6a)"
      stroke-width="20" stroke-linejoin="round" stroke-linecap="butt">
     <path d="M 218 198
@@ -26,14 +15,10 @@
              L 163 47"/>
     <path d="M 218 111 L 218 150"/>
   </g>
-
-  <!-- Body lines. -->
   <g fill="none" stroke="var(--source, #0c8c6a)" stroke-width="20" stroke-linecap="round">
     <line x1="71" y1="213" x2="181" y2="213"/>
     <line x1="71" y1="251" x2="181" y2="251"/>
   </g>
-
-  <!-- Arrow: shaft extends into the chevron so the two read as one stroke. -->
   <g fill="none" stroke="var(--brand-ink, #8a5200)"
      stroke-width="22" stroke-linecap="round" stroke-linejoin="round">
     <line x1="170" y1="174" x2="298" y2="174"/>

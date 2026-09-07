@@ -1,0 +1,134 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+// GitHub Pages serves this file for any address that doesn't exist, so it is the one page
+// that has to explain itself to a reader who arrived by accident.
+//
+// The one idea: the way out is handed over as gramdown's own output. The list below is a
+// real block of Markdown, set in the editor idiom the index panel already uses (the
+// punctuation dimmed, the text plain), and every link in it works. It is the shortest
+// honest answer to "what does this tool actually produce?" for someone whose first
+// impression of the site is a dead link.
+const routes = [
+  { href: "/", label: "Home" },
+  { href: "/docs", label: "Documentation" },
+  { href: "/docs/downloads", label: "Downloads" },
+  { href: "/#converter", label: "Convert in your browser" }
+];
+---
+
+<BaseLayout
+  title="Page not found"
+  description="That page doesn't exist. Here are the pages that do."
+  noIndex>
+  <section class="wrap notfound">
+    <h1>There's no page here</h1>
+
+    <p class="path"><code id="requested-path"></code></p>
+
+    <p class="lead">The address may have a typo, or the link that sent you here is out of date.</p>
+
+    <div class="output">
+      <ul>
+        {
+          routes.map(({ href, label }) => (
+            <li>
+              <span class="mk" aria-hidden="true">
+                - [
+              </span>
+              <a href={href}>{label}</a>
+              <span class="mk" aria-hidden="true">
+                ]({href})
+              </span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+</BaseLayout>
+
+<script is:inline>
+  const requested = document.getElementById("requested-path");
+
+  if (requested) {
+    requested.textContent = window.location.pathname + window.location.search;
+  }
+</script>
+
+<style>
+  .notfound {
+    padding-block: var(--sp-8) var(--sp-9);
+  }
+
+  .notfound h1 {
+    margin: 0;
+    font-size: var(--text-3xl);
+  }
+
+  /* The requested address, filled in by the inline script and simply absent without it (the
+     address bar already says the same thing, so nothing is lost). It is a datum, so it takes
+     the mono face at the smallest size, the way the policy rail sets its date. `min-height`
+     holds the line whether or not it gets filled, so the block below never moves. */
+  .path {
+    min-height: calc(var(--text-sm) * 1.65);
+    margin: var(--sp-3) 0 0;
+    font-size: var(--text-sm);
+    color: var(--muted);
+    overflow-wrap: anywhere;
+  }
+
+  .path code {
+    background: none;
+    border: none;
+    padding: 0;
+    font-family: var(--f-mono);
+    font-size: inherit;
+  }
+
+  .lead {
+    max-width: var(--measure);
+    margin: var(--sp-5) 0 var(--sp-6);
+    color: var(--muted);
+  }
+
+  /* The site's output frame, unchanged from the one Prose puts around a code block: the
+     raised surface, a hairline, and the 2px amber rule. What sits inside it is Markdown,
+     which is the only reason this page gets to be interesting. */
+  .output {
+    max-width: var(--measure);
+    padding: var(--sp-5) var(--sp-5) var(--sp-5) calc(var(--sp-5) - 2px);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 2px solid var(--brand);
+    border-radius: var(--radius);
+    font-family: var(--f-mono);
+    font-size: var(--text-sm);
+    line-height: 1.9;
+  }
+
+  .output ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* A hanging indent so a line that wraps on a phone continues under the link text rather
+     than flush with the "- " of the next item, which reads as a fifth bullet. */
+  .output li {
+    padding-left: 2ch;
+    text-indent: -2ch;
+  }
+
+  /* The Markdown punctuation, dimmed a step past --muted so the link text is what the eye
+     lands on - the same relationship the converter panel's `.mk` spans have to their line. */
+  .mk {
+    color: color-mix(in srgb, var(--muted) 55%, var(--paper));
+  }
+
+  @media (max-width: 25rem) {
+    .output {
+      padding: var(--sp-4) var(--sp-4) var(--sp-4) calc(var(--sp-4) - 2px);
+    }
+  }
+</style>

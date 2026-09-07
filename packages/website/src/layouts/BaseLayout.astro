@@ -2,7 +2,7 @@
 import Converter from "../components/converter/Converter";
 import Footer from "../components/Footer.astro";
 import Header from "../components/Header.astro";
-import { indexingDisabled, siteName } from "../consts";
+import Seo from "../components/Seo.astro";
 import "@fontsource/ibm-plex-sans/latin-400.css";
 import "@fontsource/ibm-plex-sans/latin-400-italic.css";
 import "@fontsource/ibm-plex-sans/latin-600.css";
@@ -14,17 +14,15 @@ import ibmPlexMonoWoff2 from "@fontsource/ibm-plex-mono/files/ibm-plex-mono-lati
 import "../styles/tokens.css";
 import "../styles/global.css";
 
+// The <head> beyond the stylesheets and the font preloads belongs to `Seo`; these props
+// are passed straight through to it.
 interface Props {
   title?: string;
-  description: string | undefined;
+  description: string;
   noIndex?: boolean;
 }
 
-const { title: pageTitle, description, noIndex } = Astro.props;
-
-const title = pageTitle && pageTitle !== siteName ? `${pageTitle} - ${siteName}` : siteName;
-
-const canonical = new URL(Astro.url.pathname, Astro.site);
+const { title, description, noIndex } = Astro.props;
 ---
 
 <!doctype html>
@@ -32,31 +30,11 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    {/* Favicon held back until the icon set is ready to ship. */}
-    <meta name="theme-color" content="#f5efe3" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#1a160f" media="(prefers-color-scheme: dark)" />
-    <meta name="generator" content={Astro.generator} />
+
+    <Seo title={title} description={description} noIndex={noIndex} />
 
     <link rel="preload" as="font" type="font/woff2" href={ibmPlexSansWoff2} crossorigin />
     <link rel="preload" as="font" type="font/woff2" href={ibmPlexMonoWoff2} crossorigin />
-
-    <title>{title}</title>
-    <meta name="description" content={description} />
-    <link rel="canonical" href={canonical} />
-
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:url" content={canonical} />
-    {/* og:image / twitter card image held back until the social lockup is ready to ship. */}
-    <meta name="twitter:card" content="summary" />
-    {
-      indexingDisabled ? (
-        <meta name="robots" content="noindex, nofollow" />
-      ) : (
-        noIndex && <meta name="robots" content="noindex" />
-      )
-    }
   </head>
 
   <body>
