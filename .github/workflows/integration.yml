@@ -116,6 +116,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
+      # The Playwright image ships browsers but not `unzip`, which `oven-sh/setup-bun`
+      # needs to unpack the Bun release. Cheap next to the browser install it saves.
+      - name: Install unzip
+        run: apt-get update && apt-get install --yes --no-install-recommends unzip
+
       - name: Setup
         uses: ./.github/actions/setup
 
