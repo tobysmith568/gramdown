@@ -34,7 +34,7 @@
   "scripts": {
     "build": "tsdown",
     "typecheck": "tsc -p tsconfig.json",
-    "lint": "eslint src",
+    "lint": "eslint src --max-warnings 0",
     "test": "bun test",
     "compile": "bun build ./src/bin.ts --compile --minify --bytecode --outfile gramdown",
     "set-version": "bun pm pkg set version=$VERSION dependencies.@gramdown/core=$VERSION",

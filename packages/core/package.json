@@ -43,7 +43,7 @@
   "scripts": {
     "build": "tsdown",
     "typecheck": "tsc -p tsconfig.json",
-    "lint": "eslint src",
+    "lint": "eslint src --max-warnings 0",
     "test": "bun test",
     "test:update": "bun run test/update-fixtures.ts",
     "set-version": "bun pm pkg set version=$VERSION",

@@ -15,7 +15,7 @@
     "build": "turbo run build",
     "test": "turbo run test",
     "typecheck": "turbo run typecheck",
-    "lint": "turbo run lint && eslint scripts",
+    "lint": "turbo run lint && eslint scripts --max-warnings 0",
     "check": "turbo run build typecheck lint test",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
