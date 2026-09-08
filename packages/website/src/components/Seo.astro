@@ -20,7 +20,7 @@ const { title: pageTitle, description, noIndex } = Astro.props;
 
 // The index passes no title and gets the site's, which carries its own tagline rather than
 // the bare wordmark: "gramdown" alone tells a search result nothing.
-const siteTitle = `${siteName} - Grammarly .docx to Markdown`;
+const siteTitle = `${siteName} - Convert Grammarly .docx exports to Markdown`;
 const title = pageTitle ? `${pageTitle} - ${siteName}` : siteTitle;
 
 // `build.format: "file"` makes the built pathname the emitted filename (`/docs/cli.html`,
