@@ -163,10 +163,9 @@ jobs:
         uses: ./.github/actions/setup
 
       - name: Set version
-        if: inputs.version != ''
         run: bun run set-version
         env:
-          VERSION: ${{ inputs.version }}
+          VERSION: ${{ inputs.version || '0.0.0' }}
 
       - name: Pack
         run: bun run pack
@@ -178,6 +177,14 @@ jobs:
           path: packages/*/*.tgz
           if-no-files-found: error
           retention-days: 1
+
+  install-test:
+    name: Install test
+    needs:
+      - pack
+    uses: ./.github/workflows/install-test.yml
+    with:
+      version: ${{ inputs.version || '0.0.0' }}
 
   codeql:
     name: CodeQL
