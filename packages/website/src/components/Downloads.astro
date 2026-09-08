@@ -65,8 +65,13 @@ const versionLine = releaseDownloads.version
     font-size: var(--text-sm);
   }
 
+  /* Scroll inside the figure on a narrow screen rather than breaking "Download" across
+     two lines or widening the page (matches the docs `Prose` tables). */
   table {
-    width: 100%;
+    display: block;
+    width: max-content;
+    max-width: 100%;
+    overflow-x: auto;
     border-collapse: collapse;
     font-size: var(--text-sm);
   }
@@ -76,6 +81,13 @@ const versionLine = releaseDownloads.version
     padding: var(--sp-3) var(--sp-4);
     text-align: left;
     border-bottom: 1px solid var(--border);
+  }
+
+  /* Keep the size and the download link each on one line - the platform name is the
+     only cell that may wrap. */
+  td:nth-child(2),
+  td:last-child {
+    white-space: nowrap;
   }
 
   th {

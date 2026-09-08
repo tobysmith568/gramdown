@@ -40,8 +40,7 @@
   .prose :global(p),
   .prose :global(ul),
   .prose :global(ol),
-  .prose :global(blockquote),
-  .prose :global(table) {
+  .prose :global(blockquote) {
     max-width: 44rem;
   }
 
@@ -86,8 +85,15 @@
     margin-bottom: 0;
   }
 
+  /* A wide table (a Type column full of code, say) scrolls inside its own frame rather
+     than widening the page - the same containment the code frames get. `display: block`
+     turns the table itself into the scroll container; `width: max-content` lets it take
+     its natural width up to the column edge before the scrollbar appears. */
   .prose :global(table) {
-    width: 100%;
+    display: block;
+    width: max-content;
+    max-width: 100%;
+    overflow-x: auto;
     border-collapse: collapse;
     font-size: var(--text-sm);
   }
