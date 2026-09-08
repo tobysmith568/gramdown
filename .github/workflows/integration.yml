@@ -111,6 +111,10 @@ jobs:
 
     container:
       image: mcr.microsoft.com/playwright:v1.63.0-noble
+      # Firefox's sandbox creates an unprivileged user namespace, which the container's
+      # default seccomp / AppArmor profiles block (EPERM on clone()). `--ipc=host` is
+      # Playwright's own recommendation for Chromium stability in Docker.
+      options: --ipc=host --security-opt seccomp=unconfined --security-opt apparmor=unconfined
 
     steps:
       - name: Checkout
