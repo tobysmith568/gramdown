@@ -22,6 +22,11 @@
       "dependsOn": ["^build"],
       "outputs": []
     },
+    "e2e": {
+      "dependsOn": ["build"],
+      "cache": false,
+      "outputs": []
+    },
     "set-version": {
       "cache": false,
       "passThroughEnv": ["VERSION"]

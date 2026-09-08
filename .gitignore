@@ -6,6 +6,11 @@ dist
 coverage
 .DS_Store
 
+# playwright
+playwright-report
+test-results
+/packages/*/playwright/.cache
+
 # compiled binaries
 /gramdown
 /gramdown-*

@@ -1,4 +1,11 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["local>tobysmith568/renovate-config"]
+  "extends": ["local>tobysmith568/renovate-config"],
+  "packageRules": [
+    {
+      "groupName": "Playwright",
+      "matchPackageNames": ["@playwright/test", "mcr.microsoft.com/playwright"],
+      "automerge": true
+    }
+  ]
 }

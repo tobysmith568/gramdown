@@ -5,3 +5,5 @@ bun.lock
 .astro
 **/test/fixtures/**/*.md
 .agents/skills
+playwright-report
+test-results

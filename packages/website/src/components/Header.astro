@@ -1,6 +1,7 @@
 ---
 import Mark from "../assets/mark.svg";
 import { repoUrl, siteName } from "../consts";
+import { isActivePath, normalizePathname } from "../lib/nav";
 
 const links = [
   { href: "/docs", label: "Docs" },
@@ -8,12 +9,9 @@ const links = [
   { href: repoUrl, label: "GitHub" }
 ];
 
-const currentPath = Astro.url.pathname.replace(/\.html$/, "").replace(/(.)\/$/, "$1");
+const currentPath = normalizePathname(Astro.url.pathname);
 
-const isActive = (href: string) =>
-  href.startsWith("/") &&
-  !href.includes("#") &&
-  (currentPath === href || currentPath.startsWith(href + "/"));
+const isActive = (href: string) => isActivePath(currentPath, href);
 ---
 
 <header data-nav-open="false">

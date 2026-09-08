@@ -75,7 +75,7 @@
 /*
  * Dark palette - a warm near-black, the light theme's counterpart (not an inversion). Only the
  * colour roles change; type, space and motion are shared. When the explicit toggle lands this
- * block splits into :root[data-theme="dark"] + a guarded media query (see ../tobysmith.uk).
+ * block splits into :root[data-theme="dark"] + a guarded media query.
  */
 @media (prefers-color-scheme: dark) {
   :root {

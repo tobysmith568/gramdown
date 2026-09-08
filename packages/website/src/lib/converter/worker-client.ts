@@ -1,10 +1,8 @@
 import ConvertWorker from "./convert.worker.ts?worker";
 import type { ConvertRequest, ConvertZipRequest, WorkerResponse, ZipEntry } from "./messages";
+import { readConvertResult, readZipBytes, type ConversionResult } from "./response";
 
-export interface ConversionResult {
-  markdown: string;
-  warnings: string[];
-}
+export type { ConversionResult } from "./response";
 
 /**
  * A typed wrapper around the conversion Web Worker. One instance owns one
@@ -33,16 +31,11 @@ export class ConversionClient {
 
     const result = new Promise<ConversionResult>((resolve, reject) => {
       const settle = (response: WorkerResponse): void => {
-        if (response.kind !== "convert") {
-          reject(new Error("the worker answered a convert request with the wrong message kind"));
-          return;
+        try {
+          resolve(readConvertResult(response));
+        } catch (error) {
+          reject(error instanceof Error ? error : new Error(String(error)));
         }
-        if (response.ok && response.markdown !== null) {
-          resolve({ markdown: response.markdown, warnings: response.warnings });
-          return;
-        }
-        const message = response.error ?? "the conversion worker failed for an unknown reason";
-        reject(new Error(message));
       };
       this.pending.set(id, { settle, abort: reject });
     });
@@ -57,16 +50,11 @@ export class ConversionClient {
 
     const result = new Promise<Uint8Array>((resolve, reject) => {
       const settle = (response: WorkerResponse): void => {
-        if (response.kind !== "zip") {
-          reject(new Error("the worker answered a zip request with the wrong message kind"));
-          return;
+        try {
+          resolve(readZipBytes(response));
+        } catch (error) {
+          reject(error instanceof Error ? error : new Error(String(error)));
         }
-        if (response.ok && response.bytes !== null) {
-          resolve(response.bytes);
-          return;
-        }
-        const message = response.error ?? "the zip worker failed for an unknown reason";
-        reject(new Error(message));
       };
       this.pending.set(id, { settle, abort: reject });
     });

@@ -1,6 +1,7 @@
 ---
 import Prose from "../components/Prose.astro";
 import { legalPages } from "../consts";
+import { normalizePathname } from "../lib/nav";
 import BaseLayout from "./BaseLayout.astro";
 
 interface Props {
@@ -20,7 +21,7 @@ const humanDate = lastUpdated.toLocaleDateString("en-GB", {
 });
 const machineDate = lastUpdated.toISOString().slice(0, 10);
 
-const currentPath = Astro.url.pathname.replace(/\.html$/, "").replace(/(.)\/$/, "$1");
+const currentPath = normalizePathname(Astro.url.pathname);
 ---
 
 <BaseLayout title={title} description={description} noIndex>

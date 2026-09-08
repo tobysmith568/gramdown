@@ -7,6 +7,7 @@
 // Pages pass their own bare title and description; the decoration (the " - gramdown"
 // suffix, the absolute URLs, the icon links) is this component's business alone.
 import { indexingDisabled, siteName } from "../consts";
+import { decorateTitle, servedPathname } from "../lib/seo";
 
 interface Props {
   /** The page's own title, undecorated. Omitted on the index, which is the site itself. */
@@ -18,15 +19,13 @@ interface Props {
 
 const { title: pageTitle, description, noIndex } = Astro.props;
 
-// The index passes no title and gets the site's, which carries its own tagline rather than
-// the bare wordmark: "gramdown" alone tells a search result nothing.
-const siteTitle = `${siteName} - Convert Grammarly .docx exports to Markdown`;
-const title = pageTitle ? `${pageTitle} - ${siteName}` : siteTitle;
+// The index passes no title and gets the site title (tagline and all); every other page
+// gets "<page> - gramdown". See `lib/seo.ts`.
+const title = decorateTitle(pageTitle);
 
-// `build.format: "file"` makes the built pathname the emitted filename (`/docs/cli.html`,
-// `/index.html`), but the page is served, linked and listed in the sitemap at the
-// extensionless path. A canonical that disagrees with the sitemap is worse than none.
-const servedPath = Astro.url.pathname.replace(/index\.html$/, "").replace(/\.html$/, "");
+// A canonical that disagrees with the sitemap is worse than none - both use the
+// extensionless served path, not the built `*.html` filename.
+const servedPath = servedPathname(Astro.url.pathname);
 const canonical = new URL(servedPath, Astro.site);
 
 // The social card is one image for the whole site: a three-page site does not have enough

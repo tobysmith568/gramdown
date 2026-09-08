@@ -5,6 +5,7 @@
  */
 
 import { signal } from "@preact/signals";
+import { coerceFlag } from "../flags";
 
 // `readFlag` and the key are read during this module's eager evaluation (the
 // `initialGuessLanguages` const below), so they sit above the export - `const`
@@ -15,13 +16,7 @@ const guessLanguagesKey = "gramdown:guess-lang";
 const readFlag = (key: string, fallback: boolean): boolean => {
   try {
     const stored = globalThis.localStorage?.getItem(key);
-    if (stored === "true") {
-      return true;
-    }
-    if (stored === "false") {
-      return false;
-    }
-    return fallback;
+    return coerceFlag(stored, fallback);
   } catch {
     return fallback;
   }

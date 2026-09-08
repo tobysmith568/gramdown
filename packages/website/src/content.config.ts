@@ -19,8 +19,7 @@ const docsSchema = z.object({
 const docs = defineCollection({ loader: docsLoader, schema: docsSchema });
 
 // The legal pages (8.9): Terms, Privacy, Cookies. `lastUpdated` is rendered in each page's
-// rail alongside the back-link (the same fact is also stated in the prose). Mirrors the
-// `policies` collection in ../tobysmith.uk.
+// rail alongside the back-link (the same fact is also stated in the prose).
 const policiesLoader = glob({ pattern: "**/*.mdx", base: "./src/content/policies" });
 
 const policiesSchema = z.object({

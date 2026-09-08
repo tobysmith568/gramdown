@@ -12,6 +12,7 @@
 
 import { effect, signal } from "@preact/signals";
 import { downloadBytes, downloadMarkdown } from "./download";
+import { describeRejection, partitionDocxFiles } from "./dropped-files";
 import { dedupeName, toMarkdownName } from "./filenames";
 import { applyRetention, clearStore, loadConversions, saveConversions } from "./persistence";
 import { guessLanguages, setGuessLanguages } from "./preferences";
@@ -100,8 +101,7 @@ export const initPersistence = async (): Promise<() => void> => {
 
 /** Add every `.docx` in `files` to the queue and start converting each one. */
 export const enqueueFiles = async (files: readonly File[]): Promise<void> => {
-  const docxFiles = files.filter(file => file.name.toLowerCase().endsWith(".docx"));
-  const rejectedCount = files.length - docxFiles.length;
+  const { docx: docxFiles, rejectedCount } = partitionDocxFiles(files);
   lastRejection.value = describeRejection(rejectedCount);
 
   const guessLanguage = guessLanguages.value;
@@ -290,14 +290,4 @@ const onVisibilityChange = (): void => {
 
 const isDownloadable = (entry: Conversion): entry is Conversion & { markdown: string } => {
   return entry.status === "ready" && entry.markdown !== null;
-};
-
-const describeRejection = (count: number): string | null => {
-  if (count === 0) {
-    return null;
-  }
-  if (count === 1) {
-    return "Skipped 1 file that isn’t a .docx.";
-  }
-  return `Skipped ${count} files that aren’t .docx.`;
 };

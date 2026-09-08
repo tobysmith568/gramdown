@@ -12,7 +12,10 @@
     "preview": "astro preview",
     "astro": "astro",
     "typecheck": "astro check",
-    "lint": "eslint . --max-warnings 0"
+    "lint": "eslint . --max-warnings 0",
+    "test": "bun test src",
+    "e2e": "playwright test",
+    "e2e:ui": "playwright test --ui"
   },
   "dependencies": {
     "@astrojs/mdx": "^8.0.0",
@@ -32,9 +35,13 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
     "@gramdown/fixtures": "workspace:*",
+    "@playwright/test": "^1.56.0",
+    "@types/bun": "^1.4.0",
     "eslint": "^10.0.0",
     "eslint-plugin-astro": "^3.1.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-playwright": "^2.11.0",
+    "fake-indexeddb": "^6.2.2",
     "typescript-eslint": "^8.69.0"
   }
 }

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "preact/hooks";
+import { countLines, dimMarkdown } from "../../lib/converter/dim-markdown";
 import { downloadMarkdown } from "../../lib/converter/download";
 import { guessLanguages } from "../../lib/converter/preferences";
 import type { SampleConversion } from "../../lib/converter/sample";
@@ -156,14 +157,14 @@ const ConverterPanel = ({ sample }: Props) => {
 
   if (!ready) {
     return (
-      <div class={styles.editorLoading}>
+      <div class={styles.editorLoading} data-testid="converter-loading">
         <span>Loading the converter…</span>
       </div>
     );
   }
 
   return (
-    <div class={styles.editor} ref={rootRef}>
+    <div class={styles.editor} ref={rootRef} data-testid="converter">
       <p class="sr-only" role="status" aria-live="polite">
         {announcement}
       </p>
@@ -171,7 +172,7 @@ const ConverterPanel = ({ sample }: Props) => {
       <div class={styles.explorer}>
         <p class={styles.explorerHead}>Converted files</p>
 
-        <ul class={styles.efList}>
+        <ul class={styles.efList} data-testid="file-list">
           {queue.map(item => (
             <FileRow
               key={item.id}
@@ -218,9 +219,11 @@ const ConverterPanel = ({ sample }: Props) => {
         </div>
       </div>
 
-      <div class={styles.pane}>
+      <div class={styles.pane} data-testid="pane">
         <div class={styles.paneHead}>
-          <span class={styles.paneFile}>{selected.outputName}</span>
+          <span class={styles.paneFile} data-testid="pane-filename">
+            {selected.outputName}
+          </span>
           <span class={styles.paneActions}>
             <button
               type="button"
@@ -283,7 +286,12 @@ interface FileRowProps {
 
 const FileRow = ({ item, selected, example, onSelect, onRemove }: FileRowProps) => {
   return (
-    <li class={styles.ef} data-status={item.status} data-selected={selected ? "" : undefined}>
+    <li
+      class={styles.ef}
+      data-testid="file-row"
+      data-name={item.outputName}
+      data-status={item.status}
+      data-selected={selected ? "" : undefined}>
       <button type="button" class={styles.efMain} onClick={onSelect}>
         <span class={styles.efName}>{item.outputName}</span>
         <span class={styles.efMeta}>
@@ -344,49 +352,6 @@ const IconTrash = () => (
     <path d="M2.75 4.25h10.5M6 4V2.75h4V4M4 4.25l.6 9.25a1 1 0 0 0 1 .95h4.8a1 1 0 0 0 1-.95L12 4.25M6.5 7v4.5M9.5 7v4.5" />
   </svg>
 );
-
-const escapeHtml = (raw: string): string =>
-  raw.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-
-const dimInline = (escaped: string): string => {
-  let text = escaped;
-  text = text.replace(/^(\s*)(#{1,6} )/, '$1<span class="mk">$2</span>');
-  text = text.replace(/^(\s*)([-*] )/, '$1<span class="mk">$2</span>');
-  text = text.replace(/^(\s*)(\d+\. )/, '$1<span class="mk">$2</span>');
-  text = text.replace(/^(\s*)(&gt; ?)/, '$1<span class="mk">$2</span>');
-  text = text.replace(/\*\*/g, '<span class="mk">**</span>');
-  text = text.replace(/`([^`]+)`/g, '<span class="mk">`</span>$1<span class="mk">`</span>');
-  text = text.replace(
-    /\[([^\]]+)\]\(([^)]+)\)/g,
-    '<span class="mk">[</span>$1<span class="mk">](</span>$2<span class="mk">)</span>'
-  );
-  return text;
-};
-
-/** One HTML string per source line, with the Markdown punctuation wrapped in `.mk`. */
-const dimMarkdown = (markdown: string): string[] => {
-  const rows = markdown.replace(/\n$/, "").split("\n");
-  const out: string[] = [];
-  let inFence = false;
-
-  for (const raw of rows) {
-    const escaped = escapeHtml(raw);
-    if (/^\s*```/.test(raw)) {
-      out.push(`<span class="mk">${escaped}</span>` || "&nbsp;");
-      inFence = !inFence;
-      continue;
-    }
-    if (inFence) {
-      out.push(escaped || "&nbsp;");
-      continue;
-    }
-    out.push(dimInline(escaped) || "&nbsp;");
-  }
-
-  return out;
-};
-
-const countLines = (markdown: string): number => markdown.replace(/\n$/, "").split("\n").length;
 
 const downloadSelected = (item: Conversion): void => {
   if (item.markdown === null) {
