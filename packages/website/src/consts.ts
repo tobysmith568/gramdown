@@ -27,6 +27,5 @@ export const legalPages = [
 // meta tag). This lets the site ship early - live at the real URL for development
 // and sharing - without it turning up in search results before it's ready.
 //
-// Flip to `false` (or delete this flag and its two call sites) as the launch step
-// - see milestone 8.12 in docs/milestone-8-website.md.
+// Flip to `false` (or delete this flag and its two call sites) as a launch step.
 export const indexingDisabled = true;

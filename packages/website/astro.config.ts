@@ -16,7 +16,7 @@ export default defineConfig({
     format: "file"
   },
 
-  // `mdx()` powers the `docs` content collection (8.8).
+  // `mdx()` powers the `docs` content collection.
   integrations: [
     preact(),
     mdx(),
@@ -34,7 +34,7 @@ export default defineConfig({
     shikiConfig: {
       // Dual themes: Shiki inlines the light colours and emits a `--shiki-dark*` custom
       // property per token. `global.css` swaps to the dark values under the dark palette.
-      // Vitesse (8.10.6) - a low-saturation theme whose warm muted reds and greens sit with
+      // Vitesse - a low-saturation theme whose warm muted reds and greens sit with
       // the parchment ground, replacing the loud `light-plus` / `dark-plus`.
       themes: {
         light: "vitesse-light",

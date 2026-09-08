@@ -32,7 +32,7 @@ describe("normaliseBlankLines", () => {
 describe("postprocess", () => {
   it("tidies the whitespace around and between blocks, without merging them", () => {
     // Two `<pre>`s that stayed separate coming out of html-to-markdown are two
-    // deliberate blocks (see startsNewCodeBlock in preprocess.ts) — postprocess
+    // deliberate blocks (see startsNewCodeBlock in preprocess/code-blocks.ts) — postprocess
     // only normalises whitespace, it never merges fences back together.
     const result = postprocess("\n\n```\na\n```\n\n\n```\nb\n```\n\n\n");
 

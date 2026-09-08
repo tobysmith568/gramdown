@@ -6,8 +6,7 @@ import styles from "./converter.module.css";
  * caught by `DropOverlay`, wherever you are). It carries no state and nothing
  * to click - the converter's real UI is the editor panel on the index
  * (`ConverterPanel`), which is also the accessible entry point. Hidden on
- * mobile, where there is no cursor to drag with. Replaces the old counter FAB
- * (milestone 8.10.5).
+ * mobile, where there is no cursor to drag with. Replaces the old counter FAB.
  */
 const DropHint = () => {
   return (

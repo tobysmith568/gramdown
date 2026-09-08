@@ -121,12 +121,10 @@ a:focus-visible {
   border: 0;
 }
 
-/* Shiki (see astro.config.mjs) inlines the Vitesse-light colours and emits a --shiki-dark*
+/* Shiki (see astro.config.ts) inlines the Vitesse-light colours and emits a --shiki-dark*
    custom property per token. The code-frame fill is ours in both themes - warm --surface,
    never Vitesse's stark #ffffff / near-black - so only the syntax colours come from the theme.
-   Under the dark palette, swap every token to its dark value. Only prefers-color-scheme for
-   now - an explicit theme toggle is deferred past launch, at which point a
-   :root[data-theme="dark"] variant joins this block. */
+   Under the dark palette, swap every token to its dark value. */
 .astro-code {
   background-color: var(--surface) !important;
 }

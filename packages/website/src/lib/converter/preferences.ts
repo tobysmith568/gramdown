@@ -7,10 +7,8 @@
 import { signal } from "@preact/signals";
 import { coerceFlag } from "../flags";
 
-// `readFlag` and the key are read during this module's eager evaluation (the
-// `initialGuessLanguages` const below), so they sit above the export - `const`
-// bindings aren't hoisted. `writeFlag` is only touched inside the setter, so it
-// lives at the bottom.
+// `initialGuessLanguages` below reads storage at module load, so `readFlag` and
+// the key it uses have to be declared first.
 const guessLanguagesKey = "gramdown:guess-lang";
 
 const readFlag = (key: string, fallback: boolean): boolean => {

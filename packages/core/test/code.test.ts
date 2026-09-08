@@ -9,7 +9,7 @@ describe("code.docx", () => {
 
   it("fences an all-monospace paragraph even when its text isn't code", async () => {
     // Grammarly has no way to record "this is a code block" beyond the font,
-    // so any Courier New paragraph becomes a fenced block — see docs/plan.md.
+    // so any Courier New paragraph becomes a fenced block.
     const markdown = await convertFixture("code");
     expect(markdown).toContain("```\nThis is plain text in a code block.\n```");
   });
@@ -53,7 +53,7 @@ describe("code.docx", () => {
     // naive "merge every adjacent code paragraph" rule would fuse them into one
     // two-line block. Grammarly's own paragraph spacing (100 twips on the side
     // facing a continuation, 200 on the side facing a boundary) is what tells
-    // startsNewCodeBlock (preprocess.ts) these are two separate one-line blocks.
+    // startsNewCodeBlock (preprocess/code-blocks.ts) these are two separate one-line blocks.
     const markdown = await convertFixture("code");
 
     expect(markdown).toContain(

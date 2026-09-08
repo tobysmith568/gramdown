@@ -2,16 +2,14 @@
  * Design tokens - the single source of truth for colour, type, spacing and motion. Components
  * read these rather than hard-coding values.
  *
- * The system (milestone 8.10.1, amended 8.10.2): a warm neutral ground with two deliberate
- * hues on top. Grammarly-derived green stays reserved for "source / input" affordances (the
- * drop zone, the "from Grammarly" side of a before/after) - colour drains out as Grammarly's
- * formatting is stripped. A second hue, amber (--brand), was added after 8.10.2 shipped an
- * all-ink chrome that read as flat rather than disciplined - it marks links and the current
- * page, never input. See docs/milestone-8.10-polish.md ("Amendment: a second hue").
+ * The system: a warm neutral ground with two deliberate hues on top. Grammarly-derived green
+ * stays reserved for "source / input" affordances (the drop zone, the "from Grammarly" side
+ * of a before/after) - colour drains out as Grammarly's formatting is stripped. Amber
+ * (--brand) marks links and the current page, never input.
  *
- * Light + dark ship via prefers-color-scheme only; an explicit toggle is deferred past launch,
- * at which point a :root[data-theme="dark"] block joins the media query and the two must stay
- * in sync.
+ * Light + dark ship via prefers-color-scheme only. If an explicit theme toggle is ever added,
+ * every `@media (prefers-color-scheme: dark)` block below needs a `:root[data-theme="dark"]`
+ * variant kept in sync with it.
  */
 
 :root {
@@ -74,8 +72,7 @@
 
 /*
  * Dark palette - a warm near-black, the light theme's counterpart (not an inversion). Only the
- * colour roles change; type, space and motion are shared. When the explicit toggle lands this
- * block splits into :root[data-theme="dark"] + a guarded media query.
+ * colour roles change; type, space and motion are shared.
  */
 @media (prefers-color-scheme: dark) {
   :root {

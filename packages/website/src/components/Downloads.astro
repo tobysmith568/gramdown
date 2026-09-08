@@ -1,7 +1,6 @@
 ---
-// The standalone-binary table, driven by the latest GitHub release (looked up at
-// build time in lib/release.ts). Lived on the index page until milestone 8.10.4
-// stripped it down; it now sits on the /docs/downloads page.
+// The standalone-binary table on /docs/downloads, driven by the latest GitHub
+// release (looked up at build time in lib/release.ts).
 import { releaseDownloads } from "../lib/release";
 
 const publishedDate = releaseDownloads.publishedAt ? new Date(releaseDownloads.publishedAt) : null;

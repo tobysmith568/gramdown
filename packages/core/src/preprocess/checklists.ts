@@ -7,9 +7,8 @@ const checklistStylePrefix = "GrammarlyChecklist";
 const maxChecklistLevel = 5;
 const checklistIndentStep = 720; // twips per level — matches Grammarly's own step
 
-// checklistStyleId and nestedListItemPath are built eagerly into
-// checklistStyles below (an Array.from run at module load), so — unlike the
-// rest of this file's helpers — they must be declared before it, not after.
+// `checklistStyles` below calls both of these in an `Array.from` that runs at
+// module load, so they have to be declared first.
 const checklistStyleId = (level: number): string => `${checklistStylePrefix}${level}`;
 
 /** A `ul > li` path nested `level` lists deep, matching the shape mammoth's own

@@ -22,8 +22,7 @@ export const maxRecords = 25;
 export const maxRetainedBytes = 25 * 1024 * 1024;
 
 // One IndexedDB database (`gramdown-conversions`), one object store, one key -
-// the whole queue is a single value. `createStore` runs eagerly, so it lives up
-// here rather than down with the helpers that read it.
+// the whole queue is a single value.
 const conversionStore = createStore("gramdown-conversions", "conversions");
 const storeKey = "queue";
 
