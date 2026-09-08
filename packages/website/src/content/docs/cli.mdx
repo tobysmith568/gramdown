@@ -4,8 +4,7 @@ description: Every flag the gramdown command takes, what it prints, the warnings
 order: 2
 ---
 
-The `gramdown` command converts one Grammarly `.docx` export to Markdown and, by
-default, prints it to your terminal.
+The `gramdown` command converts one Grammarly `.docx` export to Markdown and, by default, prints it to your terminal.
 
 ```
 gramdown <input.docx> [options]
@@ -15,9 +14,7 @@ gramdown <input.docx> [options]
 
 ### `<input.docx>`
 
-The Grammarly export to convert. The path must end in `.docx`; gramdown rejects
-anything else before it reads a byte. Required, unless `--help` or `--version` is
-passed.
+The Grammarly export to convert. The path must end in `.docx`; gramdown rejects anything else. Required, unless `--help` or `--version` is passed.
 
 ## Options
 
@@ -30,25 +27,17 @@ passed.
 
 ### `--guess-lang`
 
-Grammarly records no language anywhere in the `.docx`, so this is a pure
-heuristic (backed by [`flourite`](https://www.npmjs.com/package/flourite)).
-It is reliable for things like JSON and shell, shakier on JavaScript-vs-TypeScript,
-and **always needs a human pass**. That is why it is off by default: a bare fence
-is more honest than a confidently wrong one.
+Grammarly records no language anywhere in the `.docx`, so this is a pure heuristic (backed by [`flourite`](https://www.npmjs.com/package/flourite)). It is reliable for things like JSON and shell, shakier on JavaScript-vs-TypeScript, and **always needs a human pass**.
 
 ## Output
 
-Without `-o`, the Markdown goes to **stdout** and nothing else does, so
-`gramdown draft.docx | pbcopy` and `gramdown draft.docx > draft.md` both work
-cleanly.
+Without `-o`, the Markdown goes to **stdout** and nothing else does, so `gramdown draft.docx | pbcopy` and `gramdown draft.docx > draft.md` both work cleanly.
 
 With `-o <file>`, the Markdown is written there and stdout stays empty.
 
 ## Warnings
 
-Any warning raised while reading the document (an unrecognised style, a dropped
-element) is printed to **stderr**, prefixed `warning:`, and does not change the
-exit code. Conversion still completes and the Markdown is still written.
+Any warning raised while reading the document (an unrecognised style, a dropped element) is printed to **stderr**, prefixed `warning:`, and does not change the exit code. Conversion still completes and the Markdown is still written.
 
 ## Exit codes
 
@@ -57,8 +46,7 @@ exit code. Conversion still completes and the Markdown is still written.
 | `0`  | Conversion succeeded (`--help` / `--version` also exit `0`).                                                                                         |
 | `1`  | No arguments (usage is printed to stdout); an unknown flag or a non-`.docx` path; the input file does not exist; the file is not a readable `.docx`. |
 
-Error messages go to stderr, prefixed `error:`. A malformed command line also
-reprints the usage text.
+Error messages go to stderr, prefixed `error:`. A malformed command line also reprints the usage text.
 
 ## Examples
 

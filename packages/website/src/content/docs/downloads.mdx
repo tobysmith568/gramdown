@@ -6,15 +6,13 @@ order: 3
 
 import Downloads from "../../components/Downloads.astro";
 
-The download below is a single file that runs on its own. Save it, run it, and
-you can convert documents straight away.
+The download below is a single file that runs on its own. Save it, run it, and you can convert documents straight away.
 
 <Downloads />
 
 ## Which one do I want?
 
-- **Linux (x64)** for most servers and desktop Linux; **arm64** for Raspberry Pi,
-  AWS Graviton and similar.
+- **Linux (x64)** for most servers and desktop Linux; **arm64** for Raspberry Pi, AWS Graviton and similar.
 - **macOS (Apple silicon)** for M1 and later; **macOS (Intel)** for pre-2020 Macs.
 - **Windows (x64)** for 64-bit Windows 10 and 11.
 
@@ -26,14 +24,11 @@ chmod +x gramdown-*
 ./gramdown-* draft.docx -o draft.md
 ```
 
-On macOS the first run is blocked by Gatekeeper; allow it under **System
-Settings → Privacy & Security**, or remove the quarantine flag with
-`xattr -d com.apple.quarantine gramdown-*`.
+On macOS the first run is blocked by Gatekeeper; allow it under **System Settings → Privacy & Security**, or remove the quarantine flag with `xattr -d com.apple.quarantine gramdown-*`.
 
 ## Already have Node.js?
 
-If Node.js is set up on the machine, you can install the CLI with npm instead and
-update it the same way:
+If Node.js is set up on your machine, you can install the CLI with npm instead and update it the same way:
 
 ```sh
 npm install -g gramdown
