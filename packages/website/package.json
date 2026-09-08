@@ -32,7 +32,7 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
     "@gramdown/fixtures": "workspace:*",
-    "eslint": "^9.39.3",
+    "eslint": "^10.0.0",
     "eslint-plugin-astro": "^3.1.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "typescript-eslint": "^8.69.0"
