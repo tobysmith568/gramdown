@@ -109,27 +109,23 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
-    container:
-      image: mcr.microsoft.com/playwright:v1.63.0-noble
-      # Firefox's sandbox creates an unprivileged user namespace, which the container's
-      # default seccomp / AppArmor profiles block (EPERM on clone()). `--ipc=host` is
-      # Playwright's own recommendation for Chromium stability in Docker.
-      options: --ipc=host --security-opt seccomp=unconfined --security-opt apparmor=unconfined
-
     steps:
       - name: Checkout
         uses: actions/checkout@v7
 
-      # The Playwright image ships browsers but not `unzip`, which `oven-sh/setup-bun`
-      # needs to unpack the Bun release. Cheap next to the browser install it saves.
-      - name: Install unzip
-        run: apt-get update && apt-get install --yes --no-install-recommends unzip
-
       - name: Setup
         uses: ./.github/actions/setup
 
-      - name: Ensure browsers
-        run: bunx playwright install chromium firefox
+      - name: Cache Playwright browsers
+        uses: actions/cache@v6
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+          restore-keys: |
+            playwright-${{ runner.os }}-
+
+      - name: Install Playwright browsers
+        run: bunx playwright install --with-deps chromium firefox
         working-directory: packages/website
 
       - name: Run Playwright tests

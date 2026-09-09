@@ -3,8 +3,9 @@
   "extends": ["local>tobysmith568/renovate-config"],
   "packageRules": [
     {
-      "groupName": "Playwright",
-      "matchPackageNames": ["@playwright/test", "mcr.microsoft.com/playwright"],
+      "groupName": "npm: Playwright",
+      "matchManagers": ["npm"],
+      "matchPackageNames": ["@playwright/test", "playwright", "playwright-core"],
       "automerge": true
     }
   ]
