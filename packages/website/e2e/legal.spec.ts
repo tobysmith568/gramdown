@@ -2,13 +2,13 @@ import { expect, test } from "@playwright/test";
 import { PolicyPageObject } from "./page-objects/policy.po";
 
 const policies = [
-  { path: "/terms", title: "Terms & Conditions" },
-  { path: "/privacy", title: "Privacy Policy" },
-  { path: "/cookies", title: "Cookies Policy" }
+  { path: "/terms", title: "Terms & Conditions", lastUpdated: "2026-09-06" },
+  { path: "/privacy", title: "Privacy Policy", lastUpdated: "2026-09-12" },
+  { path: "/cookies", title: "Cookies Policy", lastUpdated: "2026-09-12" }
 ];
 
 test.describe("Legal pages", () => {
-  for (const { path, title } of policies) {
+  for (const { path, title, lastUpdated } of policies) {
     test(`${title} renders with a dated rail and stays out of the index`, async ({ page }) => {
       const policy = new PolicyPageObject(page, path);
       await policy.goto();
@@ -16,10 +16,10 @@ test.describe("Legal pages", () => {
       await expect(policy.heading).toHaveText(title);
       expect(await policy.meta.title()).toBe(`${title} - gramdown`);
 
-      // Held back pre-launch site-wide, and these pages also carry their own noindex.
+      // These pages carry their own noindex regardless of the site-wide indexing state.
       expect(await policy.meta.robots()).toContain("noindex");
 
-      await expect(policy.lastUpdated).toHaveAttribute("datetime", "2026-09-06");
+      await expect(policy.lastUpdated).toHaveAttribute("datetime", lastUpdated);
       await expect(policy.lastUpdated).toContainText("2026");
       await expect(policy.currentRailLink).toHaveText(title.split(" ")[0]!);
     });

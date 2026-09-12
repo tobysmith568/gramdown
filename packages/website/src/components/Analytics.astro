@@ -1,0 +1,11 @@
+---
+// Cloudflare Web Analytics: a cookieless page-view beacon, no client-side state and no
+// cross-site tracking. `is:inline` keeps Astro from touching the snippet - Cloudflare's
+// script reads its own `data-cf-beacon` attribute, so it has to reach the browser verbatim.
+---
+
+<script
+  is:inline
+  type="module"
+  src="https://static.cloudflareinsights.com/beacon.min.js"
+  data-cf-beacon={JSON.stringify({ token: "31a43e4365604ea0a0471d3189f276e7" })}></script>
