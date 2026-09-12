@@ -4,7 +4,7 @@
 //
 // Pages pass their own bare title and description; the decoration (the " - gramdown"
 // suffix, the absolute URLs, the icon links) is this component's business alone.
-import { indexingDisabled, siteName } from "../consts";
+import { siteName } from "../consts";
 import { decorateTitle, servedPathname } from "../lib/seo";
 
 interface Props {
@@ -67,12 +67,4 @@ const ogImageAlt = "gramdown: clean Markdown from your Grammarly .docx exports";
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:image:alt" content={ogImageAlt} />
 
-{
-  /* Pre-launch the whole site is held back (see `indexingDisabled`); after the flip, only
-     the pages that asked to be left out are. */
-  indexingDisabled ? (
-    <meta name="robots" content="noindex, nofollow" />
-  ) : (
-    noIndex && <meta name="robots" content="noindex" />
-  )
-}
+{noIndex && <meta name="robots" content="noindex" />}
