@@ -4,7 +4,7 @@ on:
   workflow_call:
     inputs:
       version:
-        description: The SemVer the tarballs were stamped with at build time.
+        description: The SemVer the tarballs/binaries were stamped with at build time.
         required: true
         type: string
 
@@ -12,8 +12,8 @@ permissions:
   contents: read
 
 jobs:
-  install-test:
-    name: Install test
+  npm-install:
+    name: npm install
     runs-on: ${{ matrix.os }}
     timeout-minutes: 15
 
@@ -36,10 +36,11 @@ jobs:
             node: "20"
 
     steps:
-      - name: Checkout fixtures only
+      - name: Checkout
         uses: actions/checkout@v7
         with:
           sparse-checkout: |
+            .github/actions/test-cli
             packages/fixtures
 
       - name: Download tarballs
@@ -63,61 +64,114 @@ jobs:
           npm install --global $core $cli
           if ($LASTEXITCODE -ne 0) { throw 'npm install failed' }
 
-      - name: Verify it is on PATH
-        run: Get-Command gramdown
+      - name: Test CLI
+        uses: ./.github/actions/test-cli
+        with:
+          version: ${{ inputs.version }}
 
-      - name: "--version"
+  test-binaries:
+    name: Test binaries
+    runs-on: ${{ matrix.runs-on }}
+    timeout-minutes: 15
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - label: linux-x64
+            runs-on: ubuntu-latest
+          - label: linux-arm64
+            runs-on: ubuntu-24.04-arm
+          - label: darwin-arm64
+            runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          sparse-checkout: |
+            .github/actions/test-cli
+            packages/fixtures
+
+      - name: Download binaries
+        uses: actions/download-artifact@v8
+        with:
+          name: binaries
+          path: dist-bin
+
+      - name: Put gramdown on PATH
+        shell: bash
         run: |
-          $out = (gramdown --version | Out-String).Trim()
-          if ($LASTEXITCODE -ne 0)             { throw "--version exited $LASTEXITCODE" }
-          if ($out -notmatch '^\d+\.\d+\.\d+') { throw "not a version: $out" }
-          $short = (gramdown -v | Out-String).Trim()
-          if ($short -ne $out)                 { throw "-v ($short) disagrees with --version ($out)" }
-          "version: $out"
+          chmod +x dist-bin/gramdown-${{ matrix.label }}
+          mv dist-bin/gramdown-${{ matrix.label }} dist-bin/gramdown
+          echo "${{ github.workspace }}/dist-bin" >> "$GITHUB_PATH"
 
-      - name: "--version matches the release version"
+      - name: Test CLI
+        uses: ./.github/actions/test-cli
+        with:
+          version: ${{ inputs.version }}
+
+  test-binaries-windows-x64:
+    name: Test binaries (windows-x64)
+    runs-on: windows-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          sparse-checkout: |
+            .github/actions/test-cli
+            packages/fixtures
+
+      - name: Download binaries
+        uses: actions/download-artifact@v8
+        with:
+          name: binaries
+          path: dist-bin
+
+      - name: Put gramdown on PATH
+        shell: pwsh
         run: |
-          $out = (gramdown --version | Out-String).Trim()
-          if ($out -ne '${{ inputs.version }}') { throw "tarball is $out, release input is ${{ inputs.version }}" }
+          Rename-Item dist-bin/gramdown-windows-x64.exe gramdown.exe
+          Add-Content $env:GITHUB_PATH '${{ github.workspace }}\dist-bin'
 
-      - name: "--help"
+      - name: Test CLI
+        uses: ./.github/actions/test-cli
+        with:
+          version: ${{ inputs.version }}
+
+  test-binaries-darwin-x64:
+    name: Test binaries (darwin-x64, via Rosetta)
+    runs-on: macos-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          sparse-checkout: |
+            .github/actions/test-cli
+            packages/fixtures
+
+      - name: Download binaries
+        uses: actions/download-artifact@v8
+        with:
+          name: binaries
+          path: dist-bin
+
+      - name: Put gramdown on PATH
+        shell: bash
         run: |
-          $help = gramdown --help | Out-String
-          if ($LASTEXITCODE -ne 0) { throw "--help exited $LASTEXITCODE" }
-          $short = gramdown -h | Out-String
-          if ($short -ne $help)                                                   { throw '--help and -h differ' }
-          if ($help -notmatch [regex]::Escape('gramdown <input.docx> [options]')) { throw 'no usage line in help' }
-          if ($help -notmatch '--guess-lang')                                     { throw 'no --guess-lang in help' }
-          if ($help -notmatch '--version')                                        { throw 'no --version in help' }
+          chmod +x dist-bin/gramdown-darwin-x64
+          cat <<'EOF' > dist-bin/gramdown
+          #!/bin/bash
+          exec arch -x86_64 "$(dirname "$0")/gramdown-darwin-x64" "$@"
+          EOF
+          chmod +x dist-bin/gramdown
+          echo "${{ github.workspace }}/dist-bin" >> "$GITHUB_PATH"
 
-      - name: No args prints help and exits non-zero
-        run: |
-          gramdown *> $null
-          $code = $LASTEXITCODE
-          $global:LASTEXITCODE = 0
-          if ($code -eq 0) { throw 'expected a non-zero exit for a bare invocation' }
-
-      - name: Smoke test - convert a real .docx
-        run: |
-          # stdout
-          $md = gramdown packages/fixtures/headings.docx | Out-String
-          if ($LASTEXITCODE -ne 0) { throw "convert exited $LASTEXITCODE" }
-          if ($md -notmatch [regex]::Escape('# This is a large heading.')) { throw 'headings.docx did not convert as expected' }
-
-          # -o writes a non-empty file
-          gramdown packages/fixtures/lists.docx -o lists.md
-          if ($LASTEXITCODE -ne 0)              { throw "-o convert exited $LASTEXITCODE" }
-          if ((Get-Item lists.md).Length -eq 0) { throw 'lists.md is empty' }
-
-          # a second fixture + a flag, so the bundled optional dep is exercised
-          $code = gramdown packages/fixtures/code.docx --guess-lang | Out-String
-          if ($LASTEXITCODE -ne 0)         { throw "--guess-lang convert exited $LASTEXITCODE" }
-          if ($code -notmatch '(?m)^`{3}') { throw 'no fenced code block in output' }
-
-      - name: Smoke test - error path
-        run: |
-          $err = gramdown notes.txt 2>&1 | Out-String
-          $code = $LASTEXITCODE
-          $global:LASTEXITCODE = 0
-          if ($code -eq 0)             { throw 'expected a non-zero exit for a non-.docx input' }
-          if ($err -notmatch '\.docx') { throw "stderr did not mention .docx: $err" }
+      - name: Test CLI
+        uses: ./.github/actions/test-cli
+        with:
+          version: ${{ inputs.version }}

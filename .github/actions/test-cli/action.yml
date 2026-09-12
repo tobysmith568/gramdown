@@ -1,0 +1,76 @@
+name: Test CLI
+description: Run the gramdown CLI's behavioural smoke tests.
+
+inputs:
+  version:
+    description: The SemVer the CLI under test should report.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Verify the command resolves
+      shell: pwsh
+      run: Get-Command gramdown
+
+    - name: "--version"
+      shell: pwsh
+      run: |
+        $out = (gramdown --version | Out-String).Trim()
+        if ($LASTEXITCODE -ne 0)             { throw "--version exited $LASTEXITCODE" }
+        if ($out -notmatch '^\d+\.\d+\.\d+') { throw "not a version: $out" }
+        $short = (gramdown -v | Out-String).Trim()
+        if ($short -ne $out)                 { throw "-v ($short) disagrees with --version ($out)" }
+        "version: $out"
+
+    - name: "--version matches the release version"
+      shell: pwsh
+      run: |
+        $out = (gramdown --version | Out-String).Trim()
+        if ($out -ne '${{ inputs.version }}') { throw "CLI reports $out, release input is ${{ inputs.version }}" }
+
+    - name: "--help"
+      shell: pwsh
+      run: |
+        $help = gramdown --help | Out-String
+        if ($LASTEXITCODE -ne 0) { throw "--help exited $LASTEXITCODE" }
+        $short = gramdown -h | Out-String
+        if ($short -ne $help)                                                   { throw '--help and -h differ' }
+        if ($help -notmatch [regex]::Escape('gramdown <input.docx> [options]')) { throw 'no usage line in help' }
+        if ($help -notmatch '--guess-lang')                                     { throw 'no --guess-lang in help' }
+        if ($help -notmatch '--version')                                        { throw 'no --version in help' }
+
+    - name: No args prints help and exits non-zero
+      shell: pwsh
+      run: |
+        gramdown *> $null
+        $code = $LASTEXITCODE
+        $global:LASTEXITCODE = 0
+        if ($code -eq 0) { throw 'expected a non-zero exit for a bare invocation' }
+
+    - name: Smoke test - convert a real .docx
+      shell: pwsh
+      run: |
+        # stdout
+        $md = gramdown packages/fixtures/headings.docx | Out-String
+        if ($LASTEXITCODE -ne 0) { throw "convert exited $LASTEXITCODE" }
+        if ($md -notmatch [regex]::Escape('# This is a large heading.')) { throw 'headings.docx did not convert as expected' }
+
+        # -o writes a non-empty file
+        gramdown packages/fixtures/lists.docx -o lists.md
+        if ($LASTEXITCODE -ne 0)              { throw "-o convert exited $LASTEXITCODE" }
+        if ((Get-Item lists.md).Length -eq 0) { throw 'lists.md is empty' }
+
+        # a second fixture + a flag, so the bundled optional dep is exercised
+        $code = gramdown packages/fixtures/code.docx --guess-lang | Out-String
+        if ($LASTEXITCODE -ne 0)         { throw "--guess-lang convert exited $LASTEXITCODE" }
+        if ($code -notmatch '(?m)^`{3}') { throw 'no fenced code block in output' }
+
+    - name: Smoke test - error path
+      shell: pwsh
+      run: |
+        $err = gramdown notes.txt 2>&1 | Out-String
+        $code = $LASTEXITCODE
+        $global:LASTEXITCODE = 0
+        if ($code -eq 0)             { throw 'expected a non-zero exit for a non-.docx input' }
+        if ($err -notmatch '\.docx') { throw "stderr did not mention .docx: $err" }
