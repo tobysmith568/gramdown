@@ -162,17 +162,8 @@ jobs:
         env:
           VERSION: ${{ inputs.version }}
 
-      # A pull request only needs to know the executable still bundles and runs;
-      # the full cross-compile (5 × ~90 MB) is reserved for main and releases.
       - name: Compile binaries
         run: bun run compile:binaries
-        env:
-          GRAMDOWN_TARGETS: ${{ github.event_name == 'pull_request' && 'linux-x64' || '' }}
-
-      - name: Smoke-test the Linux binary
-        run: |
-          ./dist-bin/gramdown-linux-x64 --version
-          ./dist-bin/gramdown-linux-x64 packages/fixtures/headings.docx | grep -q "# This is a large heading."
 
       - name: Upload binaries
         uses: actions/upload-artifact@v7
@@ -218,6 +209,7 @@ jobs:
     name: Install test
     needs:
       - pack
+      - binaries
     uses: ./.github/workflows/install-test.yml
     with:
       version: ${{ inputs.version || '0.0.0' }}
