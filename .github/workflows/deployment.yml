@@ -167,3 +167,34 @@ jobs:
       pages: write
       id-token: write
     uses: ./.github/workflows/pages.yml
+
+  install-script-test:
+    name: Install script (${{ matrix.os }})
+    needs:
+      - deploy-website
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          sparse-checkout: |
+            .github/actions/test-cli
+            packages/fixtures
+
+      - name: Run the live install.sh
+        run: curl -fsSL https://gramdown.tobythe.dev/install.sh | sh
+
+      - name: Put gramdown on PATH
+        run: echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Test CLI
+        uses: ./.github/actions/test-cli
+        with:
+          version: ${{ inputs.version }}

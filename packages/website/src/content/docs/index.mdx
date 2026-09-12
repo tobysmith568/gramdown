@@ -10,6 +10,19 @@ It is built for that one file. Grammarly's export has a handful of quirks (code 
 
 ## Ways to run it
 
+### Shell install (Linux, macOS)
+
+```sh
+curl -fsSL https://gramdown.tobythe.dev/install.sh | sh
+gramdown draft.docx -o draft.md
+```
+
+Verifies the download's checksum and installs to `~/.local/bin`. See [Downloads](/docs/downloads) for pinning a version and other options.
+
+### Standalone binary
+
+A single file that runs on its own, for Linux, macOS or Windows, with nothing else to install. [Downloads](/docs/downloads) lists each one with its size.
+
 ### npm
 
 ```sh
@@ -24,10 +37,6 @@ npx gramdown draft.docx -o draft.md
 ```
 
 Every flag and exit code is in the [CLI reference](/docs/cli).
-
-### Standalone binary
-
-A single file that runs on its own, for Linux, macOS or Windows, with nothing else to install. [Downloads](/docs/downloads) lists each one with its size.
 
 ### In the browser
 
