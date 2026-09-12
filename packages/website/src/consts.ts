@@ -21,11 +21,3 @@ export const legalPages = [
   { href: "/privacy", label: "Privacy" },
   { href: "/cookies", label: "Cookies" }
 ];
-
-// Temporary pre-launch flag: while `true`, the whole site asks search engines not
-// to crawl or index it (robots.txt `Disallow: /` + a site-wide `noindex, nofollow`
-// meta tag). This lets the site ship early - live at the real URL for development
-// and sharing - without it turning up in search results before it's ready.
-//
-// Flip to `false` (or delete this flag and its two call sites) as a launch step.
-export const indexingDisabled = true;

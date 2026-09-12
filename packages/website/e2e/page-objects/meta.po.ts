@@ -28,7 +28,14 @@ export class MetaPageObject {
     return this.content('meta[property="og:image"]');
   }
 
-  private content(selector: string): Promise<string | null> {
-    return this.page.locator(`head ${selector}`).getAttribute("content");
+  private async content(selector: string): Promise<string | null> {
+    const tag = this.page.locator(`head ${selector}`);
+    const tagCount = await tag.count();
+
+    if (tagCount === 0) {
+      return null;
+    }
+
+    return tag.getAttribute("content");
   }
 }
