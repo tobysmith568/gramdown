@@ -59,6 +59,9 @@ jobs:
       - name: Lint
         run: bun run lint
 
+      - name: Shellcheck install.sh
+        run: shellcheck packages/website/public/install.sh
+
   typecheck:
     name: Typecheck
     runs-on: ubuntu-latest
@@ -213,6 +216,40 @@ jobs:
     uses: ./.github/workflows/install-test.yml
     with:
       version: ${{ inputs.version || '0.0.0' }}
+
+  install-script:
+    name: Install script (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          sparse-checkout: |
+            .github/actions/test-cli
+            packages/fixtures
+            packages/website/public/install.sh
+
+      - name: Run install.sh from this branch
+        run: sh packages/website/public/install.sh
+
+      - name: Put gramdown on PATH
+        run: echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Capture the installed version
+        id: gramdown_version
+        run: echo "version=$(gramdown --version)" >> "$GITHUB_OUTPUT"
+
+      - name: Test CLI
+        uses: ./.github/actions/test-cli
+        with:
+          version: ${{ steps.gramdown_version.outputs.version }}
 
   codeql:
     name: CodeQL

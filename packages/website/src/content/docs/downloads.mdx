@@ -6,7 +6,17 @@ order: 3
 
 import Downloads from "../../components/Downloads.astro";
 
-The download below is a single file that runs on its own. Save it, run it, and you can convert documents straight away.
+## Quick install (Linux, macOS)
+
+```sh
+curl -fsSL https://gramdown.tobythe.dev/install.sh | sh
+```
+
+This detects your platform, verifies the download's checksum, and installs to `~/.local/bin` (override with `GRAMDOWN_INSTALL_DIR`). It always installs the latest release unless you pin one: `GRAMDOWN_VERSION=1.2.3 sh install.sh`.
+
+## Manual download
+
+Prefer to pick the file yourself, or using Windows? Grab a single file below that runs on its own.
 
 <Downloads />
 

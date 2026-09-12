@@ -16,7 +16,9 @@ test.describe("Index page", () => {
     await index.goto();
 
     await expect(index.heading).toHaveText("Turn a Grammarly export into clean Markdown");
-    await expect(index.installLines.first()).toHaveText("npm install -g gramdown");
+    await expect(index.installLines.first()).toHaveText(
+      "curl -fsSL https://gramdown.tobythe.dev/install.sh | sh"
+    );
     await expect(index.installLines).toHaveCount(2);
   });
 

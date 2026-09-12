@@ -8,7 +8,10 @@ import { sampleConversion } from "../lib/converter/sample";
 const description =
   "Convert Grammarly's .docx export into clean, GitHub-flavored Markdown. gramdown is a command line tool for Windows, macOS and Linux, and a browser converter.";
 
-const install = ["npm install -g gramdown", "gramdown draft.docx -o draft.md"];
+const install = [
+  "curl -fsSL https://gramdown.tobythe.dev/install.sh | sh",
+  "gramdown draft.docx -o draft.md"
+];
 
 const tail = [
   { href: "/docs", label: "Documentation" },
@@ -34,8 +37,7 @@ const tail = [
     </div>
 
     <p class="cmd-note">
-      <a href="/docs/downloads">Standalone downloads</a> don't require npm. Supports Windows, macOS, and
-      Linux.
+      Windows, or prefer npm? See <a href="/docs/downloads">Downloads</a> for every option.
     </p>
 
     <p class="hero-links">
@@ -94,7 +96,7 @@ const tail = [
     display: flex;
     flex-direction: column;
     gap: var(--sp-2);
-    max-width: 38rem;
+    max-width: fit-content;
     padding: var(--sp-5) var(--sp-6);
     background: var(--surface);
     border: 1px solid var(--border);
@@ -109,7 +111,8 @@ const tail = [
     border: none;
     font-family: var(--f-mono);
     font-size: var(--text-base);
-    white-space: pre;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
   }
 
   .cmd-line::before {
