@@ -24,6 +24,8 @@ jobs:
 
     outputs:
       npm_tag: ${{ steps.npm_tag.outputs.latest-tag }}
+      cli_homepage: ${{ steps.cli_metadata.outputs.homepage }}
+      cli_license: ${{ steps.cli_metadata.outputs.license }}
 
     steps:
       - name: Checkout
@@ -42,6 +44,12 @@ jobs:
         id: npm_tag
         with:
           package-json: ./packages/core/package.json
+
+      - name: Read CLI metadata
+        id: cli_metadata
+        run: |
+          echo "homepage=$(jq -r .homepage packages/cli/package.json)" >> "$GITHUB_OUTPUT"
+          echo "license=$(jq -r .license packages/cli/package.json)" >> "$GITHUB_OUTPUT"
 
   integration:
     name: Run Integration
@@ -157,6 +165,22 @@ jobs:
             `SHA256SUMS.txt` carries a checksum for every binary in this release.
             Check the one you downloaded with
             `sha256sum --check --ignore-missing SHA256SUMS.txt`.
+
+  update-homebrew-tap:
+    name: Update the Homebrew tap
+    needs:
+      - calculate
+      - release
+    uses: tobysmith568/homebrew-tap/.github/workflows/bump-formula.yml@main
+    with:
+      formula: gramdown
+      version: ${{ inputs.version }}
+      repo: tobysmith568/gramdown
+      desc: Turn a Grammarly .docx export into clean, GitHub-Flavored Markdown
+      homepage: ${{ needs.calculate.outputs.cli_homepage }}
+      license: ${{ needs.calculate.outputs.cli_license }}
+    secrets:
+      tap_pat: ${{ secrets.HOMEBREW_TAP_PAT }}
 
   deploy-website:
     name: Redeploy the website
