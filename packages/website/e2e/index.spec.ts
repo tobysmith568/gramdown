@@ -16,9 +16,12 @@ test.describe("Index page", () => {
     await index.goto();
 
     await expect(index.heading).toHaveText("Turn a Grammarly export into clean Markdown");
-    await expect(index.installLines.first()).toHaveText(
-      "curl -fsSL https://gramdown.tobythe.dev/install.sh | sh"
-    );
+    // Both "Desktop Chrome" and "Desktop Firefox" project presets (playwright.config.ts)
+    // ship a fixed Windows user agent regardless of the host OS, so the hero's
+    // OS-personalized command (HeroCommand.tsx) is npm here - see
+    // install-methods.spec.ts for the other OS cases, tested with explicit UA overrides.
+    await expect(index.heroCommand).toHaveCSS("opacity", "1");
+    await expect(index.installLines.first()).toHaveText("npm install -g gramdown");
     await expect(index.installLines).toHaveCount(2);
   });
 

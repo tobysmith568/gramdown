@@ -26,6 +26,8 @@ Prefer to pick the file yourself, or using Windows? Grab a single file below tha
 - **macOS (Apple silicon)** for M1 and later; **macOS (Intel)** for pre-2020 Macs.
 - **Windows (x64)** for 64-bit Windows 10 and 11.
 
+**Already using a package manager?** macOS: skip ahead to [Homebrew](#already-using-homebrew). Windows: WinGet support is on its way. Until then, npm or the binary above both work.
+
 ## Running it
 
 ```sh
@@ -35,6 +37,16 @@ chmod +x gramdown-*
 ```
 
 On macOS the first run is blocked by Gatekeeper; allow it under **System Settings → Privacy & Security**, or remove the quarantine flag with `xattr -d com.apple.quarantine gramdown-*`.
+
+## Already using Homebrew?
+
+If you're on macOS with Homebrew installed, gramdown is available from [the tobysmith568 tap](https://github.com/tobysmith568/homebrew-tap):
+
+```sh
+brew install tobysmith568/tap/gramdown
+```
+
+Supports both Apple Silicon and Intel. Update it the same way as any other formula: `brew upgrade`.
 
 ## Already have Node.js?
 

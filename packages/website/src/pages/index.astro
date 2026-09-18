@@ -1,5 +1,6 @@
 ---
 import ConverterPanel from "../components/converter/ConverterPanel";
+import HeroCommand from "../components/install/HeroCommand";
 import Section from "../components/Section.astro";
 import { cliNpmUrl, coreNpmUrl, repoUrl } from "../consts";
 import BaseLayout from "../layouts/BaseLayout.astro";
@@ -7,11 +8,6 @@ import { sampleConversion } from "../lib/converter/sample";
 
 const description =
   "Convert Grammarly's .docx export into clean, GitHub-flavored Markdown. gramdown is a command line tool for Windows, macOS and Linux, and a browser converter.";
-
-const install = [
-  "curl -fsSL https://gramdown.tobythe.dev/install.sh | sh",
-  "gramdown draft.docx -o draft.md"
-];
 
 const tail = [
   { href: "/docs", label: "Documentation" },
@@ -32,13 +28,7 @@ const tail = [
       out just right.
     </p>
 
-    <div class="cmd">
-      {install.map(line => <code class="cmd-line">{line}</code>)}
-    </div>
-
-    <p class="cmd-note">
-      Windows, or prefer npm? See <a href="/docs/downloads">Downloads</a> for every option.
-    </p>
+    <HeroCommand client:load />
 
     <p class="hero-links">
       <a href="/docs">Documentation</a>
@@ -90,44 +80,6 @@ const tail = [
     border: none;
   }
 
-  /* The install command is the input side of the story as much as the drop zone is, so its
-     accent rule is --source green rather than a plain border (matches the docs install block). */
-  .cmd {
-    display: flex;
-    flex-direction: column;
-    gap: var(--sp-2);
-    max-width: fit-content;
-    padding: var(--sp-5) var(--sp-6);
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-left: 3px solid var(--source);
-    border-radius: var(--radius);
-    overflow-x: auto;
-  }
-
-  .cmd-line {
-    padding: 0;
-    background: none;
-    border: none;
-    font-family: var(--f-mono);
-    font-size: var(--text-base);
-    white-space: pre-wrap;
-    overflow-wrap: break-word;
-  }
-
-  .cmd-line::before {
-    content: "$ ";
-    color: var(--source-ink);
-    user-select: none;
-  }
-
-  .cmd-note {
-    max-width: var(--measure-wide);
-    margin: var(--sp-3) 0 0;
-    font-size: var(--text-sm);
-    color: var(--muted);
-  }
-
   .hero-links {
     margin: var(--sp-5) 0 0;
     font-size: var(--text-sm);
@@ -155,15 +107,5 @@ const tail = [
     flex-wrap: wrap;
     gap: var(--sp-2) var(--sp-5);
     font-size: var(--text-sm);
-  }
-
-  @media (max-width: 44rem) {
-    .cmd {
-      padding: var(--sp-4);
-    }
-
-    .cmd-line {
-      font-size: var(--text-sm);
-    }
   }
 </style>
