@@ -1,0 +1,74 @@
+/* Hidden until `useReveal` confirms this has mounted client-side, so the
+   server-rendered OS fallback is never actually visible while JS is still
+   loading/hydrating - only the correct, already-detected content ever
+   fades in. Each consumer's own <noscript> block overrides this back to
+   visible for a no-JS visitor, who'd otherwise never see it revealed. */
+.wrap {
+  opacity: 0;
+}
+
+.wrap.revealed {
+  opacity: 1;
+  animation: revealIn var(--dur-base) var(--ease-out) both;
+}
+
+@keyframes revealIn {
+  from {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wrap.revealed {
+    animation: none;
+  }
+}
+
+/* The install command is the input side of the story as much as the drop zone is, so its
+   accent rule is --source green rather than a plain border (matches the docs install block). */
+.cmd {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  max-width: fit-content;
+  padding: var(--sp-5) var(--sp-6);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--source);
+  border-radius: var(--radius);
+  overflow-x: auto;
+}
+
+.cmdLine {
+  padding: 0;
+  background: none;
+  border: none;
+  font-family: var(--f-mono);
+  font-size: var(--text-base);
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}
+
+.cmdLine::before {
+  content: "$ ";
+  color: var(--source-ink);
+  user-select: none;
+}
+
+.cmdNote {
+  max-width: var(--measure-wide);
+  margin: var(--sp-3) 0 0;
+  font-size: var(--text-sm);
+  color: var(--muted);
+}
+
+@media (max-width: 44rem) {
+  .cmd {
+    padding: var(--sp-4);
+  }
+
+  .cmdLine {
+    font-size: var(--text-sm);
+  }
+}

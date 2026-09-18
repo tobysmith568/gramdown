@@ -1,0 +1,97 @@
+/*
+ * The OS-aware install-method tabs on the docs overview page. Reuses the
+ * site's shared tokens (tokens.css) rather than inventing its own palette -
+ * unlike the converter islands, this is plain document content, not an
+ * editor surface.
+ */
+
+/* Hidden until `useReveal` confirms this has mounted client-side, so the
+   server-rendered OS fallback is never actually visible while JS is still
+   loading/hydrating - only the correct, already-detected tab order ever
+   fades in. The <noscript> block in InstallMethods overrides this back to
+   visible for a no-JS visitor, who'd otherwise never see it revealed. */
+.methods {
+  margin: var(--sp-4) 0;
+  opacity: 0;
+}
+
+.methods.revealed {
+  opacity: 1;
+  animation: revealIn var(--dur-base) var(--ease-out) both;
+}
+
+@keyframes revealIn {
+  from {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .methods.revealed {
+    animation: none;
+  }
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-4);
+}
+
+.tab {
+  font: inherit;
+  font-size: var(--text-sm);
+  padding: 0.45em 0.9em;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--muted);
+  cursor: pointer;
+  transition:
+    border-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out),
+    background var(--dur-fast) var(--ease-out);
+}
+
+.tab:hover {
+  border-color: var(--muted);
+  color: var(--ink);
+}
+
+.tab[aria-selected="true"] {
+  background: var(--surface);
+  border-color: var(--brand-ink);
+  color: var(--ink);
+}
+
+.panel :global(pre) {
+  margin: var(--sp-4) 0;
+  padding: var(--sp-4) var(--sp-5);
+  max-width: 100%;
+  overflow-x: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 2px solid var(--brand);
+  border-radius: var(--radius);
+  font-family: var(--f-mono);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+}
+
+.panel :global(pre) code {
+  padding: 0;
+  background: none;
+  border: none;
+}
+
+.panel :global(p) {
+  max-width: var(--measure-wide);
+}
+
+.hint {
+  margin-top: var(--sp-4);
+  font-size: var(--text-sm);
+  color: var(--muted);
+}

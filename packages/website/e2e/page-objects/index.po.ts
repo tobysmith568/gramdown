@@ -26,9 +26,12 @@ export class IndexPageObject {
     return this.page.locator("main .lead");
   }
 
-  /** The `$ …` install snippet lines in the hero. */
+  get heroCommand(): Locator {
+    return this.page.getByTestId("hero-command");
+  }
+
   get installLines(): Locator {
-    return this.page.locator("main .cmd .cmd-line");
+    return this.heroCommand.locator("code");
   }
 
   get browserConverterHeading(): Locator {

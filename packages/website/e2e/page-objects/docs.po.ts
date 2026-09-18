@@ -36,8 +36,23 @@ export class DocsPageObject {
     return this.sidebar.locator('a[aria-current="page"]');
   }
 
-  /** Rendered code blocks inside the prose (Shiki `<pre class="astro-code">`). */
   get codeBlocks(): Locator {
     return this.page.locator("article.content pre.astro-code");
+  }
+
+  get installMethods(): Locator {
+    return this.page.getByTestId("install-methods");
+  }
+
+  get installMethodTabs(): Locator {
+    return this.installMethods.getByRole("tab");
+  }
+
+  get activeInstallMethodTab(): Locator {
+    return this.installMethods.getByRole("tab", { selected: true });
+  }
+
+  get installMethodPanel(): Locator {
+    return this.installMethods.getByRole("tabpanel");
   }
 }
