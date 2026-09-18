@@ -14,12 +14,12 @@ describe("detectOrder", () => {
     expect(detectOrder()).toEqual(fallbackOrder);
   });
 
-  it("leads with Homebrew on macOS", () => {
+  it("leads with the shell installer on macOS, ahead of Homebrew", () => {
     setUserAgent(
       "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/125.0.0.0"
     );
 
-    expect(detectOrder()).toEqual(["brew", "shell", "npm", "binary"]);
+    expect(detectOrder()).toEqual(["shell", "brew", "npm", "binary"]);
   });
 
   it("drops the shell installer and Homebrew on Windows", () => {

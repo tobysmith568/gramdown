@@ -48,7 +48,7 @@ export const detectOrder = (): MethodId[] => {
 };
 
 const orderByOs: Record<"mac" | "windows" | "linux", MethodId[]> = {
-  mac: ["brew", "shell", "npm", "binary"],
+  mac: ["shell", "brew", "npm", "binary"],
   linux: ["shell", "npm", "binary"],
   windows: ["npm", "binary"]
 };

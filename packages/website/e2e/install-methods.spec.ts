@@ -43,24 +43,26 @@ test.describe("Install method personalization", () => {
   test.describe("on macOS", () => {
     test.use({ userAgent: macUa });
 
-    test("the hero leads with Homebrew", async ({ page }) => {
+    test("the hero leads with the shell installer", async ({ page }) => {
       const index = new IndexPageObject(page);
       await index.goto();
 
-      await expect(index.installLines.first()).toHaveText("brew install tobysmith568/tap/gramdown");
+      await expect(index.installLines.first()).toHaveText(
+        "curl -fsSL https://gramdown.tobythe.dev/install.sh | sh"
+      );
     });
 
-    test("the docs tabs lead with Homebrew, ahead of the shell installer", async ({ page }) => {
+    test("the docs tabs lead with the shell installer, ahead of Homebrew", async ({ page }) => {
       const docs = new DocsPageObject(page);
       await docs.goto();
 
       await expect(docs.installMethodTabs).toHaveText([
-        "Homebrew (macOS)",
         "Shell install (Linux, macOS)",
+        "Homebrew (macOS)",
         "npm",
         "Standalone binary"
       ]);
-      await expect(docs.activeInstallMethodTab).toHaveText("Homebrew (macOS)");
+      await expect(docs.activeInstallMethodTab).toHaveText("Shell install (Linux, macOS)");
     });
   });
 
