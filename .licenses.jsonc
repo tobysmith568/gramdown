@@ -1,0 +1,37 @@
+{
+  "$schema": "https://license-cop.js.org/schema.json",
+  "extends": "@license-cop/permissive",
+  "licenses": [
+    // Standard OSI-approved permissive license (equivalent to BSD/MIT); pako@1.0.11 is dual
+    // licensed "(MIT AND Zlib)" and only the Zlib portion is detected.
+    "Zlib",
+
+    // SIL Open Font License; used by the @fontsource packages that ship font assets with the
+    // website. Permissive for bundling/distributing fonts, even commercially.
+    "OFL-1.1"
+  ],
+  "packages": [
+    // Declared as "Python-2.0", but the LICENSE file is the real PSF license text: OSI-approved
+    // and permissive. Pulled in transitively via js-yaml (astro).
+    "argparse@2.0.1",
+
+    // Declared as just "BSD", but the LICENSE file is verbatim BSD-2-Clause (already allowed).
+    // Pulled in transitively via lop -> mammoth (@gramdown/core).
+    "duck@0.1.12",
+
+    // CC-BY-4.0 data package (browser support tables), not code; used only by browserslist at
+    // build time, never shipped.
+    "caniuse-lite",
+
+    // MPL-2.0 CSS engine used by vite/astro at build time only; not bundled into the website
+    // output.
+    "lightningcss",
+    "lightningcss-linux-x64-gnu",
+    "lightningcss-linux-x64-musl",
+
+    // LGPL-3.0-or-later native libvips binaries used by sharp for Astro's build-time image
+    // optimization; not redistributed in the website output.
+    "@img/sharp-libvips-linux-x64",
+    "@img/sharp-libvips-linuxmusl-x64"
+  ]
+}
