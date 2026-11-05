@@ -1,7 +1,13 @@
-import tobysmith568 from "@tobysmith568/eslint-config";
+import recommended from "@tobysmith568/eslint-config";
+import node from "@tobysmith568/eslint-config/node";
+import prettier from "@tobysmith568/eslint-config/prettier";
+import test from "@tobysmith568/eslint-config/test";
+import { defineConfig } from "eslint/config";
 
-/** @type {import('eslint').Linter.Config[]} */
-export default [
+export default defineConfig([
   { ignores: ["**/dist/**", "**/node_modules/**", "**/coverage/**"] },
-  ...tobysmith568.recommended
-];
+  recommended,
+  node,
+  { files: ["**/*.test.ts"], extends: [test] },
+  prettier
+]);
